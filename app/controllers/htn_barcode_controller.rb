@@ -1,0 +1,2 @@
+class HtnBarcodeController < ApplicationController
+end

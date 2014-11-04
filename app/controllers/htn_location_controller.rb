@@ -1,0 +1,2 @@
+class HtnLocationController < ApplicationController
+end

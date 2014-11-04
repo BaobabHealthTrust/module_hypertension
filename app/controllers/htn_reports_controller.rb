@@ -1,0 +1,2 @@
+class HtnReportsController < ApplicationController
+end
