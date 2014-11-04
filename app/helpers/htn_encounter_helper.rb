@@ -1,0 +1,2 @@
+module HtnEncounterHelper
+end

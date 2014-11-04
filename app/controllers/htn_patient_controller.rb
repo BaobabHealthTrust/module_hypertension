@@ -1,0 +1,2 @@
+class HtnPatientController < ApplicationController
+end
