@@ -315,5 +315,14 @@ def self.vl_result_hash(patient)
     end
     
     return vl_hash.sort_by{|key, value|value["date_of_sample"].to_date}.reverse rescue {}
+end
+ def eligible_for_htn_diagnosis
+  #this method serves to show if a patient is eligibile for HTN
+  if self.person.age > GlobalProperty.get_global_property_value("htn.age.threshold").to_i
+   #need to add condition to check that the check after one year condition is not effective
+   return true
   end
+  return false
+ end
+
 end

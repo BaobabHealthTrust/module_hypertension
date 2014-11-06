@@ -1,2 +1,140 @@
-<h1>HtnEncounter#social_history</h1>
-<p>Find me in app/views/htn_encounter/social_history.html.erb</p>
+<style type="text/css">
+    #summary {
+        padding: 0px;
+        font-size:1.2em;
+        margin-left: 60px;
+        height: 90px;
+        max-height: 90px;
+        overflow: hide;
+
+    }
+    #tt_page_summary .inputFrameClass { height:85%;}
+</style>
+<script language="javascript" type="text/javascript" src="/javascripts/jquery.js"></script>
+<script>
+    var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>";
+    var displayText = "";
+
+    function showSummary()
+    {
+        var conditions = [];
+        var smokingConditions = [['numberOfCigarettes', "Number of cigarettes per day : <b>"],
+                                 ['smokingDuration', "Smoking Duration : <b>"],
+                                 ['currentSmoker', "Current Smokes : <b>"]
+                                ];
+        var alcoholConditions = [['numberOfDrinks', "Number of drinks per day : <b>" ],
+                                 ['daysAlcoholUsed', "Number of days patient drinks : <b>"]];
+
+        jQuery('#keyboard').empty();
+        conditions.push("Smokes Cigarettes : <b>" + $('smokingHistory').value + "</b><br/>")
+        if($('smokingHistory').value == "YES")
+        {
+            for( i = 0; i < smokingConditions.length ; i++)
+            {
+                conditions.push(smokingConditions[i][1] + $(smokingConditions[i][0]).value + "</b><br/>")
+            }
+        }
+        else
+        {
+            for( i = 0; i < smokingConditions.length ; i++)
+            {
+             $(smokingConditions[i][0]).value = "";
+            }
+        }
+        conditions.push("Drinks Alcohol : <b>" + $('alcoholHistory').value + "</b><br/>")
+        if ($('alcoholHistory').value == "YES")
+        {
+            for( i = 0; i < alcoholConditions.length ; i++)
+            {
+                conditions.push(alcoholConditions[i][1] + $(alcoholConditions[i][0]).value + "</b><br/>")
+            }
+        }
+        else
+        {
+            for( i = 0; i < alcoholConditions.length ; i++)
+            {
+                $(alcoholConditions[i][0]).value = "";
+            }
+        }
+        conditions.push("Does Exercises : <b>" + $('physicalExercises').value + "</b><br/>")
+        conditions.push("Type of Employment : <b>" + $('employmentType').value + "</b><br/>")
+
+        for(i = 0; i < conditions.length ; i++)
+        {
+            displayText += conditions[i];
+        }
+
+        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>' ;
+    }
+</script>
+
+<form action="/htn_encounter/create/">
+  <%= hidden_field_tag "encounter[encounter_type_name]", "SOCIAL HISTORY" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%#= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
+
+  <%= touch_yes_no_tag "SMOKING HISTORY", @patient, nil,
+                       {:id => "smokingHistory",
+                        :helpText => "Have you ever smoked cigarettes?" } %>
+
+  <%= touch_text_field_tag "Number of cigarettes smoked per day", @patient, nil,
+                           {	:id => "numberOfCigarettes",
+                                :field_type => "number",
+                                :helpText => "Number of cigarettes smoked per day?",
+                                :absoluteMin => 1,
+                                :condition => '$("smokingHistory").value == "YES"',
+                                :absoluteMax => 90,
+                                :validationRule => "^([1-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only",
+                                :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
+
+  <%= touch_select_tag "Smoking Duration", @patient,
+                       options_for_select([['Less than five years','Less than five years'],['Five years or more','Five years or more']]),
+                       {:id => "smokingDuration",:condition => '$("smokingHistory").value == "YES"',
+                        :helpText => 'How long Have been smoking?'
+                       } %>
+  <%= touch_yes_no_tag "CURRENT SMOKER", @patient, nil,
+                       {:id => "currentSmoker",
+                        :condition => '$("smokingHistory").value == "YES"',
+                        :helpText => "Do you still smoke?" } %>
+
+  <%= touch_yes_no_tag "Does the patient drink alcohol?", @patient, nil,
+                       {:id => "alcoholHistory",
+                        :helpText => "Do you drink alcohol?" } %>
+
+  <%= touch_text_field_tag "Alcoholic drinks per day", @patient, nil,
+                           {	:id => "numberOfDrinks",
+                                :field_type => "number",
+                                :helpText => "How many alcoholic drinks do you have per day?",
+                                :condition => '$("alcoholHistory").value == "YES"',
+                                :validationRule => "^([0-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only",
+                                :tt_pageStyleClass => "Numeric NumbersOnly"} %>
+
+  <%= touch_text_field_tag "Number of days per week alcohol is used", @patient, nil,
+                           {	:id => "daysAlcoholUsed",
+                                :field_type => "number",
+                                :helpText => "Number of days per week alcohol is used?",
+                                :condition => '$("alcoholHistory").value == "YES"',
+                                :absoluteMin => 1,
+                                :absoluteMax => 7,
+                                :validationRule => "^([0-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only",
+                                :tt_pageStyleClass => "Numeric NumbersOnly"} %>
+
+  <%= touch_yes_no_tag "Physical Exercises", @patient, nil,
+                       {:id => "physicalExercises",
+                        :helpText => "Do you do any physical exercises?" } %>
+
+  <%= touch_select_tag "Type of employment", @patient,options_for_select([['Active','Active'],['Sedentary','Sedentary']]),
+                       {:id => "employmentType",:helpText => 'Type of employment?'
+                       } %>
+
+  <%= text_field_tag :showSummary, nil,
+                     {	:tt_onLoad => "showSummary();  $('clearButton').style.display = 'none';  ",
+                          :tt_onUnLoad => " $('clearButton').style.display = 'inline';",
+                          :helpText => "Summary",
+                          :optional => "true"
+                     } %>
+</form>
