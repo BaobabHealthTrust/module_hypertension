@@ -11,7 +11,7 @@ class ClinicController < ApplicationController
 
     @roles = User.find(session[:user_id]).user_roles.collect{|r| r.role} rescue []
 
-    render :layout => 'menu'
+    render :layout => false
   end
 
 end

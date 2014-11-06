@@ -4,4 +4,5 @@ log/
 .idea/*
 *~*
 public/touchscreentoolkit
+*.lock
 
