@@ -57,7 +57,7 @@
     <div id="container">
       <div id="content">
         <div id="description" style="color:#777;position:absolute;margin-top:-70px;">
-          <% if show_intro_text %>
+          <% if (show_intro_text rescue false) %>
             This demonstration site contains the work of <a href="http://pih.org" style="color:white">Partners In Health</a>
             and <a href="http://baobabhealth.org" style="color:white">Baobab Health.</a>
             This EMR is built on top of OpenMRS 1.4 and is currently being used in Neno and Ngoni, Malawi.

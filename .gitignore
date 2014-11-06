@@ -3,3 +3,4 @@ log/
 *.yml
 *~*
 public/touchscreentoolkit
+*.lock
