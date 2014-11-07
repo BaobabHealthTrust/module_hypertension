@@ -91,6 +91,40 @@
         return document.getElementById(e);
     }
 
+    function showSummary()
+    {
+        jQuery('#keyboard').empty();
+        displayText = "";
+        var sbp = document.getElementById("systolic_blood_pressure").value
+        var dbp = document.getElementById("diastolic_blood_pressure").value
+
+        displayText += "<div><span class='title'>Weight (Kg) :</span>" + __$('weight').value + "<br/>";
+        displayText += "<div><span class='title'>Height (cm) :</span>" + currentHeight + "<br/>";
+        displayText += "<div><span class='title'>BMI :</span>";
+        if (currentBmi > 18.5) {
+            displayText += currentBmi;
+        } else {
+            displayText += "<span class='lowBMI'>" + currentBmi + "</span> <span class='recommendation'>Eligible for therapeutic feeding</span>";
+        }
+        displayText += "</div>"
+
+        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
+
+            displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp +"/" +
+                    dbp + "</span><span class='recommendation'>Patient's blood pressure is high</span><br/>";
+        }
+        else
+        {
+            displayText += "<div><span class='title'>BP:</span>" + sbp +"/" + dbp + "<br/>";
+        }
+
+        displayText += "<div><span class='title'>Waist Circumference :</span>" + __$('waistCircumference').value + "<br/>";
+        displayText += "<div><span class='title'>Respiratory Rate :</span>" + __$('respiratoryRate').value + "<br/>";
+        displayText += "<div><span class='title'>Pulse Rate :</span>" + __$('pulseRate').value + "<br/>";
+        displayText += "<div><span class='title'>Oxygen Saturation :</span>" + __$('oxygenSaturation').value + "<br/>";
+        displayText += "<div><span class='title'>Temperature :</span>" + __$('temperature').value + "<br/>";
+        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>' ;
+    }
 
     function growthIndicators(){
         //These values pulled from the tt_onLoad bit in the third form...
@@ -105,18 +139,18 @@
         medianWeightHeight = [<%= WeightHeightForAge.median_weight_height(@patient_bean.age_in_months, @patient.person.gender).join(',') rescue nil -%>];
         currentWeightPercentile = (currentWeight/(medianWeightHeight[0])*100).toFixed(0);
         currentHeightPercentile = (currentHeight/(medianWeightHeight[1])*100).toFixed(0);
+        jQuery('#keyboard').empty();
         if (('<%= @patient_bean.age %>') > 14) {
             showBMI();
         } else {
             showWeightHeightForAge();
             showWeightForHeight();
         }
-        showBP();
 
         age = "<%=  @patient.person.age(dateToday) rescue 99999%>";
         currentWeight = document.getElementById('weight').value;
 
-        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div><div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div>' ;
+        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div>' + displayText + '</div><div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div></div>' ;
 
 
         if (age < 6){
@@ -127,6 +161,7 @@
             jQuery('#keyboard').empty();
             jQuery('#charts').empty().load('/patients/graphs/<%= @patient.id -%>?data=weight&currentWeight=' + currentWeight);
         }
+
     }
 
     function hookKeyboard(){
@@ -202,161 +237,138 @@
         displayText += "</div>";
     }
 
-    function showBP()
-    {
-        var sbp = document.getElementById("systolic_blood_pressure").value
-        var dbp = document.getElementById("diastolic_blood_pressure").value
-        var csbp = document.getElementById("confirm_systolic_blood_pressure").value
-        var cdbp = document.getElementById("confirm_diastolic_blood_pressure").value
-
-        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
-            displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp +"/" + dbp + "</span><br/>";
-
-            if((parseInt(csbp) > 140) && (parseInt(cdbp) > 90)){
-                displayText += "<div><span class='title'>Confirmatory BP Reading:</span><span class='lowHeightForAge'>" + csbp +"/" + cdbp + "</span> ";
-                displayText += "<span class='recommendation'>Confirmed High Blood Pressure</span>";
-            }
-            else{
-                displayText += "<div><span class='title'>Confirmatory BP Reading:</span><span class='goodHeightForAge'>" + csbp +"/" + cdbp + "</span><br/>";
-            }
-
-        }
-        else
-        {
-            displayText += "<div><span class='title'>BP:</span>" + sbp +"/" + dbp;
-            document.getElementById("confirm_systolic_blood_pressure").value = ""
-            document.getElementById("confirm_diastolic_blood_pressure").value = ""
-
-        }
-    }
 
 </script>
 
 <form action="/htn_encounter/create/vitals">
-  <%= hidden_field_tag "encounter[encounter_type_name]", "VITALS" %>
-  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
-  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
-  <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
+      <%= hidden_field_tag "encounter[encounter_type_name]", "VITALS" %>
+      <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+      <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+      <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
 
-  <% if @retrospective %>
       <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
-                            {	:id => "weight",
-                                 :field_type => "number",
-                                 :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                                 :min => number_with_precision(@min_weight, :precision => 1),
-                                 :max => number_with_precision(@max_weight, :precision => 1),
-                                 :absoluteMin => 0,
-                                 :absoluteMax => 250,
-                                 :units => 'kg',
-                                 :validationRule => "([0-9]+\\.[0-9])|Unknown$",
-                                 :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                                 :tt_pageStyleClass => "unknownButton",
-                                 :helpText => "Weight (Kg)" } %>
-
-
-      <% if @patient_bean.age > 18 and not @current_height == 0 %>
-          <%= touch_hidden_tag "HEIGHT (CM)", @patient, @current_height %>
-      <% else %>
-          <% if @patient_bean.age > 18 %>
-              <%= hidden_field_tag "recalculate_bmi", true %>
-          <% end %>
-
-          <%= touch_numeric_tag "HEIGHT (CM)", @patient, nil,
-                                {	:id => "height",
-                                     :field_type => "number",
-                                     :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                                     :min => number_with_precision(@min_height, :precision => 1),
-                                     :max => number_with_precision(@max_height, :precision => 1),
-                                     :absoluteMin => 10,
-                                     :absoluteMax => 228,
-                                     :units => 'cm',
-                                     :validationRule => "^([0-9]+)|Unknown$",
-                                     :validationMessage => "You must enter numbers only (for example 157)",
-                                     :tt_pageStyleClass => "Numeric NumbersOnly",
-                                     :helpText => "Height (cm)" } %>
-      <% end %>
-  <% else %>
-      <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
-                            {	:id => "weight",
-                                 :field_type => "number",
-                                 :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                                 :min => number_with_precision(@min_weight, :precision => 1),
-                                 :max => number_with_precision(@max_weight, :precision => 1),
-                                 :absoluteMin => 0,
-                                 :absoluteMax => 250,
-                                 :units => 'kg',
-                                 :validationRule => "([0-9]+\\.[0-9])|Unknown$",
-                                 :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                                 :tt_pageStyleClass => "Keyboard Numeric NumbersOnlyWithDecimal",
-                                 :helpText => "Weight (Kg)" } %>
+                        {	:id => "weight",
+                            :field_type => "number",
+                            :tt_onLoad => "$('clearButton').style.display = 'inline';",
+                            :min => number_with_precision(@min_weight, :precision => 1),
+                            :max => number_with_precision(@max_weight, :precision => 1),
+                            :absoluteMin => 0,
+                            :absoluteMax => 250,
+                            :units => 'kg',
+                            :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+                            :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
+                            :tt_pageStyleClass => "Keyboard Numeric NumbersOnlyWithDecimal",
+                            :helpText => "Weight (Kg)" } %>
 
       <% if @patient_bean.age > 18 and not @current_height == 0 %>
           <%= touch_hidden_tag "HEIGHT (CM)", @patient, @current_height %>
       <% else %>
           <%= touch_numeric_tag "HEIGHT (CM)", @patient, nil,
-                                {	:id => "height",
-                                     :field_type => "number",
-                                     :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                                     :min => number_with_precision(@min_height, :precision => 1),
-                                     :max => number_with_precision(@max_height, :precision => 1),
-                                     :absoluteMin => 10,
-                                     :absoluteMax => 228,
-                                     :units => 'cm',
-                                     :validationRule => "^([0-9]+)|Unknown$",
-                                     :validationMessage => "You must enter numbers only (for example 157)",
-                                     :tt_pageStyleClass => "Numeric NumbersOnly",
-                                     :helpText => "Height (cm)" } %>
+                        {	:id => "height",
+                            :field_type => "number",
+                            :min => number_with_precision(@min_height, :precision => 1),
+                            :max => number_with_precision(@max_height, :precision => 1),
+                            :absoluteMin => 10,
+                            :absoluteMax => 228,
+                            :units => 'cm',
+                            :validationRule => "^([0-9]+)|Unknown$",
+                            :validationMessage => "You must enter numbers only (for example 157)",
+                            :tt_pageStyleClass => "Numeric NumbersOnly",
+                            :helpText => "Height (cm)" } %>
       <% end %>
-  <% end %>
+      <%= text_field_tag :showSummary, nil,
+                     {	:tt_onLoad => "growthIndicators();  $('clearButton').style.display = 'none';  ",
+                        :tt_onUnLoad => " $('clearButton').style.display = 'block';",
+                        :helpText => "Weight Summary",
+                        :optional => "true"
+                     } %>
 
-        <%= touch_text_field_tag "SYSTOLIC BLOOD PRESSURE", @patient, nil,
-                               {	:id => "systolic_blood_pressure",
-                                    :field_type => "number",
-                                    :helpText => "Systolic blood pressure (?/Y)",
-                                    :absoluteMin => 80,
-                                    :absoluteMax => 180,
-                                    :validationRule => "^([0-9]+)|Unknown$",
-                                    :validationMessage => "You must enter numbers only (for example 157)",
-                                    :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
+      <%= touch_numeric_tag "WAIST CIRCUMFERENCE", @patient, nil,
+                     {	:id => "waistCircumference",
+                        :field_type => "number",
+                        :helpText => "Waist circumference (cm)",
+                        :absoluteMin => 10,
+                        :absoluteMax => 300,
+                        :units => 'cm',
+                        :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+                        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
+                        :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
 
-
-      <%= touch_text_field_tag "DIASTOLIC BLOOD PRESSURE", @patient, nil,
-                               {	:id => "diastolic_blood_pressure",
-                                    :field_type => "number",
-                                    :helpText => "Diastolic blood pressure (X/?)",
-                                    :absoluteMin => 50,
-                                    :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                                    :absoluteMax => 110,
-                                    :validationRule => "^([0-9]+)|Unknown$",
-                                    :validationMessage => "You must enter numbers only (for example 157)",
-                                    :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
-
-      <%= touch_text_field_tag "CONFIRMATORY SYSTOLIC BLOOD PRESSURE", @patient, nil,
-                               {	:id => "confirm_systolic_blood_pressure",
-                                    :field_type => "number",
-                                    :helpText => "2nd Test Systolic blood pressure (?/Y)",
-                                    :absoluteMin => 80,
-                                    :absoluteMax => 180,
-                                    :tt_onLoad => "showMessage('BP was over 140/90. Take second measurement to confirm')",
-                                    :validationRule => "^([0-9]+)|Unknown$",
-                                    :condition => "hasHighBp()",
-                                    :validationMessage => "You must enter numbers only (for example 157)",
-                                    :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
+      <%= touch_numeric_tag "SYSTOLIC BLOOD PRESSURE", @patient, nil,
+                     {	:id => "systolic_blood_pressure",
+                        :field_type => "number",
+                        :helpText => "Systolic blood pressure (?/Y)",
+                        :absoluteMin => 80,
+                        :absoluteMax => 180,
+                        :validationRule => "^([0-9]+)|Unknown$",
+                        :validationMessage => "You must enter numbers only (for example 157)",
+                        :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
 
 
-      <%= touch_text_field_tag "CONFIRMATORY DIASTOLIC BLOOD PRESSURE", @patient, nil,
-                               {	:id => "confirm_diastolic_blood_pressure",
-                                    :field_type => "number",
-                                    :helpText => "2nd Test Diastolic blood pressure (X/?)",
-                                    :absoluteMin => 50,
-                                    :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                                    :absoluteMax => 110,
-                                    :condition => "hasHighBp()",
-                                    :validationRule => "^([0-9]+)|Unknown$",
-                                    :validationMessage => "You must enter numbers only (for example 157)",
-                                    :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
+      <%= touch_numeric_tag "DIASTOLIC BLOOD PRESSURE", @patient, nil,
+                      {	:id => "diastolic_blood_pressure",
+                        :field_type => "number",
+                        :helpText => "Diastolic blood pressure (X/?)",
+                        :absoluteMin => 50,
+                        :absoluteMax => 110,
+                        :validationRule => "^([0-9]+)|Unknown$",
+                        :validationMessage => "You must enter numbers only (for example 157)",
+                        :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
+
+  <%= touch_numeric_tag "RESPIRATORY RATE", @patient, nil,
+                        {	:id => "respiratoryRate",
+                             :field_type => "number",
+                             :helpText => "Respiratory rate",
+                             :min => 8,
+                             :max => 61,
+                             :absoluteMin => 0,
+                             :absoluteMax => 250,
+                             :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+                             :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
+                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
+
+  <%= touch_numeric_tag "PULSE", @patient, nil,
+                        {	:id => "pulseRate",
+                             :field_type => "number",
+                             :helpText => "Pulse rate",
+                             :min => 50,
+                             :max => 120,
+                             :units => "bpm",
+                             :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+                             :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
+                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
+
+  <%= touch_numeric_tag "BLOOD OXYGEN SATURATION", @patient, nil,
+                        {	:id => "oxygenSaturation",
+                             :field_type => "number",
+                             :helpText => "Oxygen saturation",
+                             :min => 85,
+                             :max => 100,
+                             :min => 85,
+                             :absoluteMax => 250,
+                             :absoluteMin => 0,
+                             :units => "bpm",
+                             :validationRule => "^([0-9]+)|Unknown$",
+                             :validationMessage => "You must enter a number",
+                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
 
 
+  <%= touch_numeric_tag "TEMPERATURE", @patient, nil,
+                        {	:id => "temperature",
+                             :field_type => "number",
+                             :helpText => "Temperature",
+                             :min => 35,
+                             :max => 41,
+                             :units => "bpm",
+                             :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+                             :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
+                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
+
+  <%= text_field_tag :summary, nil,
+                     {	:tt_onLoad => "showSummary();",
+                          :helpText => "Summary",
+                          :optional => "true"
+                     } %>
 
   <% if @patient_bean.age > 14 %>
       <%= touch_hidden_tag "BODY MASS INDEX, MEASURED", @patient, nil, { :id => 'bmi' , :kind => "value_numeric"} %>
@@ -365,21 +377,6 @@
       <%= touch_hidden_tag "WT FOR AGE", @patient, nil, {:id => 'weight_for_age'} %>
       <%= touch_hidden_tag "HT FOR AGE", @patient, nil, {:id => 'height_for_age'} %>
   <% end %>
-
-  <%= text_field_tag :showSummary, nil,
-                     {	:tt_onLoad => "growthIndicators();  $('clearButton').style.display = 'none';  ",
-                          :tt_onUnLoad => " $('clearButton').style.display = 'inline';",
-                          :helpText => "Summary",
-                          :optional => "true"
-                     } %>
-
-  <% if @retrospective %>
-      <%= text_field "filter" , 'provider',
-                     {	:helpText => 'Staff who provided the information (Provider)',
-                          :ajaxURL => '/user/username?username='} %>
-  <% else %>
-      <%= hidden_field_tag "filter[provider]", nil %>
-  <%end%>
 
   <%= submit_tag "Finish" %>
 </form>
