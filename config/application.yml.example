@@ -1,0 +1,19 @@
+## YAML Template.
+---
+production:
+  project.name: Patient Consultation
+  facility.name: Test Centre
+  patient.registration.url: http://localhost:3005
+  user.management.url: http://localhost:3004
+
+development:
+  project.name: Patient Consultation
+  facility.name: Test Centre
+  patient.registration.url: http://localhost:3005
+  user.management.url: http://localhost:3004
+
+test: &TEST
+  project.name: Patient Consultation
+  facility.name: Test Centre
+  patient.registration.url: http://localhost:3005
+  user.management.url: http://localhost:3004

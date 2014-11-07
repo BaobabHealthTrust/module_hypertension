@@ -1,6 +1,7 @@
 log/
 *.log
-*.yml
+config/*.yml
 *~*
 public/touchscreentoolkit
 *.lock
+vendor/plugins/usermanagement

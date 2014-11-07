@@ -10,18 +10,26 @@ class ApplicationController < ActionController::Base
 
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
+=begin
   before_filter :authenticate_user!, :except => ['login', 'logout','remote_demographics',
                                                  'create_remote', 'mastercard_printable', 'get_token',
                                                  'cohort','demographics_remote', 'export_on_art_patients', 'art_summary',
                                                  'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
                                                  'search_for_drugs','mastercard_printable'
   ]
+=end
+
+  before_filter :authenticate_user, :except => ['login', 'logout','remote_demographics',
+                                                 'create_remote', 'mastercard_printable', 'get_token',
+                                                 'cohort','demographics_remote', 'export_on_art_patients', 'art_summary',
+                                                 'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
+                                                 'search_for_drugs','mastercard_printable', 'authenticate', 'verify']
 
   before_filter :set_current_user, :except => ['login', 'logout','remote_demographics',
                                                'create_remote', 'mastercard_printable', 'get_token',
                                                'cohort','demographics_remote', 'export_on_art_patients', 'art_summary',
                                                'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
-                                               'search_for_drugs','mastercard_printable'
+                                               'search_for_drugs','mastercard_printable', 'authenticate', 'verify', 'location_update'
   ]
 
   before_filter :location_required, :except => ['login', 'logout', 'location',
@@ -30,10 +38,19 @@ class ApplicationController < ActionController::Base
                                                 'remote_demographics', 'get_token',
                                                 'cohort','demographics_remote', 'export_on_art_patients', 'art_summary',
                                                 'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
-                                                'search_for_drugs','mastercard_prin`table'
+                                                'search_for_drugs','mastercard_prin`table', 'authenticate', 'verify', 'location_update'
   ]
 
   before_filter :set_return_uri
+
+  def get_global_property_value(global_property)
+    property_value = Settings[global_property]
+    if property_value.nil?
+      property_value = GlobalProperty.find(:first, :conditions => {:property => "#{global_property}"}
+      ).property_value rescue nil
+    end
+    return property_value
+  end
 
   def generic_locations
     field_name = "name"
@@ -84,6 +101,12 @@ class ApplicationController < ActionController::Base
   end
 
   def location_required
+    location = session[:location_id] rescue nil
+
+    if location.nil?
+      redirect_to "/core_user_management/location?user_id=#{session[:user_id]}" and return if !session[:user_id].nil?
+    end
+
     if not located? and params[:location]
       location = Location.find(params[:location]) rescue nil
       self.current_location = location if location
@@ -155,7 +178,31 @@ class ApplicationController < ActionController::Base
   end
 
   def set_current_user
+
+    if !session[:user_id].nil?
+      current_user = User.find(session[:user_id])
+    end
+
     User.current = current_user
+
+  end
+
+protected
+
+  def authenticate_user
+
+    token = session[:token] rescue nil
+
+    if token.nil?
+      redirect_to "/core_user_management/login" and return
+    else
+      @user = CoreUser.find(session[:user_id]) rescue nil
+
+      if @user.nil?
+        redirect_to "/core_user_management/login" and return
+      end
+    end
+
   end
 
 end

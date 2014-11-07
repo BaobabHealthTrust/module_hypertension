@@ -23,3 +23,11 @@ test: &TEST
 
 cucumber:
   <<: *TEST
+  
+usermanagement:
+  adapter: mysql2
+  username: root
+  database: bart2_development
+  password: admin
+  host: localhost
+  pool: 500
