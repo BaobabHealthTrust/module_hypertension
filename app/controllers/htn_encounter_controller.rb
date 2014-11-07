@@ -57,6 +57,7 @@ class HtnEncounterController < ApplicationController
   encounter.provider_id = user_person_id
   encounter.save
   create_obs(encounter, params)
+  redirect_to next_task(Patient.find(params['encounter']['patient_id']))
  end
 
   def create_obs(encounter , params)
