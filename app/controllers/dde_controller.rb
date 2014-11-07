@@ -24,9 +24,9 @@ class DdeController < ApplicationController
 
     @person = Person.find_by_person_id(current_user.person_id) rescue nil
 
-    @user = PatientService.name(@person) rescue nil
+    @user = User.current # PatientService.name(@person) rescue nil
 
-    @roles = current_user.user_roles.collect { |r| r.role } rescue []
+    @roles = @user.user_roles.collect { |r| r.role } rescue []
 
     render :template => 'dde/index', :layout => false
   end

@@ -5,7 +5,7 @@
   <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
   <script language="javascript">
       tstUsername = "";
-      tstCurrentDate = "2010/03/12";
+      tstCurrentDate = "<%#= session[] %>";
       tt_cancel_destination = '';
       tt_cancel_show = '';
   </script>
@@ -16,7 +16,7 @@
     <div>Patient Dashboard</div>
     <div id='project_name'>
       <div style="margin-top: 0px; color: #6281A7;">
-        project
+        htn<sub style="font-size: 12px;">module</sub>
       </div>
     </div>
     <span id='patient_name'>Test Patient</span>
@@ -35,6 +35,10 @@
       <option value='mastercard.html'>Mastercard</option>
       <option value=''>Print Visit</option>
       <option value=''>Print ID</option>
+    </select>
+
+    <select id="navigation_links">
+      <option link='/'  ttSize="160px">Finish</option>
     </select>
 
     <input type='submit' value='Finish' />

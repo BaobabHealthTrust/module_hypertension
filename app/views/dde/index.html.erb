@@ -49,9 +49,13 @@
           Reports
         </option>
 
+        <option value="/my_account?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
+          My Account
+        </option>
+
         <% if (@user.admin? rescue true) %>
-            <option value="/clinic/administration">
-              Administration
+            <option value="/administration?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
+              User Administration
             </option>
         <% end %>
 
@@ -67,7 +71,7 @@
         <option value='/logout' link='/logout'>Logout</option>
         <option value='/dde/search' link='/dde/search' ttSize="290px">Find / Register Patient</option>
         <option value='<%= ((session[:datetime].to_date rescue '') != '' ?
-                "/people/reset_datetime" : "/people/set_datetime") %>' ttSize="100px">
+                "/clinic/reset_datetime" : "/clinic/set_datetime") %>' ttSize="100px">
           <%= ((session[:datetime].to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>
       </select>
 

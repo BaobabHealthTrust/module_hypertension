@@ -47,3 +47,4 @@ Rails::Initializer.run do |config|
 end
 
 require 'bantu_soundex'
+require 'composite_primary_keys'

@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   before_save :set_password, :before_create
 
   attr :plain_password
-  #cattr_accessor :current_user
+  cattr_accessor :current_user
   attr_accessor :plain_password
   attr_accessor :password_salt
   attr_accessor :encrypted_password
