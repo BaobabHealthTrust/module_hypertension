@@ -3,7 +3,8 @@ class HtnEncounterController < ApplicationController
   end
 
   def vitals
-   patient = Patient.first
+
+   patient = Patient.find(params[:patient_id])
    @patient = patient
    @patient_bean = PatientService.get_patient(@patient.person)
    if session[:datetime]
@@ -23,9 +24,7 @@ class HtnEncounterController < ApplicationController
   end
 
   def social_history
-   patient = Patient.first
-   @patient = patient
-
+   @patient = Patient.find(params[:patient_id])
   end
 
   def general_health
