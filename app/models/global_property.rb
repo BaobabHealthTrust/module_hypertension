@@ -5,6 +5,14 @@ class GlobalProperty < ActiveRecord::Base
 
   def to_s
     return "#{property}: #{property_value}"
-  end  
+  end
+
+  def self.get_global_property_value(global_property)
+
+    property_value = GlobalProperty.find(:first, :conditions => {:property => "#{global_property}"}
+    ).property_value rescue nil
+
+   return property_value
+  end
 
 end

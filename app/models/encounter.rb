@@ -9,7 +9,7 @@ class Encounter < ActiveRecord::Base
   belongs_to :provider, :class_name => "Person", :foreign_key => :provider_id, :conditions => {:voided => 0}
   belongs_to :patient, :conditions => {:voided => 0}
 
-  # TODO, this needs to account for current visit, which needs to account for possible retrospective entry
+    # TODO, this needs to account for current visit, which needs to account for possible retrospective entry
   named_scope :current, :conditions => 'DATE(encounter.encounter_datetime) = CURRENT_DATE()'
 
   def before_save
@@ -80,8 +80,9 @@ EOF
       temp = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("TEMPERATURE (C)") && "#{obs.answer_string}".upcase != 'UNKNOWN' }
       weight = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("WEIGHT (KG)") || obs.concept.concept_names.map(&:name).include?("Weight (kg)") && "#{obs.answer_string}".upcase != '0.0' }
       height = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("HEIGHT (CM)") || obs.concept.concept_names.map(&:name).include?("Height (cm)") && "#{obs.answer_string}".upcase != '0.0' }
-      vitals = [weight_str = weight.first.answer_string + 'KG' rescue 'UNKNOWN WEIGHT',
-                height_str = height.first.answer_string + 'CM' rescue 'UNKNOWN HEIGHT']
+      weight_str = weight.first.answer_string + 'KG' rescue 'UNKNOWN WEIGHT'
+      height_str = height.first.answer_string + 'CM' rescue 'UNKNOWN HEIGHT'
+      vitals = [weight_str,height_str]
       temp_str = temp.first.answer_string + '°C' rescue nil
       vitals << temp_str if temp_str                          
       vitals.join(', ')
