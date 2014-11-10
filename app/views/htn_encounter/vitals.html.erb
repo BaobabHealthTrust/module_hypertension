@@ -5,9 +5,9 @@
     #summary {
         padding: 0px;
         font-size:1.2em;
-        margin-left: 60px;
-        height: 70px;
-        max-height: 70px;
+        margin-left: 25px;
+        height: 70vh;
+        max-height: 80vh;
         overflow: hide;
 
     }
@@ -41,7 +41,7 @@
 
     #tt_page_summary .inputFrameClass { height:90%;}
     .inputFrameClass, .touchscreenTextInput, .keyboard, .inputPage{
-        width: 96%;
+        width: 97.5%;
     }
 
     #qwerty{ display:none; }
@@ -150,7 +150,7 @@
         age = "<%=  @patient.person.age(dateToday) rescue 99999%>";
         currentWeight = document.getElementById('weight').value;
 
-        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div>' + displayText + '</div><div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div></div>' ;
+        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div>' + displayText + '</div><div id="charts" style="overflow: hidden;height:185px;margin:2px 6px 6px !important;padding:2px !important;width:380px;"></div></div>' ;
 
 
         if (age < 6){
@@ -244,7 +244,7 @@
       <%= hidden_field_tag "encounter[encounter_type_name]", "VITALS" %>
       <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
       <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
-      <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
+      <%= hidden_field_tag "encounter[provider_id]", User.current.user_id %>
 
       <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
                         {	:id => "weight",

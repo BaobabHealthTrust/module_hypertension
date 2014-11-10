@@ -21,6 +21,8 @@ class HtnEncounterController < ApplicationController
   end
 
   def family_history
+   patient = Patient.find(params[:patient_id])
+   @patient = patient
   end
 
   def social_history
