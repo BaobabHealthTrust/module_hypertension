@@ -30,6 +30,7 @@ class HtnEncounterController < ApplicationController
   end
 
   def general_health
+
   end
 
   def lab_results
