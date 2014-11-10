@@ -3,12 +3,33 @@ class PatientsController < ApplicationController
   before_filter :find_patient
 
   def show
+    @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
+
+    @retrospective = session[:datetime]
+    @retrospective = Time.now if session[:datetime].blank?
+
+    @user = User.current rescue nil
+
+    session[:patient_id] = @patient.id
+    session[:user_id] = @user.id
+    session[:location_id] = params[:location_id]
+
+    program_id = Program.find_by_name('CHRONIC CARE PROGRAM').id
+    date = Date.today
+    @current_state = PatientState.find_by_sql("SELECT p.patient_id, current_state_for_program(p.patient_id, #{program_id}, '#{date}') AS state, c.name as status FROM patient p
+                      INNER JOIN  patient_program pp on pp.patient_id = p.patient_id
+                      inner join patient_state ps on ps.patient_program_id = pp.patient_program_id
+                      INNER JOIN  program_workflow_state pw ON pw.program_workflow_state_id = current_state_for_program(p.patient_id, #{program_id}, '#{date}')
+                      INNER JOIN concept_name c ON c.concept_id = pw.concept_id
+                      WHERE DATE(ps.start_date) <= '#{date}'
+                      AND p.patient_id = #{@patient.id}").first.status rescue ""
+
 
     @links = {}
 
     @project = get_global_property_value("project.name") rescue "Unknown"
 
-    render :layout => false
+    # render :layout => false
   end
 
   def blank
