@@ -1,3 +1,9 @@
 Baobab Health Hypertension Module
 =================================
 
+WARNING! The following step will overwrite your data in the target database!
+
+To setup a new database, run:
+
+  rake db:drop db:create db:structure:load db:seed
+  

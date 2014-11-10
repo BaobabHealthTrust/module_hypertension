@@ -31,7 +31,7 @@ Dir.foreach("db/data").sort.each do |file|
   
       puts "== Loading #{file} ==============================================="
           
-      system("mysql -u #{config["username"]} -p#{config["password"]} #{config["database"]} < db/data/#{file}")
+      system("mysql -u #{config["username"].strip} -p#{config["password"].strip} #{config["database"].strip} < db/data/#{file}")
       
       puts "== #{file} loaded ==============================================="    
   
