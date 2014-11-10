@@ -1,5 +1,6 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
+PROJECT_ROOT = File.dirname(__FILE__)
 
 require(File.join(File.dirname(__FILE__), 'config', 'boot'))
 
@@ -8,3 +9,38 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
+
+require 'rcov/rcovtask'
+
+namespace :test do
+  namespace :coverage do
+    desc "Delete aggregate coverage data."
+    task(:clean) { rm_f "coverage/data" }
+  end
+
+  desc 'Aggregate code coverage for unit, functional and integration tests'
+  task :coverage => "test:coverage:clean"
+    %w[unit functional integration all].each do |target|
+    namespace :coverage do
+      Rcov::RcovTask.new(target) do |t|
+        t.libs << "test"
+        t.test_files = FileList["test/#{target}/*_test.rb"]
+        t.test_files = FileList["test/**/*_test.rb"] if target == 'all'
+        t.output_dir = "test/coverage/#{target}"
+        t.verbose = true
+        t.rcov_opts << '--rails --aggregate coverage/data'
+      end
+    end
+    task :coverage => "test:coverage:#{target}"
+  end  
+end
+
+namespace :db do  
+  namespace :structure do
+    desc "initialize database"
+    task :load do
+      settings = YAML.load_file(File.join(File.dirname(__FILE__), 'config', 'database.yml'))[Rails.env]
+      system "mysql -u #{settings['username']} -p#{settings['password']} #{settings['database']} < #{PROJECT_ROOT}/db/structure.sql"
+    end
+  end
+end
