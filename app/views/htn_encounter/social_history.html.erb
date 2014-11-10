@@ -72,7 +72,7 @@
   <%= hidden_field_tag "encounter[encounter_type_name]", "SOCIAL HISTORY" %>
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
-  <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
+  <%= hidden_field_tag "encounter[provider_id]",  User.current.user_id %>
 
   <%= touch_yes_no_tag "SMOKING HISTORY", @patient, nil,
                        {:id => "smokingHistory",
