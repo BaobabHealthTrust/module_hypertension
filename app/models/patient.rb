@@ -325,4 +325,24 @@ end
   return false
  end
 
+ def get_general_health(date)
+  date = Date.today if date.blank?
+  bmiConcept = Concept.find_by_name("BMI")
+  waistConcept = Concept.find_by_name("Waist Circumference")
+  results = {}
+  Observation.find(:all, :conditions => ["person_id = ? AND concept_id in (?) AND obs_datetime >= ? AND obs_datetime <= ?",
+                                             self.id,[bmiConcept.id, waistConcept.id],date.strftime('%Y-%m-%d 00:00:00'),
+                                             date.strftime('%Y-%m-%d 23:59:59')]).each do |observation|
+    results[observation.concept_id] = observation.value_numeric
+  end
+
+  unless results.blank?
+   if (results[bmiConcept.id] > 25.0 && results[waistConcept.id] >= 90)
+    return true
+   end rescue false
+  end
+
+  return false
+ end
+
 end
