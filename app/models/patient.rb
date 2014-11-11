@@ -345,4 +345,26 @@ end
   return false
  end
 
+ def are_vitals_already_taken(date)
+  #This method is used to determine if the patient has a complete vitals encounter on given day
+
+  date = Date.today if date.blank?
+
+  vitals_enc = Encounter.find(:last, :conditions => ["patient_id = ? AND encounter_type = ?
+                                     AND encounter_datetime >= ? AND encounter_datetime <= ?",
+                                     self.id, EncounterType.find_by_name("vitals").id,
+                                     date.strftime('%Y-%m-%d 00:00:00'),date.strftime('%Y-%m-%d 23:59:59')])
+  if vitals_enc.blank?
+   return false
+  else
+   vitals_obs = ["WEIGHT (KG)","SYSTOLIC BLOOD PRESSURE","DIASTOLIC BLOOD PRESSURE"]
+   vitals_concepts = ConceptName.find(:all, :conditions => ["name in (? )", vitals_obs]).collect{|x| x.concept_id}
+   obs_present = vitals_enc.observations.collect{|x| x.concept_id}
+   if (vitals_concepts - obs_present).length > 0
+    return false
+   else
+    return true
+   end
+  end
+ end
 end
