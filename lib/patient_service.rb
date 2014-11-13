@@ -926,6 +926,8 @@ module PatientService
       return WeightHeight.min_height(sex, patient_bean.age_in_months).to_f
     when "MAX_HEIGHT"
       return WeightHeight.max_height(sex, patient_bean.age_in_months).to_f
+     when "PATIENT HAS DIABETES"
+      return self.current_vitals(patient, attribute_name).value_coded
     end
 
   end
@@ -2287,7 +2289,14 @@ people = Person.find(:all, :include => [{:names => [:person_name_code]}, :patien
     end
   end
 
-  private
+ def self.current_vitals(patient, vital_sign, session_date = Time.now())
+  concept = ConceptName.find_by_sql("select concept_id from concept_name where name = '#{vital_sign}' and voided = 0").first.concept_id
+  Observation.find_by_sql("SELECT * from obs where concept_id = '#{concept}' AND person_id = '#{patient.id}'
+                    AND DATE(obs_datetime) <= '#{session_date}' AND voided = 0
+                    ORDER BY  obs_datetime DESC, date_created DESC LIMIT 1").first rescue nil
+ end
+
+ private
 
   def self.current_program_location                                                  
     current_user_activities = User.current.activities                           
