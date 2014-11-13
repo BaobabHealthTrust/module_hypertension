@@ -30,6 +30,15 @@ class HtnEncounterController < ApplicationController
   end
 
   def general_health
+   @patient = Patient.find(params[:patient_id])
+
+   if @patient.get_general_health(session[:datetime])
+    @existing_conditions = ["Heart disease", "Stroke", "TIA", "Diabetes", "Kidney Disease"]
+    @drugs = MedicationService.hypertension_drugs.collect { |x| x.concept.fullname}
+    @drugs = @drugs.sort.uniq
+   else
+    redirect_to next_task(@patient)
+   end
   end
 
   def lab_results

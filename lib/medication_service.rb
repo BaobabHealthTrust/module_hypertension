@@ -194,4 +194,15 @@ module MedicationService
     return obs.first.obs_datetime
   end
 
+ def self.hypertension_drugs
+  hypertension_medication_concept  = ConceptName.find_by_name("HYPERTENSION MEDICATION").concept_id
+  diabetes_medication_concept  = ConceptName.find_by_name("DIABETES MEDICATION").concept_id
+  cardiac_medication_concept   = ConceptName.find_by_name("CARDIAC MEDICATION").concept_id
+  kidney_failure_medication_concept       = ConceptName.find_by_name("KIDNEY FAILURE CARDIAC MEDICATION").concept_id
+  medication_drug_concepts = ConceptName.find_by_sql("SELECT * FROM concept_set WHERE concept_set
+		IN (#{hypertension_medication_concept}, #{diabetes_medication_concept}, #{cardiac_medication_concept},
+         #{kidney_failure_medication_concept})")
+
+  medication_drug_concepts
+ end
 end
