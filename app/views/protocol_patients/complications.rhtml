@@ -1,0 +1,301 @@
+<style>
+      #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+  #tt_page_patient_has_any_of_the_following #viewport {
+    height: 500px;
+  }
+
+  #tt_page_complications_summary  .inputFrameClass {
+  height: 600px;
+}
+
+  ul
+{
+list-style-type: none;
+}
+
+ #tt_page_complications_summary  #viewport {
+  height: 600px;
+}
+    th { text-align: center;
+	 vertical-align: middle;
+	 background-color: #9250DE;
+	 color: white;
+	 height: 10%;
+	 border-radius: 20px ;
+}
+  #charttable{
+	border-color:#ff0000 #0000ff;
+	border-radius: 20px ;
+	border-style: outset;
+	height: 600px;
+	overflow: scroll;
+  }
+
+  .data {
+    color: black;
+    font-size: 25px;
+  }
+
+  .create_button {
+	background-color: #7784AE;
+	border-bottom: 1px outset black;
+	border-radius: 7px 7px 7px 7px;
+	border-style: outset;
+	border-top: 1px outset black;
+	color: #E8EAF1;
+	display: block;
+	padding: 10px 16px 10px 10px;
+	text-align: center;
+	text-decoration: none !important;
+	font-size:27px;
+	width: 327%;
+	height: 70px;
+  }
+
+  .menu{
+	border-radius: 20px ;
+	border-style:solid;
+	border-color:#ff0000 #0000ff;
+  }
+
+  .range{
+	height: 5%;
+	width: 400px;
+	background-color:white;
+	border-radius: 20px ;
+	border-style:solid;
+	border-color:#ff0000 #0000ff;
+  }
+  #summary_container {
+    bottom: 124px;
+    font-size: 20px;
+    left: 25px;
+    position: absolute;
+    z-index: 600;
+    border-radius: 10px 10px 10px 10px;
+    width: 47.2em;
+    border-style: solid;
+    border-width: 1px;
+    background-color: lightgrey;
+    display: none;
+    -moz-user-select: none;
+    height: 18em;
+    overflow: auto;
+  }
+
+  .summary {
+    font-size: 27px;
+    padding-left: 15px;
+  }
+
+  .header {
+    font-size: 27px;
+    color: white;
+    padding-left: 30px;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+  }
+</style>
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+	
+  var conditions = [];
+
+  function getSelected(){
+    var choices = "";
+
+    for(var o = 0; o < __$('choice').options.length; o++){
+      if(__$('choice').options[o].selected == true){
+        choices += __$('choice').options[o].innerHTML + " ";
+      }
+    }
+
+    return choices;
+  }
+
+  function getComplaints(){
+    var complaints = "";
+
+    for(var o = 0; o < $('multiple').options.length; o++){
+      if($('multiple').options[o].selected == true){
+        complaints += $('multiple').options[o].innerHTML + " ";
+      }
+    }
+
+    return complaints;
+  }
+
+  function calculateBP(pos){
+    var bp;
+
+    if(!$('bp')){
+      var div = document.createElement("div");
+      div.id = "bp";
+      div.className = "statusLabel";
+
+      $("inputFrame" + tstCurrentPage).appendChild(div);
+    }
+
+    if(pos == 1){
+      bp = ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0 ? $("touchscreenInput" +
+        tstCurrentPage).value.trim() : "?") +
+        "/" + ($("diastolic_blood_pressure").value.trim().length > 0 ? $("diastolic_blood_pressure").value.trim() : "?");
+    } else if(pos == 2){
+      bp = ($("systolic_blood_pressure").value.trim().length > 0 ? $("systolic_blood_pressure").value.trim() : "?") +
+        "/" + ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0 ? $("touchscreenInput" +
+        tstCurrentPage).value.trim() : "?");
+    }
+
+    $("bp").innerHTML = "Blood Pressure: <i style='font-size: 1.2em; float: right;'>" + bp + "</i>";
+
+    timedEvent = setTimeout('calculateBP(' + pos + ')', 500);
+  }
+
+
+function selectedOptions(selected){
+   
+	 var x = 1
+      for (i = 0; i < selected.options.length; i++) {
+        
+        if (selected.options[i].selected) {
+            if (selected.options[i].value == 'Visual Blindness'){
+              $('blind').value = selected.options[i].value
+            }
+            conditions.push( x + " : <i>" + selected.options[i].value) + "</i>";
+			x += 1
+        }
+    }
+
+}
+  /* starts */
+
+
+   function showSelectedConditions() {
+      conditions = [];
+
+	   if ($('choice').value.length > 0){
+		conditions.push("Complications: ");
+		selectedOptions($('choice'))
+	  }
+
+      if ($('cva').value.length > 0)
+        conditions.push("CVA: " + $('cva').value);
+
+
+      if ($('mi').value.length > 0)
+        conditions.push("MI: " + $('mi').value);
+
+      if($('creatinine').value.length > 0){
+        conditions.push("Creatinine: " + $('creatinine').value);
+      }
+
+      if ($('funduscopy').value.length > 0)
+        conditions.push("Funduscopy: " + $('funduscopy').value);
+
+      if ($('shortness_of_breath').value.length > 0)
+        conditions.push("Shortness of breath: " + $('shortness_of_breath').value);
+
+      if ($('oedema').value.length > 0)
+        conditions.push("Oedema: " + $('oedema').value);
+
+      //var container = $("summary_container");
+      var html
+      html = "<ul>"
+      for(var i=0;i < conditions.length;i++) {
+        if (conditions[i].length > 0)
+          html += "<li class='data'>" + conditions[i] + "</li>";
+
+      }
+      html += "</ul>"
+	  $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary" style="width:98%;overflow:auto;hieght:500px ! important;">' + html + '</div>' ;
+	  $("clearButton").style.display = "none";
+  }
+
+
+  /* end */
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+	<input type='hidden' name='encounter_type' value='COMPLICATIONS ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= @user.id %>' />
+        <input type='hidden' name='concept[Visual Blindness]' id="blind" />
+
+	
+
+<%= select_tag "Complication", options_for_select(@treatements_list),
+	{ :field_type => 'text',
+      :helpText => "Patient has any of the following",
+      :id => "choice",
+	  :name=> "concept[Complications][]",
+      :multiple => true,
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true,
+      :tt_onLoad => "showCategory('Complications')"} %>
+
+
+<%= text_field_tag "Oedema", nil, {
+	:helpText => 'Oedema Test Date',
+	:name => 'concept[oedema]',
+	:field_type => 'date',
+	:id => 'oedema',
+	:condition => 'getSelected().match(/oedema/i)',
+    :tt_onLoad => "showCategory('Complications')"}  %>
+
+<%= text_field_tag "Shortness of breath", nil, {
+	:helpText => 'Shortness of breath Test Date',
+	:name => 'concept[Shortness of breath]',
+	:field_type => 'date',
+	:id => 'shortness_of_breath',
+	:condition => 'getSelected().match(/shortness\sof\sbreath/i)',
+    :tt_onLoad => "showCategory('Complications')"}  %>
+
+<%= text_field_tag "Funduscopy", nil, {
+	:helpText => 'Funduscopy Test Date',
+	:name => 'concept[Fundus]',
+	:field_type => 'date',
+	:id => 'funduscopy',
+	:condition => 'getSelected().match(/funduscopy/i)',
+    :tt_onLoad => "showCategory('Complications')"}  %>
+
+<%= text_field_tag "Creatinine", nil, {
+	:helpText => 'Creatinine Test Date',
+	:name => 'concept[Creatinine]',
+	:field_type => 'date',
+	:id => 'creatinine',
+	:condition => 'getSelected().match(/creatinine/i)',
+    :tt_onLoad => "showCategory('Complications')"}  %>
+
+<%= text_field_tag "MI", nil, {
+	:helpText => 'Myocardial Injactia Test Date',
+	:name => 'concept[myocardial injactia]',
+	:field_type => 'date',
+	:id => 'mi',
+	:condition => 'getSelected().match(/myocardial injactia(mi)/i)',
+    :tt_onLoad => "showCategory('Complications')"}  %>
+
+<%= text_field_tag "CVA", nil, {
+	:helpText => 'CVA Test Date',
+	:name => 'concept[Cardiac]',
+	:field_type => 'date',
+	:id => 'cva',
+	:condition => 'getSelected().match(/cva/i)',
+    :tt_onLoad => "showCategory('Complications')"}  %>
+
+			<label for='summary'>Summary</label>
+	<%= text_field_tag :summary, nil, {
+	  :tt_onLoad => "showSelectedConditions(); showCategory('Complications');__$('keyboard').style.display = 'none';",
+	  :optional => "true",
+	  :tt_pageStyleClass => "NoControls" } %>
+
+</form>

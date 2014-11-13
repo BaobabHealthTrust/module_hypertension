@@ -1,0 +1,26 @@
+<script>
+  var tt_cancel_destination = "/clinic?user_id=<%= params['user_id'] %>&location_id=<%= params['location_id'] %>" // /reports"
+</script>
+<style>
+#tt_page_select_the_type_of_vitals_taken #viewport {
+  height: 780px;
+}
+</style>
+
+  <% default={
+    :allowFreeText => 'true',
+  } %>
+<form method='post' action='/clinic/appointment'>
+	<input type='hidden' name='user_id' value='<%= params[:user_id] %>' />
+	<input type='hidden' name='location_id' value='<%= params[:location_id] %>' />
+  <% 
+  options=default.merge({
+      :field_type => 'text',
+      :helpText => "Auto Set Appointment?",
+      :id => "appointment",
+      :tt_onLoad => "showCategory('Auto Set Appointment')"
+    }) %>
+
+  <% @list = [true,false] %>
+  <%= select_tag("appointment",options_for_select(@list),options)%>
+</form>

@@ -54,7 +54,7 @@ module DDE
     }
 
     # Check if this patient exists locally
-    result = PatientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
+    result = Core::PatientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
 
     if result.blank?
       # if patient does not exist locally, first verify if the patient is similar
@@ -62,9 +62,9 @@ module DDE
 
       (person["patient"]["identifiers"] rescue []).each do |identifier|
 
-        result = PatientIdentifier.find_by_identifier(identifier[identifier.keys[0]],
+        result = Core::PatientIdentifier.find_by_identifier(identifier[identifier.keys[0]],
                                                       :conditions => ["identifier_type = ?",
-                                                                      PatientIdentifierType.find_by_name("National id").id]) rescue nil
+                                                                      Core::PatientIdentifierType.find_by_name("National id").id]) rescue nil
 
         break if !result.blank?
 
@@ -83,11 +83,11 @@ module DDE
 
         self.create_from_form(passed["person"])
 
-        result = PatientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
+        result = Core::PatientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
 
       else
 
-        result = Patient.find(person["patient_id"]) rescue nil
+        result = Core::Patient.find(person["patient_id"]) rescue nil
 
       end
 
@@ -101,7 +101,7 @@ module DDE
           "gender" => (patient.person.gender rescue nil),
           "birthdate_estimated" => ((patient.person.birthdate_estimated rescue 0) == 1 ? true : false),
           "patient_id" => (patient.patient_id rescue nil),
-          "national_id" => (patient.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("National id").id).identifier rescue nil),
+          "national_id" => (patient.patient_identifiers.find_by_identifier_type(Core::PatientIdentifierType.find_by_name("National id").id).identifier rescue nil),
           "addresses" => {
               "current_residence" => (address.address1 rescue nil),
               "landmark" => (address.address1 rescue nil),
@@ -113,13 +113,13 @@ module DDE
               "home_district" => (address.address2 rescue nil)
           },
           "person_attributes" => {
-              "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
-              "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
-              "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
-              "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
-              "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Race").id).value rescue nil),
-              "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
-              "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
+              "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
+              "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
+              "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
+              "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
+              "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Race").id).value rescue nil),
+              "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
+              "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
           },
           "patient" => {
               "identifiers" => (patient.patient_identifiers.collect { |id| {id.type.name => id.identifier} if id.type.name.downcase != "national id" }.delete_if { |x| x.nil? } rescue [])
@@ -159,19 +159,19 @@ module DDE
 
       end
 
-      defidtype = PatientIdentifierType.find_by_name("Unknown ID").id rescue nil
+      defidtype = Core::PatientIdentifierType.find_by_name("Unknown ID").id rescue nil
 
       (person["patient"]["identifiers"] rescue []).each do |identifier|
 
         if !local["patient"]["identifiers"].include?(identifier)
 
-          idtype = PatientIdentifierType.find_by_name(identifier.keys[0]).id rescue nil
+          idtype = Core::PatientIdentifierType.find_by_name(identifier.keys[0]).id rescue nil
 
           if !defidtype.blank?
 
-            uuid = PatientIdentifier.find_by_sql("SELECT UUID() uuid")
+            uuid = Core::PatientIdentifier.find_by_sql("SELECT UUID() uuid")
 
-            PatientIdentifier.create(
+            Core::PatientIdentifier.create(
                 "patient_id" => patient.id,
                 "identifier" => identifier[identifier.keys[0]],
                 "identifier_type" => (idtype || defidtype),
@@ -198,7 +198,7 @@ module DDE
       fields.each do |field|
 
         if (local["person_attributes"][field.keys[0]] rescue nil).to_s.strip.downcase != (person["person_attributes"][field.keys[0]] rescue nil).to_s.strip.downcase
-          pattribute = PersonAttribute.find_by_person_attribute_type_id(PersonAttributeType.find_by_name(field[field.keys[0]]).id, :conditions => ["person_id = ?", patient.person.person_id]) rescue nil
+          pattribute = Core::PersonAttribute.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name(field[field.keys[0]]).id, :conditions => ["person_id = ?", patient.person.person_id]) rescue nil
 
           if !pattribute.blank?
 
@@ -208,11 +208,11 @@ module DDE
 
           else
 
-            PersonAttribute.create(
+            Core::PersonAttribute.create(
                 "person_id" => patient.person.person_id,
                 "value" => (person["person_attributes"][field.keys[0]] rescue nil),
-                "person_attribute_type_id" => PersonAttributeType.find_by_name(field[field.keys[0]]).id,
-                "uuid" => (PersonAttribute.find_by_sql("SELECT UUID() uuid").first.uuid)
+                "person_attribute_type_id" => Core::PersonAttributeType.find_by_name(field[field.keys[0]]).id,
+                "uuid" => (Core::PersonAttribute.find_by_sql("SELECT UUID() uuid").first.uuid)
             )
 
           end
@@ -245,7 +245,7 @@ module DDE
 
         else
 
-          PersonAddress.create(
+          Core::PersonAddress.create(
               "person_id" => patient.person.id,
               "address1" => (person["addresses"]["current_residence"] rescue nil),
               "address2" => (person["addresses"]["home_district"] rescue nil),
@@ -254,7 +254,7 @@ module DDE
               "county_district" => (person["addresses"]["home_ta"] rescue nil),
               "neighborhood_cell" => (person["addresses"]["home_village"] rescue nil),
               "township_division" => (person["addresses"]["current_ta"] rescue nil),
-              "uuid" => (PersonAddress.find_by_sql("SELECT UUID() uuid").first.uuid)
+              "uuid" => (Core::PersonAddress.find_by_sql("SELECT UUID() uuid").first.uuid)
           )
 
         end
@@ -270,13 +270,13 @@ module DDE
   end
 
   def self.get_full_identifier(identifier, patient_id)
-    PatientIdentifier.find(:first, :conditions => ["voided = 0 AND identifier_type = ? AND patient_id = ?",
-                                                   PatientIdentifierType.find_by_name(identifier).id, patient_id]) rescue nil
+    Core::PatientIdentifier.find(:first, :conditions => ["voided = 0 AND identifier_type = ? AND patient_id = ?",
+                                                         Core::PatientIdentifierType.find_by_name(identifier).id, patient_id]) rescue nil
   end
 
   def self.set_identifier(identifier, value, patient_id)
-    PatientIdentifier.create(:patient_id => patient_id, :identifier => value,
-                             :identifier_type => (PatientIdentifierType.find_by_name(identifier).id))
+    Core::PatientIdentifier.create(:patient_id => patient_id, :identifier => value,
+                             :identifier_type => (Core::PatientIdentifierType.find_by_name(identifier).id))
   end
 
   def self.create_from_form(params)
@@ -294,7 +294,7 @@ module DDE
       person_params["gender"] = 'M'
     end
 
-    person = Person.create(person_params)
+    person = Core::Person.create(person_params)
 
     unless birthday_params.empty?
       if birthday_params["birth_year"] == "Unknown"
@@ -310,27 +310,27 @@ module DDE
     person.addresses.create(address_params) unless address_params.empty? rescue nil
 
     person.person_attributes.create(
-        :person_attribute_type_id => PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
+        :person_attribute_type_id => Core::PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
         :value => params["person_attributes"]["occupation"]) unless params["person_attributes"]["occupation"].blank? rescue nil
 
     person.person_attributes.create(
-        :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
+        :person_attribute_type_id => Core::PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
         :value => params["person_attributes"]["cell_phone_number"]) unless params["person_attributes"]["cell_phone_number"].blank? rescue nil
 
     person.person_attributes.create(
-        :person_attribute_type_id => PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
+        :person_attribute_type_id => Core::PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
         :value => params["person_attributes"]["office_phone_number"]) unless params["person_attributes"]["office_phone_number"].blank? rescue nil
 
     person.person_attributes.create(
-        :person_attribute_type_id => PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
+        :person_attribute_type_id => Core::PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
         :value => params["person_attributes"]["home_phone_number"]) unless params["person_attributes"]["home_phone_number"].blank? rescue nil
 
     person.person_attributes.create(
-        :person_attribute_type_id => PersonAttributeType.find_by_name("Citizenship").person_attribute_type_id,
+        :person_attribute_type_id => Core::PersonAttributeType.find_by_name("Citizenship").person_attribute_type_id,
         :value => params["person_attributes"]["citizenship"]) unless params["person_attributes"]["citizenship"].blank? rescue nil
 
     person.person_attributes.create(
-        :person_attribute_type_id => PersonAttributeType.find_by_name("Country of Residence").person_attribute_type_id,
+        :person_attribute_type_id => Core::PersonAttributeType.find_by_name("Country of Residence").person_attribute_type_id,
         :value => params["person_attributes"]["country_of_residence"]) unless params["person_attributes"]["country_of_residence"].blank? rescue nil
 
     # TODO handle the birthplace attribute
@@ -340,7 +340,7 @@ module DDE
 
       patient_params["identifiers"].each { |identifier_type_name, identifier|
         next if identifier.blank?
-        identifier_type = PatientIdentifierType.find_by_name(identifier_type_name) || PatientIdentifierType.find_by_name("Unknown id")
+        identifier_type = Core::PatientIdentifierType.find_by_name(identifier_type_name) || Core::PatientIdentifierType.find_by_name("Unknown id")
         patient.patient_identifiers.create("identifier" => identifier, "identifier_type" => identifier_type.patient_identifier_type_id)
       } if patient_params["identifiers"]
 

@@ -12,8 +12,15 @@ class Mastercard
    :tb_within_last_two_yrs, :eptb ,:ks,:pulmonary_tb, :first_line_drugs, :alt_first_line_drugs,
    :second_line_drugs, :date_of_first_alt_line_regimen, :date_of_second_line_regimen, :transfer_in_date,
    :cd4_count_date, :cd4_count, :pregnant, :who_clinical_conditions, :tlc, :tlc_date, :tb_status_at_initiation,
-   :ever_received_art, :last_art_drugs_taken, :last_art_drugs_date_taken,
-   :first_positive_hiv_test_site, :first_positive_hiv_test_date, :first_positive_hiv_test_arv_number,
-   :first_positive_hiv_test_type, :months_on_art, :transferred_out_to, :transferred_out_date, :art_start_date, :current_drugs_given
+   :ever_received_art, :last_art_drugs_taken, :last_art_drugs_date_taken, :smoking, :alcohol, :dm, :htn, :asthma, :stroke, :bp,
+   :oedema, :mi, :cardiac, :funduscopy, :creatinine, :comp_stroke, :tia, :amputation, :impotence, :foot_ulcers, :neuropathy, :comp_other,
+   :first_positive_hiv_test_site, :first_positive_hiv_test_date, :first_positive_hiv_test_arv_number, :hiv_status,
+   :first_positive_hiv_test_type, :months_on_art, :transferred_out_to, :transferred_out_date, :art_start_date, :current_drugs_given,
+   :diagnosis_dm, :diagnosis_htn, :diagnosis_dm_htn, :diagnosis_asthma, :diagnosis_stroke, :diagnosis_other,
+   :zone, :district, :clinic, :smoker, :alcohol, :cva_risk, :fbs, :urine, :history_asthma, :acuity, :pork, :head_banging,
+   :other_drugs, :known_seizure, :head_trauma, :cysticercosis, :meningitis, :cerebral_maralia, :epilepsy, :mental_illness,
+   :mental_retardation, :burns,:injuries, :psychosis, :status_epileptus, :drug_related, :hyperactivity, :tonic_clonic, :absence,
+   :myclonic, :clonic, :simplex, :tonic, :atomic, :complex, :unclassified, :last_seizures, :last_seizure_date, :number, :triggers,
+   :seizure_history
 
 end 

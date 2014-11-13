@@ -2,8 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  User
-  Location
+  Core::User
+  Core::Location
 
   helper :all # include all helpers, all the time
   # protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
                                                'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
                                                'search_for_drugs','mastercard_printable', 'authenticate', 'verify', 'location_update'
   ]
-
+=begin
   before_filter :location_required, :except => ['login', 'logout', 'location',
                                                 'demographics','create_remote',
                                                 'mastercard_printable',
@@ -42,13 +42,13 @@ class ApplicationController < ActionController::Base
                                                 'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
                                                 'search_for_drugs','mastercard_prin`table', 'authenticate', 'verify', 'location_update'
   ]
-
+=end
   before_filter :set_return_uri
 
   def get_global_property_value(global_property)
     property_value = Settings[global_property]
     if property_value.nil?
-      property_value = GlobalProperty.find(:first, :conditions => {:property => "#{global_property}"}
+      property_value = Core::GlobalProperty.find(:first, :conditions => {:property => "#{global_property}"}
       ).property_value rescue nil
     end
     return property_value
@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
   def generic_locations
     field_name = "name"
 
-    Location.find_by_sql("SELECT *
+    Core::Location.find_by_sql("SELECT *
           FROM location
           WHERE location_id IN (SELECT location_id
                          FROM location_tag_map
@@ -67,30 +67,19 @@ class ApplicationController < ActionController::Base
              ORDER BY name ASC").collect{|name| name.send(field_name)} rescue []
   end
 
-  def next_task(patient)
-    session_date = session[:datetime].to_date rescue Date.today
-    task = nil
-    begin
-      return task.url if task.present? && task.url.present?
-      return "/patients/show/#{patient.id}"
-    rescue
-      return "/patients/show/#{patient.id}"
-    end
-  end
-
   def use_user_selected_activities
     CoreService.get_global_property_value('use.user.selected.activities').to_s == "true" rescue false
   end
 
   def current_user_roles
-    user_roles = UserRole.find(:all,:conditions =>["user_id = ?", current_user.id]).collect{|r|r.role}
-    RoleRole.find(:all,:conditions => ["child_role IN (?)", user_roles]).collect{|r|user_roles << r.parent_role}
+    user_roles = Core::UserRole.find(:all,:conditions =>["user_id = ?", current_user.id]).collect{|r|r.role}
+    Core::RoleRole.find(:all,:conditions => ["child_role IN (?)", user_roles]).collect{|r|user_roles << r.parent_role}
     return user_roles.uniq
   end
 
   def current_program_location
     current_user_activities = current_user.activities
-    if Location.current_location.name.downcase == 'outpatient'
+    if Core::Location.current_location.name.downcase == 'outpatient'
       return "OPD"
     elsif current_user_activities.include?('Manage Lab Orders') or current_user_activities.include?('Manage Lab Results') or
         current_user_activities.include?('Manage Sputum Submissions') or current_user_activities.include?('Manage TB Clinic Visits') or
@@ -109,6 +98,7 @@ class ApplicationController < ActionController::Base
       redirect_to "/core_user_management/location?user_id=#{session[:user_id]}" and return if !session[:user_id].nil?
     end
 
+=begin
     if not located? and params[:location]
       location = Location.find(params[:location]) rescue nil
       self.current_location = location if location
@@ -120,6 +110,7 @@ class ApplicationController < ActionController::Base
     end
 
     located? || location_denied
+=end
   end
 
   def set_return_uri
@@ -164,7 +155,7 @@ class ApplicationController < ActionController::Base
   # Future calls avoid the database because nil is not equal to false.
   def current_location
     @current_location ||= location_from_session unless @current_location == false
-    Location.current_location = @current_location unless @current_location == false
+    Core::Location.current_location = @current_location unless @current_location == false
     @current_location
   end
 
@@ -176,16 +167,16 @@ class ApplicationController < ActionController::Base
 
   # Called from #current_location.  First attempt to get the location id stored in the session.
   def location_from_session
-    self.current_location = Location.find_by_location_id(session[:location_id]) if session[:location_id]
+    self.current_location = Core::Location.find_by_location_id(session[:location_id]) if session[:location_id]
   end
 
   def set_current_user
 
     if !session[:user_id].nil?
-      current_user = User.find(session[:user_id])
+      current_user = Core::User.find(session[:user_id])
     end
 
-    User.current = current_user
+    Core::User.current = current_user
 
   end
 
@@ -204,6 +195,30 @@ class ApplicationController < ActionController::Base
     @message = message
     @show_next_button = show_next_button
     render :template => 'print/print_location', :layout => nil
+  end
+
+  def check_encounter(patient, enc, current_date = Date.today)
+    Core::Encounter.find(:first,:order => "encounter_datetime DESC,date_created DESC",
+                   :conditions =>["DATE(encounter_datetime) = ? AND patient_id = ? AND encounter_type = ?",
+                                  current_date.to_date.to_date, patient.id,Core::EncounterType.find_by_name(enc).id])
+  end
+
+  def next_task(patient)
+    session_date = session[:datetime].to_date rescue Date.today
+    task = TaskFlow.new(session[:user_id], patient.id, session_date).next_task rescue nil
+    begin
+      return task.url if !task.nil?
+      return "/patients/show/#{patient.id}"
+    rescue
+      return "/patients/show/#{patient.id}"
+    end
+  end
+
+  def current_program
+    if session[:selected_program].blank?
+      return "HYPERTENSION PROGRAM"
+    end
+    return session[:selected_program]
   end
 
 protected

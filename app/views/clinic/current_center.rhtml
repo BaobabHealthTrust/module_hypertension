@@ -1,0 +1,27 @@
+<script>
+  var tt_cancel_destination = "/clinic?user_id=<%= params['user_id'] %>&location_id=<%= params['location_id'] %>" // /reports"
+</script>
+<style>
+#tt_page_select_the_type_of_vitals_taken #viewport {
+  height: 780px;
+}
+</style>
+
+  <% default={
+    :allowFreeText => 'true',
+  } %>
+<form method='post' action='/clinic/current_center'>
+	<input type='hidden' name='user_id' value='<%= params[:user_id] %>' />
+	<input type='hidden' name='location_id' value='<%= params[:location_id] %>' />
+  <%
+  ajax_url = "/location/locations?user_id=#{params[:user_id]}&search_string="
+  options=default.merge({
+      :field_type => 'text',
+      :helpText => "Current health center?",
+      :ajaxURL => "#{ajax_url}",
+      :id => "current_center",
+      :tt_onLoad => "showCategory('Current health center')"
+    }) %>
+
+  <%= select_tag("current_center", nil,options)%>
+</form>

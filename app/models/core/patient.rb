@@ -1,0 +1,96 @@
+module Core
+  class Patient < ActiveRecord::Base
+    set_table_name "patient"
+    set_primary_key "patient_id"
+    include Core::Openmrs
+
+    has_one :person, :class_name => 'Core::Person', :foreign_key => :person_id, :conditions => {:voided => 0}
+    has_many :patient_identifiers, :class_name => 'Core::PatientIdentifier', :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
+    has_many :patient_programs, :class_name => 'Core::PatientProgram', :conditions => {:voided => 0}
+    has_many :programs, :class_name => 'Core::Program', :through => :patient_programs
+    has_many :relationships, :class_name => 'Core::Relationship', :foreign_key => :person_a, :dependent => :destroy, :conditions => {:voided => 0}
+    has_many :orders, :class_name => 'Core::Order', :conditions => {:voided => 0}
+
+    has_many :program_encounters, :class_name => 'Core::ProgramEncounter', :class_name => 'Core::ProgramEncounter', :foreign_key => :patient_id, :dependent => :destroy
+
+    has_many :encounters, :class_name => 'Core::Encounter', :conditions => {:voided => 0} do
+      def find_by_date(encounter_date)
+        encounter_date = Date.today unless encounter_date
+        find(:all, :conditions => ["encounter_datetime BETWEEN ? AND ?",
+                                   encounter_date.to_date.strftime('%Y-%m-%d 00:00:00'),
+                                   encounter_date.to_date.strftime('%Y-%m-%d 23:59:59')
+        ]) # Use the SQL DATE function to compare just the date part
+      end
+    end
+
+    def after_void(reason = nil)
+      self.person.void(reason) rescue nil
+      self.patient_identifiers.each { |row| row.void(reason) }
+      self.patient_programs.each { |row| row.void(reason) }
+      self.orders.each { |row| row.void(reason) }
+      self.encounters.each { |row| row.void(reason) }
+    end
+
+    def name
+      "#{self.person.names.first.given_name} #{self.person.names.first.family_name}"
+    end
+
+    def national_id
+      self.patient_identifiers.find_by_identifier_type(Core::PatientIdentifierType.find_by_name("National id").id).identifier rescue nil
+    end
+
+    def address
+      "#{self.person.addresses.first.city_village}" rescue nil
+    end
+
+    def age(today = Date.today)
+      return nil if self.person.birthdate.nil?
+
+      # This code which better accounts for leap years
+      patient_age = (today.year - self.person.birthdate.year) + ((today.month -
+          self.person.birthdate.month) + ((today.day - self.person.birthdate.day) < 0 ? -1 : 0) < 0 ? -1 : 0)
+
+      # If the birthdate was estimated this year, we round up the age, that way if
+      # it is March and the patient says they are 25, they stay 25 (not become 24)
+      birth_date=self.person.birthdate
+      estimate=self.person.birthdate_estimated==1
+      patient_age += (estimate && birth_date.month == 7 && birth_date.day == 1 &&
+          today.month < birth_date.month && self.person.date_created.year == today.year) ? 1 : 0
+    end
+
+    def gender
+      self.person.gender rescue nil
+    end
+
+    def age_in_months(today = Date.today)
+      years = (today.year - self.person.birthdate.year)
+      months = (today.month - self.person.birthdate.month)
+      (years * 12) + months
+    end
+
+    def allergic_to_sulphur
+      status = self.encounters.collect { |e|
+        e.observations.find(:last, :conditions => ["concept_id = ?",
+                                                   Core::ConceptName.find_by_name("Allergic to sulphur").concept_id]).answer_string rescue nil
+      }.compact.flatten.first
+
+      status = "unknown" if status.nil?
+    end
+
+    def national_id_with_dashes
+      id = national_id
+      length = id.length
+      case length
+        when 13
+          id[0..4] + "-" + id[5..8] + "-" + id[9..-1] rescue id
+        when 9
+          id[0..2] + "-" + id[3..6] + "-" + id[7..-1] rescue id
+        when 6
+          id[0..2] + "-" + id[3..-1] rescue id
+        else
+          id
+      end
+    end
+
+  end
+end

@@ -1,0 +1,342 @@
+<style>
+    #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+<script type='text/javascript' language='javascript'>
+  <!--
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+
+  function changeProgram(){
+    $('program_state').value = "Patient Transferred Out"
+  }
+
+</script>
+
+<form method='post' action='/encounters/create'>
+  <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+  <input type='hidden' name='encounter_type' value='TREATMENT' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= @user.id %>' />
+  <input type="hidden" name="programs[][states][][state]" value="On treatment" id="program_id" />
+
+
+<%# if params[:ext].to_i == 1 %>
+  <input type='hidden' id='1.1.1' name='concept[Complications]' value='<%= @category %>' />
+  <input type='hidden' id='1.1.4' value="yes" />
+<%# end %>
+  <table>
+    <tr>
+      <% if @current_program != "ASTHMA PROGRAM" %>
+        <td>
+          Hypertension Category
+        </td>
+        <td>
+          <% if params[:ext].to_i != 1 %>
+            <!--
+            <select id='1.1.1' name='concept[Complications]'
+                    helpText='Hypertension Category '
+                    pos='1'
+                    tt_onload="" >
+            <option></option>
+            <option value='Severe'>Severe</option>
+             <option value='Moderate'>Moderate</option>
+             <option value='Mild'>Mild</option>
+             </select>
+            -->
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          recommended treatment
+        </td>
+        <td>
+
+          <% @moderate_list = ["Hydrochlorothiazide (25mg tablet) + Amlodipine 5 – 10 mg", "Hydrochlorothiazide (25mg tablet) + Nifedipine 10-20 mg"] %>
+
+          <% @mild_list = ["Aspirin (75mg tablet)", "Hydrochlorothiazide (25mg tablet)"] %>
+
+          <% @severe_list = ["Hydrochlorthiazide + Amlodipine + Lipiniopril + Enalapril", "Hydrochlorthiazide + Amlodipine + Lipiniopril + Captopril",
+            "Hydrochlorthiazide + Amlodipine + Lipiniopril + Captopril +  Atenolol", "Hydrochlorthiazide + Amlodipine + Lipiniopril + Enalapril + Atenolol",
+            "Hydrochlorthiazide  + Nifedipine + Lipiniopril + Captopril", "Hydrochlorthiazide  + Nifedipine + Lipiniopril + Enalapril "] %>
+
+          <select id="1.1.2" name="concept[treatment][]"
+                  condition='__$("1.1.1").value.toLowerCase() == "mild"'
+                  multiple='true'
+                  tt_onload=""
+                  helpText='Recommended Treatment for category : <%= @category %><span id="helper">Treatment</span>'
+                  optional='true'>
+                    <% if @bp < @normal_bp %>
+              <option value="Aspirin">Aspirin (75mg tablet)</option>
+
+            <% elsif @previous_bp > @bp %>
+              <option value="Hydrochlorothiazide">Hydrochlorothiazide (25mg tablet)</option>
+            <% else %>
+              <option value="None">None</option>
+            <% end %>
+          </select>
+  <%#= select_tag "recommended treatment", options_for_select(@mild_list),
+  { :field_type => 'text',
+  :helpText => "Treatment Recommendation",
+  :id => "recommended_treatment",
+  :name=> "concept[recommended treatment][]",
+  :condition => '$("1.1.1").value.toLowerCase() == "mild"',
+  :multiple => true,
+  :tt_pageStyleClass => "MultiSelectList",
+  :optional => true} %>
+
+          <%= select_tag "recommended treatment", options_for_select(@moderate_list),
+            { :field_type => 'text',
+            :helpText => "Treatment Recommendation for category : Moderate<span id='helper'>Treatment</span>",
+            :id => "recommended_treatment",
+            :name=> "concept[treatment][]",
+            :condition => '$("1.1.1").value.toLowerCase() == "moderate"',
+            :multiple => true,
+            :tt_pageStyleClass => "MultiSelectList",
+            :optional => true} %>
+
+          <select id="recommended_treatment" name="concept[treatment][]"
+                  condition='__$("1.1.1").value.toLowerCase() == "severe"'
+                  multiple='multiple'
+                  tt_onload=""
+                  tt_pageStyleClass = "MultiSelectList"
+                   
+                  helpText='Recommended Treatment for category : <%= @category %><span id="helper">Treatment</span>'
+                  optional='true'>
+            <option></option>
+            
+              <option value="Hydrochlorothiazide">Hydrochlorthiazide</option>
+              <option value="Amlodipine">Amlodipine</option>
+              <option value="Lipiniopril">Lipiniopril</option>
+              <option value="Enalapril">Enalapril</option>
+              <option value="Captopril">Captopril</option>
+              <option value="Nifedipine">Nifedipine</option>
+            
+          </select>
+            
+
+  <%#= select_tag "recommended treatment", options_for_select(@severe_list),
+  { :field_type => 'text',
+  :helpText => "Treatment Recommendation for category : Severe",
+  :id => "recommended_treatment",
+  :name=> "concept[recommended treatment][]",
+  :condition => '$("1.1.1").value.toLowerCase() == "severe"',
+  :multiple => true,
+  :tt_pageStyleClass => "MultiSelectList",
+  :optional => true} %>
+
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Advise on Life Changes
+        </td>
+        <td>
+          <% @changes_list = ["Regular exercises"]
+            @changes_list += ["Lose weight"] if @bmi < 25
+            @changes_list += ["Stop Smoking"] if @smoking == "YES"
+            @changes_list += ["Avoid heavy drinking"] if @drinking == "YES"
+        %>
+          <%= select_tag "You receive helpful advice on important things in your life", options_for_select(@changes_list),
+            { :field_type => 'text',
+            :helpText => "Advise on Life Changes<span id='helper'>Treatment</span>",
+            :id => "1.1.3",
+            :name=> "concept[You receive helpful advice on important things in your life][]",
+            :multiple => true,
+            :tt_pageStyleClass => "MultiSelectList",
+            :condition => '__$("1.1.1").value.toLowerCase() == "mild"',
+            :optional => true,
+            :tt_onload=> ""} %>
+
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Is current treatment effective?
+        </td>
+        <td>
+          <% if params[:ext].to_i != 1 %>
+            <% unless @previous_treatment.blank? %>
+              <select id='1.1.4' name='concept[continue treatment]'
+                      helpText='Is current treatment effective  for category : <%= @category %> ?<span id="helper">Treatment</span>' pos='4'
+                      condition='__$("1.1.1").value.toLowerCase() != "mild"' tt_onload="" >
+                <option></option>
+                <option value='No'>No</option>
+                <option value='Yes'>Yes</option>
+              </select>
+            <% end
+          end
+        %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Refer to another Level?
+        </td>
+        <td>
+          <select id='1.1.5'
+                  name='concept[Refer to other hospital]'
+                  helpText='Refer to Secondary Level? <span id="helper">Treatment</span>' pos='5'
+                  condition='(__$("1.1.1").value.toLowerCase() == "moderate" || __$("1.1.1").value.toLowerCase() == "severe") &&  __$("1.1.4").value.toLowerCase() == "no"'
+                  tt_onload="">
+            <option></option>
+            <option value='Refer to Tertial Level'>Refer to Tertial Level</option>
+            <option value='Refer to Secondary Level'>Refer to Secondary Level</option>
+            <option value='Unknown'>Unknown</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          Select Location
+        </td>
+        <%
+        ajax_url = "/location/secondary_locations?patient_id=#{@patient.id}&user_id=#{@user['user_id']}&search_string="
+        ajax_url1 = "/location/tertialy_locations?patient_id=#{@patient.id}&user_id=#{@user['user_id']}&search_string="
+      %>
+        <td>
+          <%= touch_select_tag "location",  @patient, nil,
+            {	:id => "location",
+            :value_datetime => true,
+            :name => "concept[Patient referred to another site]",
+            :helpText => "Select Location<span id='helper'>Treatment</span>",
+            :ajaxURL => "#{ajax_url}",
+            :condition => '$("1.1.5").value != "UNKNOWN" && $("1.1.4").value.toLowerCase() == "no" && $("1.1.5").value == "Refer to Secondary Level"',
+            :tt_onload=> "",
+            :tt_onUnload => "changeProgram()"}%>
+        </td>
+
+        <td>
+          <%= touch_select_tag "location",  @patient, nil,
+            {	:id => "location",
+            :value_datetime => true,
+            :name => "concept[Patient referred to another site]",
+            :helpText => "Select Tertiary Location<span id='helper'>Treatment</span>",
+            :ajaxURL => "#{ajax_url1}",
+            :condition => '$("1.1.5").value != "UNKNOWN" && $("1.1.4").value.toLowerCase() == "no" && $("1.1.5").value == "Refer to Tertial Level"',
+            :tt_onload=> "",
+            :tt_onUnload => "changeProgram()"}%>
+        </td>
+
+        <td>
+
+          <select id='1.1.10'
+                  name='concept[Reason for referral][]'
+                  helpText='Referal Reason<span id="helper">Treatment</span>'
+                  multiple='multiple'
+                  tt_onload=""
+                  tt_pageStyleClass = "MultiSelectList"
+                   
+                  condition='$("1.1.5").value != "UNKNOWN" && $("1.1.4").value.toLowerCase() == "no"' >
+            <option></option>
+            <option value='Diabetic with ulcers'>Diabetic with ulcers</option>
+            <option value='History of stroke'>History of stroke</option>
+            <option value='History of heart attack'>History of heart attack</option>
+            <option value='History of pain in calf'>History of pain in calf</option>
+            <option value='History of chect pain or exertion'>History of chect pain or exertion</option>
+            <option value="Diabetic and BP >= 130 inspite tratment">Diabetic and BP >= 130 inspite tratment</option>
+            <option value="BP >= 140 despite treatment">BP >= 140 despite treatment</option>
+            <option value="SBP > 160 or DBP >= 90 mmHg and aged 40 or more">SBP > 160 or DBP >= 90 mmHg and aged 40 or more</option>
+            <option value="SBP > 140 or DBP >= 90 mmHg and aged below 40 years">SBP > 140 or DBP >= 90 mmHg and aged below 40 years</option>
+          </select>
+        </td>
+      <% else %>
+        <% @changes_list = ["Cigarette or smoke free environment", "Correct use of in-haler", "Loose weight", "Breathing control exercise", "Allergen avoidance", "Acid reflux"] %>
+        <%= select_tag "You receive helpful advice on important things in your life", options_for_select(@changes_list),
+          { :field_type => 'text',
+          :helpText => "Advise on Life Changes<span id='helper'>Treatment</span>",
+          :id => "1.1.3",
+          :name=> "concept[You receive helpful advice on important things in your life][]",
+          :multiple => true,
+          :tt_pageStyleClass => "MultiSelectList",
+          :optional => true,
+          :tt_onload=> ""} %>
+      <% end %>
+    </tr>
+
+    <tr>
+      <td>
+				Prescribe Drugs? 
+      </td>
+      <td>
+        <% if params[:ext].to_i != 1 %>
+          <select id='1.1.7' name='concept[Prescribe Drugs]' helpText='Prescribe Drugs?<span id="helper">Treatment</span> ' pos='7' tt_onload="">
+            <option></option>
+            <option value='Yes'>Yes</option>
+            <option value='No'>No</option>
+          </select>
+        <% end %>
+      </td>
+    </tr>
+    <!---
+		<tr>
+			<td>
+				Next Appoinment 
+			</td>
+			<td>
+<input type='text' id='1.1.8'  name='concept[Appoinment]' helpText='Next Appoinment '  pos='8' />
+			</td>
+		</tr>
+
+
+		<tr>
+			<td>
+				Refer to Secondary Level? 
+			</td>
+			<td>
+<select id='1.1.9' name='concept[Refer to Secondary Level?]' helpText='Refer to Secondary Level? ' pos='9'  condition='__$("1.1.1").value.toLowerCase() != "moderate"' >
+<option></option>
+<option value='NO'>No</option>
+<option value='YES'>Yes</option>
+</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Select Location
+			</td>
+			<td>
+<%#= touch_location_tag "location",  @patient, nil,
+{	:id => "location_of_art_intiation",
+:value_datetime => true,
+:location => "concept[]",
+:helpText => "Select Location",
+:ajaxURL => '/location/locations?search_string=',
+:condition => '$("1.1.9").value == "YES"'}%>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Referal Reason 
+			</td>
+			<td>
+<select id='1.1.10'
+name='concept[Referal Reason][]'
+helpText='Referal Reason ' multiple='true'  pos='10'
+condition='__$("1.1.9").value.toLowerCase() == "yes"' >
+<option></option>
+<option value='Diabetic with ulcers'>Diabetic with ulcers</option>
+<option value='Hsitory of stroke'>Hsitory of stroke</option>
+<option value='History of heart attack'>History of heart attack</option>
+<option value='History of pain in calf'>History of pain in calf</option>
+<option value='History of chect pain or exertion'>History of chect pain or exertion</option>
+<option value='Diabetic and BP >= 130 inspite tratment'>Diabetic and BP >= 130 inspite tratment</option>
+<option value='BP >= 140 despite treatment'>BP >= 140 despite treatment</option>
+<option value='SBP > 160 or DBP >= 90 mmHg and aged 40 or more'>SBP > 160 or DBP >= 90 mmHg and aged 40 or more</option>
+<option value='SBP > 140 or DBP >= 90 mmHg and aged below 40 years'>SBP > 140 or DBP >= 90 mmHg and aged below 40 years</option>
+</select>
+			</td>
+		</tr>
+--->
+  </table>
+</form>
