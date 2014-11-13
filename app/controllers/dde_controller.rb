@@ -850,7 +850,7 @@ class DdeController < ApplicationController
 
     # pagesize = ((pagesize) * 2) - result.length
 
-    Person.find(:all, :joins => [:names], :limit => pagesize, :offset => offset, :conditions => ["given_name = ? AND family_name = ? AND gender = ?", params["given_name"], params["family_name"], params["gender"]]).each do |person|
+    Core::Person.find(:all, :joins => [:names], :limit => pagesize, :offset => offset, :conditions => ["given_name = ? AND family_name = ? AND gender = ?", params["given_name"], params["family_name"], params["gender"]]).each do |person|
 
       patient = person.patient # rescue nil
 
