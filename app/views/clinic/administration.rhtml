@@ -73,12 +73,12 @@
     </tr>
     <tr>
       <td rowspan="4" style="">
-        <iframe height="300" src="/project_users?user_id=<%= params[:user_id]
+        <iframe height="300" src="/project_users?user_id=<%= session[:user_id]
               %>&location_id=<%= params[:location_id] %>" style="border: 1px solid #ccc; width: 100%;">
         </iframe>
       </td>
       <td style="height: 70px; width: 250px;">
-        <button class="btn" onclick="window.parent.location='/manage_activities?user_id=<%= params[:user_id]
+        <button class="btn" onclick="window.parent.location='/manage_activities?user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>'">
           <span>
             Manage Activities
@@ -89,7 +89,7 @@
     <tr>
       <td style="height: 70px;">
         <button class="btn" onclick="window.parent.location='<%= @link
-      %>/user_list?ext=true&user_id=<%= params[:user_id]
+      %>/user_list?ext=true&user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
           <span>
             Manage Users
@@ -99,7 +99,7 @@
     </tr>
     <tr>
       <td style="height: 70px;">
-        <button class="btn" onclick="window.parent.location='/project_members?user_id=<%= params[:user_id]
+        <button class="btn" onclick="window.parent.location='/project_members?user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>'">
           <span>
             Project Members
@@ -109,7 +109,7 @@
     </tr>
     <tr>
       <td style="height: 70px;">
-        <button class="btn" onclick="window.parent.location='/demographics_fields?user_id=<%= params[:user_id]
+        <button class="btn" onclick="window.parent.location='/demographics_fields?user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>'">
           <span>
             Demographics Fields
