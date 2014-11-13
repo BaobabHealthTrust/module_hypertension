@@ -74,7 +74,7 @@
     <tr>
       <td rowspan="4" >
         <iframe height="300" src="<%= @link
-      %>/user_demographics?ext=true&user_id=<%= params[:user_id]
+      %>/user_demographics?ext=true&user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>"
               style="border: 1px solid #ccc; width: 100%;">
         </iframe>
@@ -91,7 +91,7 @@
     <tr>
       <td style="height: 70px;">
         <button class="btn" onclick="window.parent.location='<%= @link
-      %>/location?ext=true&user_id=<%= params[:user_id]
+      %>/location?ext=true&user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
           <span>
             Change Location
@@ -102,7 +102,7 @@
     <tr>
       <td style="height: 70px;">
         <button class="btn" onclick="window.parent.location='<%= @link
-      %>/edit_password?ext=true&user_id=<%= params[:user_id]
+      %>/edit_password?ext=true&user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
           <span>
             Change Password
@@ -113,7 +113,7 @@
     <tr>
       <td style="height: 70px;">
         <button class="btn" onclick="window.parent.location='<%= @link
-              %>/edit_user?ext=true&user_id=<%= params[:user_id]
+              %>/edit_user?ext=true&user_id=<%= session[:user_id]
               %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
           <span>
             Edit Demographics

@@ -1,6 +1,6 @@
 <script type='text/javascript' language='javascript'>
     <!--
-            tt_cancel_show = '/clinic?user_id=<%= params[:user_id] %>';
+    tt_cancel_show = '/clinic?user_id=<%= params[:user_id] %>';
     tt_cancel_destination = '/clinic?user_id=<%= params[:user_id] %>';
 
     <%
@@ -86,6 +86,7 @@
         document.body.appendChild(newDiv);
 
     }
+ //-->
 </script>
 
 <style type="text/css">
@@ -355,7 +356,7 @@
   <div><br />
 
     <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=HYPERTENSION"'>Hypertension</span><br />
-    <% else %>
+
     <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=DIABETES"'>Diabetes</span><br />
 
     <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=ASTHMA"'>Asthma</span><br />

@@ -538,6 +538,7 @@ class ClinicController < ApplicationController
   end
 
   def site_properties
+=begin
     @link = get_global_property_value("user.management.url").to_s rescue nil
 
     if @link.nil?
@@ -545,7 +546,7 @@ class ClinicController < ApplicationController
 
       redirect_to "/no_user" and return
     end
-
+=end
     @host = request.host_with_port rescue ""
 
     render :layout => false
