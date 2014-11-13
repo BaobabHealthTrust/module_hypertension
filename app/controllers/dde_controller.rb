@@ -1257,10 +1257,10 @@ class DdeController < ApplicationController
 
   # Districts containing the string given in params[:value]
   def district
-    region_id = DDERegion.find_by_name("#{params[:filter_value]}").id
+    region_id = Core::DDERegion.find_by_name("#{params[:filter_value]}").id
     region_conditions = ["name LIKE (?) AND region_id = ? ", "#{params[:search_string]}%", region_id]
 
-    districts = DDEDistrict.find(:all,:conditions => region_conditions, :order => 'name')
+    districts = Core::DDEDistrict.find(:all,:conditions => region_conditions, :order => 'name')
     districts = districts.map do |d|
       "<li value=\"#{d.name}\">#{d.name}</li>"
     end
@@ -1269,10 +1269,10 @@ class DdeController < ApplicationController
 
   # List traditional authority containing the string given in params[:value]
   def traditional_authority
-    district_id = DDEDistrict.find_by_name("#{params[:filter_value]}").id
+    district_id = Core::DDEDistrict.find_by_name("#{params[:filter_value]}").id
     traditional_authority_conditions = ["name LIKE (?) AND district_id = ?", "%#{params[:search_string]}%", district_id]
 
-    traditional_authorities = DDETraditionalAuthority.find(:all,:conditions => traditional_authority_conditions, :order => 'name')
+    traditional_authorities = Core::DDETraditionalAuthority.find(:all,:conditions => traditional_authority_conditions, :order => 'name')
     traditional_authorities = traditional_authorities.map do |t_a|
       "<li value=\"#{t_a.name}\">#{t_a.name}</li>"
     end
@@ -1281,10 +1281,10 @@ class DdeController < ApplicationController
 
   # Villages containing the string given in params[:value]
   def village
-    traditional_authority_id = DDETraditionalAuthority.find_by_name("#{params[:filter_value]}").id
+    traditional_authority_id = Core::DDETraditionalAuthority.find_by_name("#{params[:filter_value]}").id
     village_conditions = ["name LIKE (?) AND traditional_authority_id = ?", "%#{params[:search_string]}%", traditional_authority_id]
 
-    villages = DDEVillage.find(:all,:conditions => village_conditions, :order => 'name')
+    villages = Core::DDEVillage.find(:all,:conditions => village_conditions, :order => 'name')
     villages = villages.map do |v|
       "<li value=\"#{v.name}\">#{v.name}</li>"
     end
@@ -1305,7 +1305,7 @@ class DdeController < ApplicationController
   def country
     country_conditions = ["name LIKE (?)", "%#{params[:search_string]}%"]
 
-    countries = DDECountry.find(:all,:conditions => country_conditions, :order => 'weight')
+    countries = Core::DDECountry.find(:all,:conditions => country_conditions, :order => 'weight')
     countries = countries.map do |v|
       "<li value=\"#{v.name}\">#{v.name}</li>"
     end
@@ -1316,7 +1316,7 @@ class DdeController < ApplicationController
   def nationality
     nationalty_conditions = ["name LIKE (?)", "%#{params[:search_string]}%"]
 
-    nationalities = DDENationality.find(:all,:conditions => nationalty_conditions, :order => 'weight')
+    nationalities = Core::DDENationality.find(:all,:conditions => nationalty_conditions, :order => 'weight')
     nationalities = nationalities.map do |v|
       "<li value=\"#{v.name}\">#{v.name}</li>"
     end
