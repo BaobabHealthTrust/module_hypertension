@@ -5,7 +5,7 @@ module PatientService
 	require 'rest_client'
 	require 'dde_service'
 	require 'medication_service'
- require 'weight_height'
+ require 'core/weight_height'
 
   def self.search_demographics_from_remote(params)
     return [] if params[:person][:names]['given_name'].blank?
