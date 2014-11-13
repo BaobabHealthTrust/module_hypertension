@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Prescription</title>
+    <!--link rel="stylesheet" href="styles.css" type="text/css"-->
+    <%= stylesheet_link_tag "prescription/styles" %>
+    <script>
+      var tt_cancel_destination = "/patients/show?patient_id=<%= params[:patient_id] %>&user_id=<%= params[:user_id] %>";
+      var drugs = [];
+      var strengths = [];
+      var units = [];
+      var drug_ids = [];
+
+      var drug_set_name_display = [];
+      var drug_set_name = [];
+      var drug_set_dose = [];
+      var drug_set_unit = [];
+      var drug_set_frequency = [];
+      var drug_set_duration = [];
+
+<%@drugs.each do |drug|%>
+    drugs.push("<%=drug.name%>");
+    strengths.push(<%=drug.dose_strength || 1%>);
+    units.push("<%=drug.units%>");
+    drug_ids.push("<%=drug.id%>");
+<%end%>
+
+  var drug_sets = <%= @drug_sets.to_json%>
+  var set_names = <%= @set_names.to_json%>
+  var set_descriptions = <%= @set_descriptions.to_json%>
+
+    </script>
+  </head>
+  <body onresize="resize()">
+    <div id="container" style="border: 0px solid #999; width: 100%; height: 100%;">
+      <div class="table" style="width: 100%; border: 0px solid #666; height: 100%;">
+        <div class="row">
+          <div class="cell" style="border: 0px solid #999;">
+            <div class="table" style="width: 100%; border: 0px solid #666; height: 100%;">
+              <div class="row">
+                <div id="cummulative" class="cell" style="border: 1px solid #999;
+                     border-radius: 10px; background-color: #f6f2ca; height: 220px;
+                     overflow: auto; padding: 5px;">
+                  <div class="table" style="width: 100%; border-spacing: 0px;">
+                    <div class="row" style="color: #000;">
+                      <div class="cell borderBottom" style="font-weight: bold;
+                           text-align: center; padding: 5px; width: 34%;">
+                        Drug
+                      </div>
+                      <div class="cell borderBottom" style="font-weight: bold;
+                           text-align: center; padding: 5px; width: 10%;">
+                        Strength
+                      </div>
+                      <div class="cell borderBottom" style="font-weight: bold;
+                           text-align: center; padding: 5px; width: 29%;">
+                        Frequency
+                      </div>
+                      <div class="cell borderBottom" style="font-weight: bold;
+                           text-align: center; width: 22%;">
+                        Duration
+                      </div>
+                      <div class="cell borderBottom" style="font-weight: bold;
+                           text-align: center; padding: 5px; ">
+                        &nbsp;
+                      </div>
+                    </div>
+                  </div>
+                  <div id="scroll_me" style="width: 100%; height: 190px; overflow: auto;">
+                    <div id="drugs" class="table" style="width: 100%; border-spacing: 0px;">
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell" id="switcher" style="border: 0px solid #fff; overflow: auto;
+                     border: 0px #999 solid; border-radius: 10px; background-color: #fff;">
+
+                  <div class="table" style="width: 100%; height: 100%;">
+                    <div class="row">
+                      <div id="selections" class="cell" style="border: 0px solid #fff; height: 50px; border-radius: 10px; background-color: #c8e1d3;">
+
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div id="keying" class="cell" style="border: 1px solid #999; overflow: auto; text-align: center; border-radius: 10px; height: 200px;">
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cell" style="border: 0px solid #999; width: 200px; text-align: center; vertical-align: top;">
+            <!--button class='button_red' id='btncancel' style='float: none;'-->
+            <button class='big_button button_green' id='btndone' style='float: none;' onmousedown = 'buildParams();'>
+              Finish
+            </button>
+            <button class='big_button button_blue' id='btnback' style='float: none;' onmousedown="clearAll();">
+              Clear all
+            </button>
+            <button class='big_button button_red' id='btncancel' style='float: none;' onmousedown="window.location = tt_cancel_destination">
+              Cancel
+            </button>
+
+            <button class='big_button button_blue' id='btnswitch' style='float: none; margin-top: 100px;' onmousedown="checkParams(this);">
+              <%if @drug_sets.present?%>
+                All Drugs
+              <%else%>
+                Drug Sets
+              <%end%>
+            </button>
+
+            <div id="searchbox" style="position: absolute; bottom: 0%; left: 10px; width: 95.7%; display: none;">
+              <input type="text" id="search" value="" class="input" />
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Add at the end of the document for proper functioning -->
+    <!--script type="text/javascript" src="scripts.js"></script-->
+    <%=javascript_include_tag "prescription/scripts"%>
+  </body>
+</html>
+
+<script>
+  setInterval("setDuration();", 500);
+  //setInterval("getSearchedDrugs();", 500);
+  var user_id = '<%= params[:user_id] %>';
+  var patient_id = '<%= params[:patient_id] %>';
+  
+  function getSearchedDrugs() {
+    var search_str = document.getElementById('search').value;
+
+    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp=new XMLHttpRequest();
+    }else{// code for IE6, IE5
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function() {
+      if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        var results = xmlhttp.responseText;
+        if(results) {
+          var searchedDrugs = JSON.parse(results);
+          drugs = []; strengths = []; units = []; drug_ids = [];
+          for(drug_id in searchedDrugs) {
+            //alert(searchedDrugs[drug_id].name);
+            drugs.push(searchedDrugs[drug_id].name);
+            strengths.push(searchedDrugs[drug_id].dose_strength);
+            units.push(searchedDrugs[drug_id].unit);
+            drug_ids.push(drug_id);
+          }
+          listAllDrugs();
+        }
+      }
+    }
+    xmlhttp.open("GET","/prescriptions/search_for_drugs?user_id=" + <%= params[:user_id] %> + "&patient_id=" + <%= params[:patient_id] %> + "&search_str=" + search_str, true);
+    xmlhttp.send();
+  }
+
+  function checkParams(node){
+
+    if (node.innerHTML == "Drug Sets"){
+
+      if (__$("cummulative") != undefined){
+
+        var cells = __$("cummulative").getElementsByClassName("cell");
+
+        if (cells.length >= 8 && cells.length % 4 == 0 && (cells[cells.length - 3].innerHTML == "")){
+
+          confirmAction("Enter frequency for drug: " + cells[cells.length - 4].innerHTML)
+        }else if (cells.length >= 8 && cells.length % 4 == 0 && (cells[cells.length - 2].innerHTML == "")){
+          confirmAction("Enter duration for drug: " + cells[cells.length - 4].innerHTML)
+        }else{
+          switchViews(node.innerHTML);
+        }
+      }else{
+        switchViews(node.innerHTML);
+      }
+    }else{
+
+      switchViews(node.innerHTML);
+    }
+  }
+  function buildParams(){
+
+    var submitForm = document.createElement("FORM");
+    submitForm.setAttribute("type","hidden");
+    document.body.appendChild(submitForm);
+    submitForm.method = "POST";
+
+    for( var selected_drug in selectedDrugs) {
+
+      var drug_id = selected_drug.match(/\d+/)[0];
+      var frequency = __$("row_frequency_" + selected_drug).innerHTML;
+      var duration = __$("row_duration_" + selected_drug).innerHTML;
+      var dose = __$("row_dose_" + selected_drug).innerHTML;
+
+      var newElement = document.createElement("input")
+      newElement.setAttribute("name",'drug_formulations[]')
+      newElement.setAttribute("type","hidden");
+      newElement.value = "{:drug_id => " + drug_id +",:dose => " + dose+  ", :frequency => '" + frequency + "', :duration => '" + duration + "' }";
+      submitForm.appendChild(newElement);
+    }
+
+    var newElement = document.createElement("input");
+    newElement.setAttribute("name",'patient_id');
+    newElement.setAttribute("type","hidden");
+    newElement.value = "<%= @patient.patient_id %>";
+    submitForm.appendChild(newElement);
+
+    submitForm.action= "/prescriptions/prescribes?user_id=<%= params[:user_id] %>";
+    finish(submitForm);
+  }
+
+  function finish(form){
+
+    if (__$("cummulative") != undefined){
+
+      var cells = __$("cummulative").getElementsByClassName("cell");
+
+      if (cells.length >= 8 && cells.length % 4 == 0 && (cells[cells.length - 3].innerHTML == "")){
+
+        confirmAction("Enter frequency for drug: " + cells[cells.length - 4].innerHTML)
+      }else if (cells.length >= 8 && cells.length % 4 == 0 && (cells[cells.length - 2].innerHTML == "")){
+        confirmAction("Enter duration for drug: " + cells[cells.length - 4].innerHTML)
+      }else{
+        form.submit();
+      }
+    }else{
+      form.submit();
+    }
+  }
+
+</script>

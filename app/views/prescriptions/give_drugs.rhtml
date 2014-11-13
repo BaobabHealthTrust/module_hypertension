@@ -1,0 +1,116 @@
+<link href="/touchscreentoolkit/lib/stylesheets/drug-style.css" type="text/css" rel="stylesheet" />
+<link href="/touchscreentoolkit/lib/stylesheets/dispense.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" language="javascript">
+  <!--
+  tt_cancel_destination = "/patients/show?patient_id=<%= @patient.id %>&user_id=<%= params["user_id"] %>"
+  var generics = <%= @generics.to_json rescue {} %>;
+  var frequencies = <%= @frequencies.to_json rescue {} %>;
+  var diagnosisList = <%= @diagnosis.to_json rescue {} %>;
+  var patient_id = <%= params[:patient_id] rescue "" %>;
+  var formulations = <%= @formulations.to_json rescue {} %>
+  var generic_drugs = generics;
+  var drugs = formulations;
+  var prn = '<%=  @prn %>';
+
+  var search_path = "/encounters/load_frequencies_and_dosages";
+
+</script>
+
+<script language="javascript" type="text/javascript" src="/touchscreentoolkit/lib/javascripts/dispense.js" defer></script>
+<style type="text/css">
+  #space { display:inline; font-size:1.2em; }
+  #helpText0 { width:680px}
+
+  #alertBox {
+    position: absolute;
+    top: 35px;
+    left: 420px;
+    min-height: 50px;
+    min-width: 560px;
+    background-color: #87d469;
+    z-index: 1000;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px outset #87d469;    
+    font-size: 2em;
+    vertical-align: middle;
+    padding-top: 10px;
+    opacity: 0.9;
+    display: none;
+  }
+</style>
+
+<div id="alertBox">  
+  Hello World!
+</div>
+
+<form id='prescription' action="/prescriptions/create_advanced_prescription" method='post'>
+   <%= hidden_field_tag "program", "CHRONIC CARE PROGRAM" %>
+  <%= hidden_field_tag "encounter[encounter_type_name]", "TREATMENT" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "user_id", params["user_id"]%>
+   <%#=  raise params["user_id"].to_yaml %>
+  <input type='hidden' name='programs[][states][][state]' value='on treatment' />
+
+  <input
+    type='text' name='drugs' tt_onLoad='generateGenerics(<%= @patient.id %>)'
+    tt_onUnLoad='removeGenerics()' tt_pageStyleClass='NoControls'
+    optional />
+
+  <input type="hidden" value="<%= @patient.id %>" id="patient_id" name="patient_id" />
+
+
+  <%= submit_tag "Finish" %>
+
+</form>
+
+<div style="z-index:11;bottom:28px; height: 64px; width: 435px; left: 230px;
+     right: -66px; position: absolute;">
+
+</div>
+<script type="text/javascript" language="javascript">
+  <!--
+
+  var freq_defs = {"OD": "ONCE A DAY (OD)",
+    "BD": "TWICE A DAY (BD)",
+    "TDS": "THREE A DAY (TDS)",
+    "Q4HRS": "SIX TIMES A DAY (Q4HRS)",
+    "QHS": "ONCE A DAY AT NIGHT (QHS)",
+    "NOCTE": "ONCE A DAY AT NIGHT (NOCTE)",
+    "QOD": "EVERY OTHER DAY (QOD)",
+    "QPM": "IN THE EVENING (QPM)",
+    "QAM": "IN THE MORNING (QAM)",
+    "QWK": "ONCE A WEEK (QWK)",
+    "QID": "FOUR TIMES A DAY (QID)",
+    "5X/D": "FIVE TIMES A DAY (5X/D)",
+    "5XD": "FIVE TIMES A DAY (5XD)",
+    "QNOON": "ONCE A DAY AT NOON (QNOON)"};
+
+  function __$(id){
+    return document.getElementById(id);
+  }
+
+  function createMethods(){
+    for(var freq in freq_defs){
+      if(__$("option" + freq)){
+        __$("option" + freq).setAttribute("freq", freq)
+        __$("option" + freq).onmousedown = function(){
+          __$("alertBox").innerHTML = freq_defs[this.getAttribute("freq")];
+          __$("alertBox").style.display = "block";
+      
+          setTimeout("hideAlert()", 2000);
+        }
+      }
+    }
+  }
+
+  function hideAlert(){
+    __$("alertBox").style.display = "none";
+  }
+
+  setTimeout("createMethods()", 200);
+
+  //-->
+</script>
