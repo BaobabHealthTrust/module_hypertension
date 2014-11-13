@@ -1,0 +1,72 @@
+<style>
+      #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+<script type='text/javascript' language='javascript'>
+  <!--
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  function changeProgram(){
+    $('outcome').value = $('1.1.1').value
+  }
+</script>
+
+<form method='post' action='/encounters/create'>
+  <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+  <input type='hidden' name='encounter_type' value='UPDATE OUTCOME' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= @user.id %>' />
+  <input type='hidden' id="outcome" name='concept[outcome]' />
+  <table>
+    <tr>
+      <td>
+				New Outcome 
+      </td>
+      <td>
+        <select id='1.1.1'
+                name='programs[][states][][state]'
+                helpText='New Outcome <span id="helper">Update Outcome</span>'
+                pos='1'
+                tt_onload= ""
+                tt_onUnload ="changeProgram()">
+          <option></option>
+          <option value='Patient transferred out'>Patient Transfered Out</option>
+          <option value='Patient died'>Patient Died</option>
+          <option value='Discharged'>Discharged</option>
+          <option value ='On treatment'>On treatment</option>
+          <option value ='Patient defaulted'>Defaulted</option>
+          <option value ='Treatment Stopped'>Treatment Stopped</option>
+        </select>
+      </td>
+      <td>
+        <%= touch_select_tag "location",  @patient, nil,
+          {	:id => "location",
+          :value_datetime => true,
+          :name => "concept[transferred to]",
+          :helpText => "Select Location transferred to: <span id='helper'>Update Outcome</span>",
+          :ajaxURL => '/location/locations?search_string=',
+          :condition => '$("1.1.1").value == "Patient transferred out"'
+        }%>
+      </td>
+ <% initial_date = "#{session[:datetime].strftime('%Y-%m-%d')}" rescue "#{(Date.today).strftime('%Y-%m-%d')}"%>
+      <td>
+        <%= text_field_tag 'current_date', initial_date,
+        {:id => 'current_date',
+         :field_type => 'date',
+         :name => "programs[][states][][state_date]",
+         :tt_onLoad => "changeNextButtonCaption();",
+         :helpText => "New outcome start date <span id='helper'>Update Outcome</span>",
+         :max => "#{(Date.today).strftime('%Y-%m-%d')}",
+         :tt_pageStyleClass => "Date DatesOnly"} %>
+      </td>
+
+
+    </tr>
+  </table>
+</form>

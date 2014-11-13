@@ -2,19 +2,18 @@ module Core
   class Patient < ActiveRecord::Base
     set_table_name "patient"
     set_primary_key "patient_id"
-    include Openmrs
+    include Core::Openmrs
 
-    has_one :person, :foreign_key => :person_id, :conditions => {:voided => 0}
-    has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
-    has_many :patient_programs, :conditions => {:voided => 0}
-    has_many :programs, :through => :patient_programs
-    has_many :relationships, :foreign_key => :person_a, :dependent => :destroy, :conditions => {:voided => 0}
-    has_many :orders, :conditions => {:voided => 0}
+    has_one :person, :class_name => 'Core::Person', :foreign_key => :person_id, :conditions => {:voided => 0}
+    has_many :patient_identifiers, :class_name => 'Core::PatientIdentifier', :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
+    has_many :patient_programs, :class_name => 'Core::PatientProgram', :conditions => {:voided => 0}
+    has_many :programs, :class_name => 'Core::Program', :through => :patient_programs
+    has_many :relationships, :class_name => 'Core::Relationship', :foreign_key => :person_a, :dependent => :destroy, :conditions => {:voided => 0}
+    has_many :orders, :class_name => 'Core::Order', :conditions => {:voided => 0}
 
-    has_many :program_encounters, :class_name => 'ProgramEncounter',
-             :foreign_key => :patient_id, :dependent => :destroy
+    has_many :program_encounters, :class_name => 'Core::ProgramEncounter', :class_name => 'Core::ProgramEncounter', :foreign_key => :patient_id, :dependent => :destroy
 
-    has_many :encounters, :conditions => {:voided => 0} do
+    has_many :encounters, :class_name => 'Core::Encounter', :conditions => {:voided => 0} do
       def find_by_date(encounter_date)
         encounter_date = Date.today unless encounter_date
         find(:all, :conditions => ["encounter_datetime BETWEEN ? AND ?",
@@ -37,7 +36,7 @@ module Core
     end
 
     def national_id
-      self.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("National id").id).identifier rescue nil
+      self.patient_identifiers.find_by_identifier_type(Core::PatientIdentifierType.find_by_name("National id").id).identifier rescue nil
     end
 
     def address
@@ -72,102 +71,26 @@ module Core
     def allergic_to_sulphur
       status = self.encounters.collect { |e|
         e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Allergic to sulphur").concept_id]).answer_string rescue nil
+                                                   Core::ConceptName.find_by_name("Allergic to sulphur").concept_id]).answer_string rescue nil
       }.compact.flatten.first
 
       status = "unknown" if status.nil?
     end
 
-    def dpt1
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Was DPT-HepB-Hib 1 vaccine given at 6 weeks or later?").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
+    def national_id_with_dashes
+      id = national_id
+      length = id.length
+      case length
+        when 13
+          id[0..4] + "-" + id[5..8] + "-" + id[9..-1] rescue id
+        when 9
+          id[0..2] + "-" + id[3..6] + "-" + id[7..-1] rescue id
+        when 6
+          id[0..2] + "-" + id[3..-1] rescue id
+        else
+          id
+      end
     end
-
-    def dpt2
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Was DPT-HepB-Hib 2 vaccine given at 1 month after first dose?").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def dpt3
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Was DPT-HepB-Hib 3 vaccine given at 1 month after second dose?").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def pcv1
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("PCV 1 vaccine given at 6 weeks or later?").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def pcv2
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("PCV 2 vaccine given at 1 month after first dose?").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def pcv3
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("PCV 3 vaccine given at 1 month after second dose?").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def polio0
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("First polio vaccine at birth").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def polio1
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Second polio vaccine at 1.5 months").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def polio2
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Third polio vaccine at 2.5 months").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
-    def polio3
-      status = self.encounters.collect { |e|
-        e.observations.find(:last, :conditions => ["concept_id = ?",
-                                                   ConceptName.find_by_name("Fourth polio vaccine at 3.5 months").concept_id]).answer_string rescue nil
-      }.compact.flatten.first
-
-      status = "unknown" if status.nil?
-    end
-
 
   end
 end

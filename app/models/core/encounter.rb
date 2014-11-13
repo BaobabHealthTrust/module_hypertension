@@ -2,15 +2,15 @@ module Core
   class Encounter < ActiveRecord::Base
     set_table_name :encounter
     set_primary_key :encounter_id
-    include Openmrs
+    include Core::Openmrs
 
-    has_one :program_encounter, :foreign_key => :encounter_id, :conditions => {:voided => 0}
-    has_many :observations, :dependent => :destroy, :conditions => {:voided => 0}
-    has_many :drug_orders, :through => :orders, :foreign_key => 'order_id'
-    has_many :orders, :dependent => :destroy, :conditions => {:voided => 0}
-    belongs_to :type, :class_name => "EncounterType", :foreign_key => :encounter_type, :conditions => {:retired => 0}
+    has_one :program_encounter, :class_name => 'Core::ProgramEncounter', :foreign_key => :encounter_id, :conditions => {:voided => 0}
+    has_many :observations, :class_name => 'Core::Observation', :dependent => :destroy, :conditions => {:voided => 0}
+    has_many :drug_orders, :class_name => 'Core::DrugOrder', :through => :orders, :foreign_key => 'order_id'
+    has_many :orders, :class_name => 'Core::Order', :dependent => :destroy, :conditions => {:voided => 0}
+    belongs_to :type, :class_name => "Core::EncounterType", :foreign_key => :encounter_type, :conditions => {:retired => 0}
     # belongs_to :provider, :class_name => "User", :foreign_key => :provider_id, :conditions => {:voided => 0}
-    belongs_to :patient, :conditions => {:voided => 0}
+    belongs_to :patient, :class_name => 'Core::Patient', :conditions => {:voided => 0}
 
     # TODO, this needs to account for current visit, which needs to account for possible retrospective entry
     named_scope :current, :conditions => 'DATE(encounter.encounter_datetime) = CURRENT_DATE()'
@@ -45,7 +45,7 @@ EOF
     end
 
     def encounter_type_name=(encounter_type_name)
-      self.type = EncounterType.find_by_name(encounter_type_name)
+      self.type = Core::EncounterType.find_by_name(encounter_type_name)
       raise "#{encounter_type_name} not a valid encounter_type" if self.type.nil?
     end
 
@@ -101,7 +101,7 @@ EOF
 
     def self.statistics(encounter_types, opts={})
 
-      encounter_types = EncounterType.all(:conditions => ['name IN (?)', encounter_types])
+      encounter_types = Core::EncounterType.all(:conditions => ['name IN (?)', encounter_types])
       encounter_types_hash = encounter_types.inject({}) { |result, row| result[row.encounter_type_id] = row.name; result }
       with_scope(:find => opts) do
         rows = self.all(

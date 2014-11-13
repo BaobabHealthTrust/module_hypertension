@@ -3,15 +3,15 @@ class ClinicController < ApplicationController
   before_filter :sync_user, :except => [:index, :set_datetime, :update_datetime, :reset_datetime]
 
   def index
-    @facility = Location.current_health_center.name rescue ''
+    @facility = Core::Location.current_health_center.name rescue ''
 
-    @location = Location.find(session[:location_id]).name rescue ""
+    @location = Core::Location.find(session[:location_id]).name rescue ""
 
     @date = (session[:datetime].to_date rescue Date.today).strftime("%Y-%m-%d")
 
-    @user = User.find(session[:user_id]) rescue nil
+    @user = Core::User.find(session[:user_id]) rescue nil
 
-    @roles = User.find(session[:user_id]).user_roles.collect{|r| r.role} rescue []
+    @roles = Core::User.find(session[:user_id]).user_roles.collect{|r| r.role} rescue []
 
     render :layout => false
   end
@@ -73,8 +73,8 @@ class ClinicController < ApplicationController
   end
 
   def project_users_list
-    users = User.find(:all, :conditions => ["username LIKE ? AND user_id IN (?)", "#{params[:username]}%",
-                                            UserProperty.find(:all, :conditions => ["property = 'Status' AND property_value = 'ACTIVE'"]
+    users = Core::User.find(:all, :conditions => ["username LIKE ? AND user_id IN (?)", "#{params[:username]}%",
+                                                  Core::UserProperty.find(:all, :conditions => ["property = 'Status' AND property_value = 'ACTIVE'"]
                                             ).map{|user| user.user_id}], :limit => 50)
 
     @project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
@@ -100,7 +100,7 @@ class ClinicController < ApplicationController
       user = User.find(params[:target]) rescue nil
 
       unless user.nil?
-        UserProperty.create(
+        Core::UserProperty.create(
             :user_id => user.id,
             :property => "#{@project}.activities",
             :property_value => ""
@@ -131,9 +131,9 @@ class ClinicController < ApplicationController
     @project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
 
     unless @project.nil?
-      @users = UserProperty.find_all_by_property("#{@project}.activities").collect { |user| user.user_id }
+      @users = Core::UserProperty.find_all_by_property("#{@project}.activities").collect { |user| user.user_id }
 
-      @roles = UserRole.find(:all, :conditions => ["user_id IN (?)", @users]).collect { |role| role.role }.sort.uniq
+      @roles = Core::UserRole.find(:all, :conditions => ["user_id IN (?)", @users]).collect { |role| role.role }.sort.uniq
 
     end
 
@@ -302,7 +302,7 @@ class ClinicController < ApplicationController
 
     unless @project.nil?
 
-      UserProperty.find_by_user_id_and_property(session[:user_id],
+      Core::UserProperty.find_by_user_id_and_property(session[:user_id],
                                                 "#{@project}.activities").property_value.split(",").each{|activity|
 
         activities[activity.titleize] = 1 if activity.downcase.match("^" +
@@ -321,7 +321,7 @@ class ClinicController < ApplicationController
 
     unless @project.nil? || params[:activity].nil?
 
-      user = UserProperty.find_by_user_id_and_property(session[:user_id],
+      user = Core::UserProperty.find_by_user_id_and_property(session[:user_id],
                                                        "#{@project}.activities")
 
       unless user.nil?
@@ -335,7 +335,7 @@ class ClinicController < ApplicationController
 
       else
 
-        UserProperty.create(
+        Core::UserProperty.create(
             :user_id => session[:user_id],
             :property => "#{@project}.activities",
             :property_value => params[:activity]
@@ -369,7 +369,7 @@ class ClinicController < ApplicationController
 
     unless @project.nil?
 
-      UserProperty.find_by_user_id_and_property(session[:user_id],
+      Core::UserProperty.find_by_user_id_and_property(session[:user_id],
                                                 "#{@project}.activities").property_value.split(",").each{|activity|
 
         activities[activity.titleize] = 1
@@ -387,7 +387,7 @@ class ClinicController < ApplicationController
 
     unless @project.nil? || params[:activity].nil?
 
-      user = UserProperty.find_by_user_id_and_property(session[:user_id],
+      user = Core::UserProperty.find_by_user_id_and_property(session[:user_id],
                                                        "#{@project}.activities")
 
       unless user.nil?
@@ -422,7 +422,7 @@ class ClinicController < ApplicationController
 
     unless @project.nil?
 
-      UserProperty.find_by_user_id_and_property(session[:user_id],
+      Core::UserProperty.find_by_user_id_and_property(session[:user_id],
                                                 "#{@project}.activities").property_value.split(",").each{|activity|
 
         activities[activity.titleize] = 1
@@ -520,6 +520,165 @@ class ClinicController < ApplicationController
     render :text => @fields.to_json
   end
 
+  def lab_results
+    if request.post?
+      lab_results = get_global_property_value("lab_results") rescue nil
+      if lab_results.nil?
+        lab_results = Core::GlobalProperty.new
+        lab_results.property = "lab_results"
+        lab_results.property_value = params[:test_type_values].join(";")
+        lab_results.save
+      else
+        lab_results = Core::GlobalProperty.find_by_property("lab_results")
+        lab_results.property_value = params[:test_type_values].join(";")
+        lab_results.save
+      end
+      redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{session[:location_id] || params[:location_id]}"
+    end
+  end
+
+  def site_properties
+    @link = get_global_property_value("user.management.url").to_s rescue nil
+
+    if @link.nil?
+      flash[:error] = "Missing configuration for <br/>user management connection!"
+
+      redirect_to "/no_user" and return
+    end
+
+    @host = request.host_with_port rescue ""
+
+    render :layout => false
+  end
+
+  def overview
+    @project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
+
+    @encounter_activities = Core::UserProperty.find(:first, :conditions => ["property = '#{@project}.activities' AND user_id = ?", @user[:user_id]]).property_value.split(",") rescue []
+    @encounter_activities.push("APPOINTMENT")
+    @to_date = Clinic.overview(@encounter_activities)
+    @current_year = Clinic.overview_this_year(@encounter_activities)
+    @today = Clinic.overview_today(@encounter_activities)
+    @me = Clinic.overview_me(@encounter_activities, @user['user_id'])
+
+    render :layout => false
+  end
+
+  def reports
+    render :layout => false
+  end
+
+  def clinic_days
+    if request.post?
+      ['peads','all'].each do | age_group |
+        if age_group == 'peads'
+          clinic_days = Core::GlobalProperty.find_by_property('peads.clinic.days')
+          weekdays = params[:peadswkdays]
+        else
+          clinic_days = Core::GlobalProperty.find_by_property('clinic.days')
+          weekdays = params[:weekdays]
+        end
+
+        if clinic_days.blank?
+          clinic_days = Core::GlobalProperty.new()
+          clinic_days.property = 'clinic.days'
+          clinic_days.property = 'peads.clinic.days' if age_group == 'peads'
+          clinic_days.description = 'Week days when the clinic is open'
+        end
+        weekdays = weekdays.split(',').collect{ |wd|wd.capitalize }
+        clinic_days.property_value = weekdays.join(',')
+        clinic_days.save
+      end
+      flash[:notice] = "Week day(s) successfully created."
+      redirect_to "/clinic?user_id=#{session[:user_id]}&location_id=#{session[:location_id] || params[:location_id]}" and return
+    end
+    @peads_clinic_days = CoreService.get_global_property_value('peads.clinic.days') rescue nil
+    @clinic_days = CoreService.get_global_property_value('clinic.days') rescue nil
+    render :layout => "menu"
+  end
+
+  def prescriptions
+    if request.post?
+      appointment = get_global_property_value("prescription.types") rescue nil
+      if appointment.nil?
+        appointment= Core::GlobalProperty.new
+        appointment.property = "prescription.types"
+        appointment.property_value = params[:prescription]
+        appointment.save
+      else
+        appointment = Core::GlobalProperty.find_by_property("prescription.types")
+        appointment.property_value = params[:prescription]
+        appointment.save
+      end
+      redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{session[:location_id] || params[:location_id]}"
+    end
+  end
+
+  def vitals
+    if request.post?
+      lab_results = get_global_property_value("vitals") rescue nil
+      if lab_results.nil?
+        lab_results = Core::GlobalProperty.new
+        lab_results.property = "vitals"
+        lab_results.property_value = params[:vitals].join(";")
+        lab_results.save
+      else
+        lab_results = Core::GlobalProperty.find_by_property("vitals")
+        lab_results.property_value = params[:vitals].join(";")
+        lab_results.save
+      end
+      redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{session[:location_id] || params[:location_id]}"
+    end
+  end
+
+  def appointment
+    if request.post?
+      appointment = get_global_property_value("auto_set_appointment") rescue nil
+      if appointment.nil?
+        appointment= Core::GlobalProperty.new
+        appointment.property = "auto_set_appointment"
+        appointment.property_value = params[:appointment]
+        appointment.save
+      else
+        appointment = Core::GlobalProperty.find_by_property("auto_set_appointment")
+        appointment.property_value = params[:appointment]
+        appointment.save
+      end
+      redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{session[:location_id] || params[:location_id]}"
+    end
+  end
+
+  def current_center
+    if request.post?
+      location = Core::Location.find_by_name(params[:current_center])
+      current_center = Core::GlobalProperty.find_by_property("current_health_center_name")
+
+      if current_center.nil?
+        current_center = Core::GlobalProperty.new
+        current_center.property = "current_health_center_name"
+        current_center.property_value = params[:current_center]
+        current_center.save
+      else
+        current_center = Core::GlobalProperty.find_by_property("current_health_center_name")
+        current_center.property_value = params[:current_center]
+        current_center.save
+      end
+
+      current_id = get_global_property_value("current_health_center_id")
+      if current_id.nil?
+        current_id = Core::GlobalProperty.new
+        current_id.property = "current_health_center_id"
+        current_id.property_value = location.id
+        current_id.save
+      else
+        current_id = Core::GlobalProperty.find_by_property("current_health_center_id")
+        current_id.property_value = location.id
+        current_id.save
+      end
+      redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{session[:location_id] || params[:location_id]}"
+    end
+  end
+
   protected
 
   def sync_user
@@ -527,7 +686,7 @@ class ClinicController < ApplicationController
     if !session[:user].nil?
       @user = session[:user]
     else
-      @user = CoreUser.find(User.current.id).demographics # rescue {}
+      @user = CoreUser.find(Core::User.current.id).demographics # rescue {}
     end
 
   end

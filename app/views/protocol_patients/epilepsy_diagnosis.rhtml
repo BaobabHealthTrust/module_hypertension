@@ -1,0 +1,228 @@
+<style>
+      #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+<script type='text/javascript' language='javascript'>
+  <!--
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+
+  function accumulateSeizures(){
+    existing_number = '<%= @number %>';
+    var additional_number = document.getElementById('number_of_seizures').value;
+    var current_number = parseInt(existing_number) + parseInt(additional_number)
+    document.getElementById('1.1.1').value = current_number
+  }
+</script>
+
+<form method='post' action='/encounters/create'>
+  <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+  <input type='hidden' name='encounter_type' value='TREATMENT' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= @user.id %>' />
+  <input type="hidden" name="programs[][states][][state]" value="On treatment" id="program_id" />
+  <table>
+    <tr>
+      <% if @number.blank? %>
+
+        <td>
+          Number of seizure including current
+        </td>
+        <td>
+          <input type='text'
+                 id='1.1.1'
+                 name='concept[Number of seizure including current]'
+                 helpText='Number of seizure including current?<span id="helper"> Treatment</span>'
+                 tt_pageStyleClass = "Numeric NumbersWithUnknown"
+                 field_type='number'
+                 pos='1'
+                 tt_onload=""/>
+        </td>
+
+      <% else %>
+        <td>
+          <input type='hidden' id='1.1.1'
+                 name='concept[Number of seizure including current]' value='<%= @number %>' />
+          <input type='text'
+                 id='number_of_seizures'
+                 name='Number of seizures'
+                 helpText='Number of seizures since last visit?<span id="helper"> Treatment</span>'
+                 tt_pageStyleClass = "Numeric NumbersWithUnknown"
+                 field_type='number'
+                 tt_onload=""
+                 tt_onUnLoad="accumulateSeizures()"/>
+        </td>
+      <% end %>
+    </tr>
+    <tr>
+      <td>
+				Seizure frequency since last visit 
+      </td>
+      <td>
+        <select id='1.1.2'
+                name='concept[Seizure frequency since last visit]'
+                helpText='Seizure frequency since last visit<span id="helper"> Treatment</span>'
+                pos='2'
+                tt_onload=""
+                tt_requireNextClick = false>
+          <option></option>
+          <option value='Constant'>Constant</option>
+          <option value='Decreased'>Decreased</option>
+          <option value='Increased'>Increased</option>
+        </select>
+      </td>
+    </tr>
+    <% if @patient.age <= 15 and @hyperactivity.blank? %>
+    <tr>
+      <td>
+        Burns
+      </td>
+      <td>
+        <select id='hyperactivity'
+                name='concept[hyperactivity]'
+                helpText='Confirm attention-deficit/hyperactivity disorder?<span id="helper"> Treatment</span>'
+                pos='13'
+                tt_onLoad = ""
+                tt_requireNextClick = false >
+          <option></option>
+          <option value='No'>No</option>
+          <option value='Yes'>Yes</option>
+        </select>
+      </td>
+    </tr>
+    <% end 
+    if @psychosis.blank? %>
+    <tr>
+      <td>
+        Burns
+      </td>
+      <td>
+        <select id='psychosis'
+                name='concept[psychosis]'
+                helpText='Confirm psychosis?<span id="helper"> Treatment</span>'
+                pos='13'
+                tt_onLoad = ""
+                tt_requireNextClick = false >
+          <option></option>
+          <option value='No'>No</option>
+          <option value='Yes'>Yes</option>
+        </select>
+      </td>
+    </tr>
+    <% end
+    unless @patient_epileptic == "YES" %>
+      <tr>
+        <td>
+          Confirm diagnosis of epilepsy
+        </td>
+        <td>
+
+          <select id='1.1.3'
+                  name='concept[Confirm diagnosis of epilepsy]'
+                  helpText='Confirm diagnosis of epilepsy<span id="helper"> Treatment</span>'
+                  pos='3'
+                  tt_onload=""
+                  tt_requireNextClick = false>
+            <option></option>
+            <option value='No'>No</option>
+            <option value='Yes'>Yes</option>
+          </select>
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          Type of epilepsy
+        </td>
+        <td>
+          <select id='1.1.4'
+                  name='concept[Type of epilepsy]'
+                  helpText='Type of epilepsy<span id="helper"> Treatment</span> '
+                  pos='4'
+                  condition='$("1.1.3").value == "Yes"'
+                  tt_onload=""
+                  tt_requireNextClick = false>
+            <option></option>
+            <option value='Generalised'>Generalised Epilepsy</option>
+            <option value='Focal seizure'>Focal epilepsy</option>
+          </select>
+        </td>
+
+        <td>
+          <select id='general_epilepsy'
+                  name='concept[generalised]'
+                  helpText='Type of generalised epilepsy<span id="helper"> Treatment</span> '
+                  pos='4'
+                  condition='$("1.1.4").value == "Generalised"'
+                  tt_onload=""
+                  tt_requireNextClick = false>
+            <option></option>
+            <option value='Atonic'>Atonic</option>
+            <option value='Clonic'>Clonic</option>
+            <option value='Myclonic'>Myclonic</option>
+            <option value='absence'>absence</option>
+            <option value='Tonic Clonic'>Tonic Clonic</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Partial epilepsy?
+        </td>
+        <td>
+          <select id='1.1.5' name='concept[Focal seizure]'
+                  helpText='Partial epilepsy type? <span id="helper"> Treatment</span>'
+                  pos='5'
+                  condition='$("1.1.4").value == "Focal seizure"'
+                  tt_onload=""
+                  tt_requireNextClick = false>
+            <option></option>
+            <option value='Complex'>Complex</option>
+            <option value='Simplex'>Simplex</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Condition to treat
+        </td>
+        <td>
+          <select id='1.1.6' name='concept[Condition]'
+                  helpText='Condition to treat?<span id="helper"> Treatment</span>' pos='6'
+                  condition='$("1.1.3").value == "No"'
+                  tt_onload=""
+                  tt_requireNextClick = false>
+            <option></option>
+            <option value='Psychogenic'>Psychogenic</option>
+            <option value='Febrile seizure'>Febrile seizure</option>
+            <option value='Syncope'>Syncope</option>
+          </select>
+        </td>
+
+      </tr>
+    <% end %>
+    <tr>
+      <td>
+				Prescribe Drugs?
+      </td>
+      <td>
+        <select id='1.1.7'
+                name='concept[Prescribe Drugs]'
+                helpText='Prescribe Epilepsy Drugs?<span id="helper"> Treatment</span> '
+                pos='7'
+                tt_onload=""
+                tt_requireNextClick = false >
+          <option></option>
+          <option value='No'>No</option>
+          <option value='Epilepsy Drugs'>Yes</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+</form>

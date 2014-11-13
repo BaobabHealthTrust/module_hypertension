@@ -2,10 +2,10 @@ module Core
   class PersonName < ActiveRecord::Base
     set_table_name "person_name"
     set_primary_key "person_name_id"
-    include Openmrs
+    include Core::Openmrs
 
-    belongs_to :person, :foreign_key => :person_id, :conditions => {:voided => 0}
-    has_one :person_name_code, :foreign_key => :person_name_id # no default scope
+    belongs_to :person, :class_name => 'Core::Person', :foreign_key => :person_id, :conditions => {:voided => 0}
+    has_one :person_name_code, :class_name => 'Core::PersonNameCode', :foreign_key => :person_name_id # no default scope
 
     def before_save
       self.build_person_name_code(

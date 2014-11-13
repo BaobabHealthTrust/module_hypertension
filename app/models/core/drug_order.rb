@@ -2,8 +2,8 @@ module Core
   class DrugOrder < ActiveRecord::Base
     set_table_name :drug_order
     set_primary_key :order_id
-    include Openmrs
-    belongs_to :drug, :foreign_key => :drug_inventory_id, :conditions => {:retired => 0}
+    include Core::Openmrs
+    belongs_to :drug, :class_name => 'Core::Drug', :foreign_key => :drug_inventory_id, :conditions => {:retired => 0}
 
     def order
       @order ||= Order.find(order_id)
@@ -134,7 +134,7 @@ module Core
     # of a clinical worker voiding something.
     def total_drug_supply(patient, encounter = nil, session_date = Date.today)
       if encounter.blank?
-        type = EncounterType.find_by_name("DISPENSING")
+        type = Core::EncounterType.find_by_name("DISPENSING")
         encounter = encounters.find(:first, :conditions => ["encounter_datetime BETWEEN ? AND ? AND encounter_type = ?",
                                                             session_date.to_date.strftime('%Y-%m-%d 00:00:00'),
                                                             session_date.to_date.strftime('%Y-%m-%d 23:59:59'),
@@ -143,19 +143,20 @@ module Core
 
       return [] if encounter.blank?
 
-      amounts_brought = Observation.all(:conditions =>
+      amounts_brought = Core::Observation.all(:conditions =>
                                             ['obs.concept_id = ? AND ' +
                                                  'obs.person_id = ? AND ' +
                                                  "encounter_datetime BETWEEN ? AND ? AND " +
                                                  'drug_order.drug_inventory_id = ?',
-                                             ConceptName.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id,
+                                             Core::ConceptName.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id,
                                              patient.person.person_id,
                                              session_date.to_date.strftime('%Y-%m-%d 00:00:00'),
                                              session_date.to_date.strftime('%Y-%m-%d 23:59:59'),
                                              drug_inventory_id],
                                         :include => [:encounter, [:order => :drug_order]])
       total_brought = amounts_brought.sum { |amount| amount.value_numeric }
-      amounts_dispensed = Observation.all(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("AMOUNT DISPENSED").concept_id, self.order_id, encounter.encounter_id])
+      amounts_dispensed = Core::Observation.all(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?',
+                                                                Core::ConceptName.find_by_name("AMOUNT DISPENSED").concept_id, self.order_id, encounter.encounter_id])
       total_dispensed = amounts_dispensed.sum { |amount| amount.value_numeric }
       self.quantity = total_dispensed + total_brought
       self.save
@@ -171,8 +172,8 @@ module Core
     end
 
     def self.all_orders_complete(patient, encounter_date)
-      type = EncounterType.find_by_name('TREATMENT').id
-      all = Encounter.find(:all,
+      type = Core::EncounterType.find_by_name('TREATMENT').id
+      all = Core::Encounter.find(:all,
                            :conditions => ["patient_id = ? AND encounter_datetime BETWEEN ? AND ?
       AND encounter_type = ?", patient.id,
                                            encounter_date.to_date.strftime('%Y-%m-%d 00:00:00'),
@@ -190,8 +191,8 @@ module Core
     end
 
     def self.prescription_dates(patient, date)
-      type = EncounterType.find_by_name('TREATMENT').id
-      all = Encounter.find(:all,
+      type = Core::EncounterType.find_by_name('TREATMENT').id
+      all = Core::Encounter.find(:all,
                            :conditions => ["patient_id = ? AND encounter_datetime BETWEEN ? AND ?
       AND encounter_type = ?", patient.id, date.to_date.strftime('%Y-%m-%d 00:00:00'),
                                            date.to_date.strftime('%Y-%m-%d 23:59:59'), type])

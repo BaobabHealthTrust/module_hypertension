@@ -1,0 +1,80 @@
+
+<script type="text/javascript" language="javascript">
+
+  tt_cancel_show = "/drug/drug_sets?user_id=<%= params[:user_id] %>&patient_id=<%= params[:patient_id] %>";
+  tt_cancel_destination = "/drug/drug_sets?user_id=<%= params[:user_id] %>&patient_id=<%= params[:patient_id] %>";
+</script>
+
+<style>
+  .helper {
+    display: block;
+    float:right;
+    background-color: #DEDEDE;
+  }
+
+</style>
+
+<%  form_tag :controller => "drug", :action => "create_drug_set" do |f| %>
+
+  <%= hidden_field_tag "set_id", params[:set_id] %>
+  <%= hidden_field_tag "user_id", params[:user_id] %>
+  <%= hidden_field_tag "patient_id", params[:patient_id] %>
+
+  <%if params[:set_id].blank? %>
+
+
+    <%= text_field_tag "name", nil,
+      {
+      :id => "name",
+      :helpText => "Choose set name",
+      :tt_onLoad => "showCategory('Task: Add Drug Set')"
+    } %>
+
+    <%= text_field_tag "description", nil,
+      {
+      :id => "desc",
+      :helpText => "Set description",
+      :tt_onLoad => "showCategory('Task: Add Drug Set')"
+    } %>
+
+  <%end%>
+
+  <%= select_tag "drug", options_for_select(@drugs),
+    {
+    :id => "drug",
+    :helpText => "Select drug to add to set",
+    :tt_onLoad => "showCategory('Task: Add Drug Set')"
+  } %>
+
+  <%= text_field_tag "strength", nil,
+    {:id => "strength",
+    :field_type => "number",
+    :helptext => "Dose Strength",
+    :tt_onLoad => "showCategory('Task: Add Drug Set')",
+    :tt_pageStyleClass => "NumbersOnlyWithDecimal",
+    :max => 200,
+    :absoluteMax => 1000
+  } %>
+
+  <%= select_tag "frequency", options_for_select(@frequencies),
+    {
+    :id => "frequency",
+    :helpText => "Select drug set frequency",
+    :tt_onLoad => "showCategory('Task: Add Drug Set')"
+  } %>
+
+  <%= text_field_tag "duration", nil,
+    {:id => "duration",
+    :field_type => "number",
+    :helptext => "Duration (days)",
+    :tt_onLoad => "showCategory('Task: Add Drug Set')",
+    :tt_pageStyleClass => "NumbersOnly",
+    :min => 1,
+    :max => 200,
+    :absoluteMin => 1,
+    :absoluteMax => 1000
+  } %>
+
+  <%= submit_tag 'Finish' %>
+
+<% end %>

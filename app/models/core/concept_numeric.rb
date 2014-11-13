@@ -2,8 +2,8 @@ module Core
   class ConceptNumeric < ActiveRecord::Base
     set_table_name :concept_numeric
     set_primary_key :concept_id
-    include Openmrs
-    has_one :concept, :foreign_key => :concept_id, :dependent => :destroy
+    include Core::Openmrs
+    has_one :concept, :class_name => 'Core::Concept', :foreign_key => :concept_id, :dependent => :destroy
 
     def options
       result = {}

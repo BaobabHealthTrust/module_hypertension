@@ -57,7 +57,12 @@
             <option value="/administration?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
               User Administration
             </option>
-        <% end %>
+
+      <% end %>
+
+        <option value="/clinic/site_properties?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
+          Properties
+        </option>
 
       </select>
 

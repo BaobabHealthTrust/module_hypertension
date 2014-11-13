@@ -2,9 +2,9 @@ module Core
   class PersonAddress < ActiveRecord::Base
     set_table_name "person_address"
     set_primary_key "person_address_id"
-    include Openmrs
+    include Core::Openmrs
 
-    belongs_to :person, :foreign_key => :person_id, :conditions => {:voided => 0}
+    belongs_to :person, :class_name => 'Core::Person', :foreign_key => :person_id, :conditions => {:voided => 0}
 
     # Looks for the most commonly used element in the database and sorts the results based on the first part of the string
     def self.find_most_common(field_name, search_string)

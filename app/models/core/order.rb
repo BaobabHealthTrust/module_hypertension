@@ -2,13 +2,13 @@ module Core
   class Order < ActiveRecord::Base
     set_table_name :orders
     set_primary_key :order_id
-    include Openmrs
-    belongs_to :order_type, :conditions => {:retired => 0}
-    belongs_to :concept, :conditions => {:retired => 0}
-    belongs_to :encounter, :conditions => {:voided => 0}
-    belongs_to :patient, :conditions => {:voided => 0}
-    belongs_to :provider, :foreign_key => 'orderer', :class_name => 'User', :conditions => {:voided => 0}
-    belongs_to :observation, :foreign_key => 'obs_id', :class_name => 'Observation', :conditions => {:voided => 0}
+    include Core::Openmrs
+    belongs_to :order_type, :class_name => 'Core::OrderType', :conditions => {:retired => 0}
+    belongs_to :concept, :class_name => 'Core::Concept', :conditions => {:retired => 0}
+    belongs_to :encounter, :class_name => 'Core::Encounter', :conditions => {:voided => 0}
+    belongs_to :patient, :class_name => 'Core::Patient', :conditions => {:voided => 0}
+    belongs_to :provider, :foreign_key => 'orderer', :class_name => 'Core::User', :conditions => {:voided => 0}
+    belongs_to :observation, :foreign_key => 'obs_id', :class_name => 'Core::Observation', :conditions => {:voided => 0}
     has_one :drug_order # no default scope
 
     named_scope :current, :conditions => 'DATE(encounter.encounter_datetime) = CURRENT_DATE()', :include => :encounter

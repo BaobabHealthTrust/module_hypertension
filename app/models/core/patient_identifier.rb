@@ -2,10 +2,10 @@ module Core
   class PatientIdentifier < ActiveRecord::Base
     set_table_name "patient_identifier"
     set_primary_key :patient_identifier_id
-    include Openmrs
+    include Core::Openmrs
 
-    belongs_to :type, :class_name => "PatientIdentifierType", :foreign_key => :identifier_type, :conditions => {:retired => 0}
-    belongs_to :patient, :class_name => "Patient", :foreign_key => :patient_id, :conditions => {:voided => 0}
+    belongs_to :type, :class_name => "Core::PatientIdentifierType", :foreign_key => :identifier_type, :conditions => {:retired => 0}
+    belongs_to :patient, :class_name => "Core::Patient", :foreign_key => :patient_id, :conditions => {:voided => 0}
 
     def self.calculate_checkdigit(number)
       # This is Luhn's algorithm for checksums
@@ -28,14 +28,14 @@ module Core
     end
 
     def self.site_prefix
-      site_prefix = GlobalProperty.find_by_property("site_prefix").property_value rescue nil
+      site_prefix = Core::GlobalProperty.find_by_property("site_prefix").property_value rescue nil
       return site_prefix
     end
 
     def self.next_available_arv_number
       current_arv_code = self.site_prefix
-      type = PatientIdentifierType.find_by_name('ARV Number').id
-      current_arv_number_identifiers = PatientIdentifier.find(:all, :conditions => ["identifier_type = ? AND voided = 0", type])
+      type = Core::PatientIdentifierType.find_by_name('ARV Number').id
+      current_arv_number_identifiers = Core::PatientIdentifier.find(:all, :conditions => ["identifier_type = ? AND voided = 0", type])
 
       assigned_arv_ids = current_arv_number_identifiers.collect { |identifier|
         $1.to_i if identifier.identifier.match(/#{current_arv_code}-ARV- *(\d+)/)
@@ -51,7 +51,7 @@ module Core
         #array_of_unused_arv_ids = (1..highest_arv_id).to_a - assigned_arv_ids
         assigned_numbers = assigned_arv_ids.sort
 
-        possible_number_range = GlobalProperty.find_by_property("arv_number_range").property_value.to_i rescue 100000
+        possible_number_range = Core::GlobalProperty.find_by_property("arv_number_range").property_value.to_i rescue 100000
         possible_identifiers = Array.new(possible_number_range) { |i| (i + 1) }
         next_available_number = ((possible_identifiers)-(assigned_numbers)).first
       end
@@ -67,7 +67,7 @@ module Core
     def self.next_filing_number(type = 'Filing Number')
       available_numbers = self.find(:all,
                                     :conditions => ['identifier_type = ?',
-                                                    PatientIdentifierType.find_by_name(type).id]).map { |i| i.identifier }
+                                                    Core::PatientIdentifierType.find_by_name(type).id]).map { |i| i.identifier }
 
       filing_number_prefix = CoreService.get_global_property_value("filing.number.prefix") rescue "FN101,FN102"
 
@@ -76,7 +76,7 @@ module Core
 
       len_of_identifier = (filing_number_prefix.split(",")[0][-1..-1] + "00000").to_i if type.match(/filing/i)
       len_of_identifier = (filing_number_prefix.split(",")[1][-1..-1] + "00000").to_i if type.match(/Archived/i)
-      possible_identifiers_range = GlobalProperty.find_by_property("filing.number.range").property_value.to_i rescue 300000
+      possible_identifiers_range = Core::GlobalProperty.find_by_property("filing.number.range").property_value.to_i rescue 300000
       possible_identifiers = Array.new(possible_identifiers_range) { |i| prefix + (len_of_identifier + i +1).to_s }
 
       ((possible_identifiers)-(available_numbers.compact.uniq)).first
@@ -86,7 +86,7 @@ module Core
       create_from_dde_server = CoreService.get_global_property_value('create.from.dde.server').to_s == "true" rescue false
 
       if !create_from_dde_server
-        if self.identifier_type == PatientIdentifierType.find_by_name("National ID").id
+        if self.identifier_type == Core::PatientIdentifierType.find_by_name("National ID").id
           person = self.patient.person
           patient_bin = PatientService.get_patient(person)
           date_created = person.date_created.strftime('%Y-%m-%d %H:%M:%S') rescue Time.now().strftime('%Y-%m-%d %H:%M:%S')

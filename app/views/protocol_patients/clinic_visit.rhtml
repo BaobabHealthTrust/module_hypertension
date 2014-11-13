@@ -1,0 +1,274 @@
+<script type='text/javascript' language='javascript'>
+  <!--
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  var program = '<%= @current_program %>'
+  var conditions = [];
+
+  function selectedOptions(selected){
+      var x = 1
+      for (i = 0; i < selected.options.length; i++) {
+
+        if (selected.options[i].selected) {
+            conditions.push( x + " : " + selected.options[i].value);
+			x += 1
+        }
+    }
+
+}
+
+  function showSelectedConditions() {
+    //alert($('patient_type').value)
+    if ($('patient_type').value.length > 0){
+      conditions.push("Patient Type: " + $('patient_type').value);
+    }
+    if ($('location').value.length > 0){
+      conditions.push("Transferred From: " + $('location').value);
+    }
+
+    if ($('1.1.1').value.length > 0){
+      conditions.push("Have you been diagnose with TB?: " + $('1.1.1').value);
+    }
+
+     if ($('year_of_tb_diagnosis').value.length > 0){
+      conditions.push("Year(s) of TB diagnos: ");
+      selectedOptions($('year_of_tb_diagnosis'))
+    }
+
+    if ($('1.1.3').value.length > 0){
+      conditions.push("Patient has diabetes: " + $('1.1.3').value);
+    }
+
+    if ($('year_of_diabetes_diagnosis').value.length > 0){
+      conditions.push("Year(s) of diabetes diagnos: ");
+      selectedOptions($('year_of_diabetes_diagnosis'))
+    }
+    
+    if ($('1.1.5').value.length > 0){
+      conditions.push("Patient pregnant: " + $('1.1.5').value);
+    }
+
+    if ($('1.1.6').value.length > 0){
+      conditions.push("Patient breastfeeding: " + $('1.1.6').value);
+    }
+
+    
+   /* if ($('1.1.5').value.length > 0){
+      conditions.push("Patient pregnat: " + $('1.1.5').value);
+    }
+    if ($('1.1.6').value.length > 0){
+      conditions.push("Patient breastfeeding: " + $('1.1.6').value);
+    } */
+    var html
+    html = "<ol>"
+    for(var i=0;i < conditions.length;i++) {
+      if (conditions[i].length > 0)
+       if(i % 2 == 0){
+        html += "<li class='even' group='even'>" + conditions[i] + "</li>";
+        }
+        else{
+        html += "<li class='odd' group='odd'>" + conditions[i] + "</li>";
+        }
+
+    }
+    html += "</ol>"
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + html + '</div>' ;
+    $("clearButton").style.display = "none";
+  }
+</script>
+<style>
+   .summary {
+    font-size: 27px;
+    padding-left: 15px;
+  }
+  
+  ol
+{
+list-style-type: none;
+}
+    #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+<form method='post' action='/encounters/create'>
+  <%
+  @select_init_diagnosis_year = ["", "Unknown"]
+  this_year = Date.today.year
+  begin @select_init_diagnosis_year << Array.new(1){this_year.to_s}; this_year = this_year - 1; end while (this_year != 1949)
+%>
+  <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+  <input type='hidden' name='encounter_type' value='DIABETES HYPERTENSION INITIAL VISIT' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= @user.id %>' />
+  <% if  @current_state.blank? %>
+    <input type="hidden" name="programs[][states][][state]" value="alive" id="program_id" />
+  <% end %>
+  <table>
+    <tr> <td>
+      </td>
+
+      <% #raise @first_visit.to_yaml
+      if @first_visit == true %>
+        <%
+        ajax_url = "/location/locations?patient_id=#{@patient.id}&user_id=#{@user['user_id']}&search_string="
+      %>
+        <% type_list = ["NEW PATIENT", "TRANSFER IN"] %>
+        <%= touch_select_tag "TYPE OF PATIENT", @patient, options_for_select(type_list),
+          {	:id => "patient_type",
+          :name => "concept[TYPE OF PATIENT]",
+          :multiple => false,
+          :helpText => "Is the patient a:<span id='helper'> Clinic Visit</span>",
+          :tt_onload=> "__$('nextButton').style.display = 'none';",
+          :tt_requireNextClick => false } %>
+
+        <%= touch_location_tag "location",  @patient, nil,
+          {	:id => "location",
+          :value_datetime => true,
+          :name => "concept[Source of referral]",
+          :helpText => "Transferred from<span id='helper'> Clinic Visit</span>",
+          :ajaxURL => "#{ajax_url}",
+          :condition => '$("patient_type").value == "TRANSFER IN"',
+          :tt_onload=> "__$('nextButton').style.display = 'block';"
+        }%>
+
+      <% else %>
+      <input type='hidden' name='concept[Patient referred to another site]' id="location"/>
+     <input type='hidden' name='concept[TYPE OF PATIENT]' id="patient_type" />
+      <% end %>
+      </td>
+      <td>
+				Have you been diagnosed with TB since your LAST clinic visit? 
+      </td>
+      <td>
+        <% if @first_visit == true %>
+          <select id='1.1.1' name='concept[HAVE YOU EVER HAD TB?]'
+                  helpText='Have you been diagnosed with TB? <span id="helper"> Clinic Visit</span>' pos='1'
+                  tt_requireNextClick = false
+                  tt_onload="__$('nextButton').style.display = 'none';">
+            <option></option>
+            <option value='No'>No</option>
+            <option value='Yes'>Yes</option>
+          </select>
+        <% else %>
+          <select id='1.1.1' name='concept[HAVE YOU EVER HAD TB?]'
+                  helpText='Have you been diagnosed with TB since your LAST clinic visit? <span id="helper"> Clinic Visit</span>' pos='1'
+                  tt_onload="__$('nextButton').style.display = 'none';"
+                  tt_requireNextClick = false >
+            <option></option>
+            <option value='No'>No</option>
+            <option value='Yes'>Yes</option>
+          </select>
+      <% end %>			</td>
+    </tr>
+    <tr>
+      <td>
+				Year(s) of TB Diagnosis 
+      </td>
+      <td>
+        <%= select_tag "TB DIAGNOSIS DATE",  options_for_select(@select_init_diagnosis_year, ""),
+          {	:id => "year_of_tb_diagnosis",
+          :multiple => true,
+          :name => "concept[TB DIAGNOSIS DATE][]",
+          :condition => "$('1.1.1').value.match(/^yes$/i);",
+          :tt_pageStyleClass => "longSelectList",
+          :absoluteMin => "1950", :min => "1940", :absoluteMax => Date.today.year,
+          :helpText => "Year(s) of TB Diagnosis<span id='helper'> Clinic Visit</span>",
+          :tt_onload=> "__$('nextButton').style.display = 'block';"} %>
+
+      </td>
+    </tr>
+    <tr>
+      <td>
+				Is patient diabetic?
+      </td>
+      <td>
+        <% if @first_visit == true || !@diabetic.blank? %>
+          <select id='1.1.3'
+                  name='concept[Patient has Diabetes]'
+                  helpText='Is patient diabetic? <span id="helper"> Clinic Visit</span>'
+                  pos='3'
+                  tt_requireNextClick = false
+                  tt_onload="__$('nextButton').style.display = 'none';">
+            <option></option>
+            <option value='No'>No</option>
+            <option value='Yes'>Yes</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+                                  Year(s) of Diabetes Diagnosis
+        </td>
+        <td>
+
+          <%= select_tag "DIABETES DIAGNOSIS DATE",  options_for_select(@select_init_diagnosis_year, ""),
+            {	:id => "year_of_diabetes_diagnosis",
+            :multiple => true,
+            :name => "concept[DIABETES DIAGNOSIS DATE][]",
+            :condition => "$('1.1.3').value.match(/^yes$/i);",
+            :tt_pageStyleClass => "longSelectList",
+            :absoluteMin => "1950", :min => "1940", :absoluteMax => Date.today.year,
+            :helpText => "Year(s) of Diabetes Diagnosis<span id='helper'> Clinic Visit</span>",
+            :tt_onload=> "__$('nextButton').style.display = 'block';"} %>
+      <% else %>
+          <input type='hidden' name='concept[DIABETES DIAGNOSIS DATE][]' id="year_of_diabetes_diagnosis" />
+          
+          <input type='hidden' name='concept[Patient has Diabetes]' id="1.1.3" />
+      <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+				Is Patient Pregnant
+      </td>
+      <td>
+        <% if @patient.gender.upcase == ("F" || "FEMALE")  %>
+          <select id='1.1.5'
+                  name='concept[Is patient pregnant?]'
+                  helpText='Is Patient Pregnant<span id="helper"> Clinic Visit</span>'
+                  tt_requireNextClick = false
+                  pos='5'
+                  tt_onload="__$('nextButton').style.display = 'none';">
+            <option></option>
+            <option value='No'>No</option>
+            <option value='Yes'>Yes</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+                                  Is Patient breastfeeding
+        </td>
+        <td>
+          <select id='1.1.6'
+                  name='concept[Is patient breast feeding?]'
+                  helpText='Is Patient breastfeeding<span id="helper"> Clinic Visit</span>'
+                  tt_requireNextClick = false
+                  pos='6'
+                  tt_onload="__$('nextButton').style.display = 'none';">
+            <option></option>
+            <option value='No'>No</option>
+            <option value='Yes'>Yes</option>
+          </select>
+          <% else %>
+            <input type='hidden'  id="1.1.5" />
+              <input type='hidden'  id="1.1.6" />
+      <%  end %>		</td>
+    </tr>
+    <tr><td>
+        Summary
+      </td>
+      <td>
+        <label for='summary'>Summary<span id='helper'> Clinic Visit</span></label>
+        <%= text_field_tag :summary, nil, {
+          :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';__$('nextButton').style.display = 'block';",
+          :optional => "true",
+          :tt_pageStyleClass => "NoControls" } %>
+      </td></tr>
+  </table>
+</form>

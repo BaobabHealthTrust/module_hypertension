@@ -2,10 +2,10 @@ module Core
   class ConceptName < ActiveRecord::Base
     set_table_name :concept_name
     set_primary_key :concept_name_id
-    include Openmrs
-    has_many :concept_name_tag_maps # no default scope
-    has_many :tags, :through => :concept_name_tag_maps, :class_name => 'ConceptNameTag'
-    belongs_to :concept, :conditions => {:retired => 0}
+    include Core::Openmrs
+    has_many :concept_name_tag_maps, :class_name => 'Core::ConceptNameTagMap' # no default scope
+    has_many :tags, :through => :concept_name_tag_maps, :class_name => 'Core::ConceptNameTag'
+    belongs_to :concept, :class_name => 'Core::Concept', :conditions => {:retired => 0}
     named_scope :tagged, lambda { |tags| tags.blank? ? {} : {:include => :tags, :conditions => ['concept_name_tag.tag IN (?)', Array(tags)]} }
     named_scope :typed, lambda { |tags| tags.blank? ? {} : {:conditions => ['concept_name_type IN (?)', Array(tags)]} }
     self.default_scope :joins => :concept, :conditions => "concept_name.voided = 0 AND concept.retired = 0 AND concept_name.name != ''"

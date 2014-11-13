@@ -281,15 +281,15 @@
       </span>
 
       <span id='patient_id'><%= "#{@patient.national_id_with_dashes}" %></span>
-      <span id='patient_residence'><%= "#{@patient.address}" %></span>
-      <span id='patient_age'><%= "#{(@patient.age > 0 ? @patient.age : "#{@patient.age_in_months} months")}" %></span>
+      <span id='patient_residence'><%= "#{@patient.address rescue nil}" %></span>
+      <span id='patient_age'><%= "#{(@patient.age > 0 ? @patient.age : "#{@patient.age_in_months rescue nil} months")}" %></span>
       <span id='patient_gender'><%= "#{@patient.gender}" %></span>
       <select id="tabs">
-        <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user.id %>'>Current Visit</option>
-        <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user.id %>'>Visit History</option>
-        <option value='/patients/patient_report/<%= @patient.id %>?user_id=<%= @user.id %>'>Report</option>
+        <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Current Visit</option>
+        <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Visit History</option>
+        <option value='/patients/patient_report/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Report</option>
         <option value='/patients/patient_bp?user_id=<%= @user["user_id"] %>&patient_id=<%= @patient.id %>'>Chart</option>
-        <option value='/patients/printouts/<%= @patient.id %>?user_id=<%= @user.id %>'>Printouts</option>
+        <option value='/patients/printouts/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Printouts</option>
         <option value='#'>Next Task : <%= next_task.titleize rescue "" %></option>
       </select>
       <select id="links">
@@ -330,16 +330,16 @@
             <option link="<%= @demographics_url %>" ttSize = "160px">
               Demographics
             </option>
-            <option link='<%= "/patients/mastercard/#{@patient.id}?user_id=#{@user.id}"  %>' ttSize = "160px">Mastercard</option>
+            <option link='<%= "/patients/mastercard/#{@patient.id}?user_id=#{@user[:user_id]}"  %>' ttSize = "160px">Mastercard</option>
         <% end %>
 <%#= raise @task.url.to_yaml %>
 
         <%# if @disable.to_s != "true" and ! @disable.blank? %>
-        <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user.id}" %>
+        <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user[:user_id]}" %>
             <option link="/encounter_types/show?user_id=<%=  @user["user_id"] %>&encounter_type=Appointment&id=show&patient_id=<%= @patient.id -%>" ttSize = "160px">Appointment</option>
             <option link="<%= @task.url  %>" ttSize = "160px">Continue</option>
         <% else %>
-            <option link="/encounter_types/show?encounter_type=Appointment&id=show&patient_id=<%= @patient.id -%>&user_id=<%=  @user.id %>" ttSize = "160px">Set Appointment</option>
+            <option link="/encounter_types/show?encounter_type=Appointment&id=show&patient_id=<%= @patient.id -%>&user_id=<%=  @user[:user_id] %>" ttSize = "160px">Set Appointment</option>
         <% end %>
         <%# end %>
 
@@ -354,12 +354,12 @@
 <div id="program_menu" style="display:none">
   <div><br />
 
-    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=HYPERTENSION"'>Hypertension</span><br />
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=HYPERTENSION"'>Hypertension</span><br />
     <% else %>
-    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=DIABETES"'>Diabetes</span><br />
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=DIABETES"'>Diabetes</span><br />
 
-    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=ASTHMA"'>Asthma</span><br />
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=ASTHMA"'>Asthma</span><br />
 
-    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=EPILEPSY"'>Epilepsy</span><br />
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=EPILEPSY"'>Epilepsy</span><br />
   </div>
 </div>

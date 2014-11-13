@@ -16,15 +16,15 @@ class DdeController < ApplicationController
       return
     end
 
-    @facility = Location.current_health_center.name rescue ''
+    @facility = Core::Location.current_health_center.name rescue ''
 
-    @location = Location.find(session[:location_id]).name rescue ""
+    @location = Core::Location.find(session[:location_id]).name rescue ""
 
     @date = session[:datetime].to_date rescue Date.today.to_date
 
-    @person = Person.find_by_person_id(current_user.person_id) rescue nil
+    @person = Core::Person.find_by_person_id(current_user.person_id) rescue nil
 
-    @user = User.current # PatientService.name(@person) rescue nil
+    @user = Core::User.current # PatientService.name(@person) rescue nil
 
     @roles = @user.user_roles.collect { |r| r.role } rescue []
 
@@ -67,7 +67,7 @@ class DdeController < ApplicationController
 
     json = JSON.parse(params["person"]) rescue {}
 
-    patient = Patient.find(patient_id) rescue nil
+    patient = Core::Patient.find(patient_id) rescue nil
 
     print_and_redirect("/patients/national_id_label?patient_id=#{patient_id}", next_task(patient)) and return if !patient.blank? and (json["print_barcode"] rescue false)
 
@@ -86,9 +86,9 @@ class DdeController < ApplicationController
 
     params[:id] = params[:id].strip.gsub(/\s/, "").gsub(/\-/, "") rescue params[:id]
 
-    patient = PatientIdentifier.find_by_identifier(params[:id]).patient rescue nil
+    patient = Core::PatientIdentifier.find_by_identifier(params[:id]).patient rescue nil
 
-    national_id = ((patient.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("National id").id).identifier rescue nil) || params[:id])
+    national_id = ((patient.patient_identifiers.find_by_identifier_type(Core::PatientIdentifierType.find_by_name("National id").id).identifier rescue nil) || params[:id])
 
     name = patient.person.names.last rescue nil
 
@@ -109,13 +109,13 @@ class DdeController < ApplicationController
             },
         "gender" => (patient.person.gender rescue nil),
         "person_attributes" => {
-            "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
-            "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
-            "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
-            "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
-            "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Race").id).value rescue nil),
-            "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
-            "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
+            "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
+            "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
+            "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
+            "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
+            "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Race").id).value rescue nil),
+            "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
+            "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
         },
         "birthdate" => (patient.person.birthdate rescue nil),
         "patient" => {
@@ -317,7 +317,7 @@ class DdeController < ApplicationController
     else
       person_id = params[:id]
     end
-    @person = Person.find(person_id)
+    @person = Core::Person.find(person_id)
 
     @patient = @person.patient rescue nil
 
@@ -329,7 +329,7 @@ class DdeController < ApplicationController
 
     @settings = YAML.load_file("#{Rails.root}/config/dde_connection.yml")[Rails.env] rescue {}
 
-    patient = Person.find(params[:person_id]).patient rescue nil
+    patient = Core::Person.find(params[:person_id]).patient rescue nil
 
     if patient.blank?
 
@@ -399,22 +399,22 @@ class DdeController < ApplicationController
         "gender" => (!params["gender"].blank? ? params["gender"] : (patient.person.gender rescue nil)),
         "person_attributes" => {
             "occupation" => (!(params[:person][:attributes][:occupation] rescue nil).blank? ? (params[:person][:attributes][:occupation] rescue nil) :
-                (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil)),
+                (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil)),
 
             "cell_phone_number" => (!(params[:person][:attributes][:cell_phone_number] rescue nil).blank? ? (params[:person][:attributes][:cell_phone_number] rescue nil) :
-                (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil)),
+                (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil)),
 
             "home_phone_number" => (!(params[:person][:attributes][:home_phone_number] rescue nil).blank? ? (params[:person][:attributes][:home_phone_number] rescue nil) :
-                (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil)),
+                (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil)),
 
             "office_phone_number" => (!(params[:person][:attributes][:office_phone_number] rescue nil).blank? ? (params[:person][:attributes][:office_phone_number] rescue nil) :
-                (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil)),
+                (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil)),
 
             "country_of_residence" => (!(params[:person][:attributes][:country_of_residence] rescue nil).blank? ? (params[:person][:attributes][:country_of_residence] rescue nil) :
-                (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil)),
+                (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil)),
 
             "citizenship" => (!(params[:person][:attributes][:citizenship] rescue nil).blank? ? (params[:person][:attributes][:citizenship] rescue nil) :
-                (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil))
+                (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil))
         },
         "birthdate" => dob,
         "patient" => {
@@ -459,7 +459,7 @@ class DdeController < ApplicationController
 
     # raise patient_id.inspect
 
-    patient = Patient.find(patient_id) rescue nil
+    patient = Core::Patient.find(patient_id) rescue nil
 
     print_and_redirect("/patients/national_id_label?patient_id=#{patient_id}", "/dde/edit_patient/id=#{patient_id}") and return if !patient.blank? and (json["print_barcode"] rescue false)
 
@@ -540,11 +540,11 @@ class DdeController < ApplicationController
 
         @results << result
 
-        patient = PatientIdentifier.find_by_identifier(@json["national_id"]).patient rescue nil
+        patient = Core::PatientIdentifier.find_by_identifier(@json["national_id"]).patient rescue nil
 
         if !patient.nil?
 
-          national_id = ((patient.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("National id").id).identifier rescue nil) || params[:id])
+          national_id = ((patient.patient_identifiers.find_by_identifier_type(Core::PatientIdentifierType.find_by_name("National id").id).identifier rescue nil) || params[:id])
 
           name = patient.person.names.last rescue nil
 
@@ -562,13 +562,13 @@ class DdeController < ApplicationController
                   },
               "gender" => (patient.person.gender rescue nil),
               "person_attributes" => {
-                  "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
-                  "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
-                  "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
-                  "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
-                  "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Race").id).value rescue nil),
-                  "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
-                  "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
+                  "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
+                  "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
+                  "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
+                  "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
+                  "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Race").id).value rescue nil),
+                  "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
+                  "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
               },
               "birthdate" => (patient.person.birthdate rescue nil),
               "patient" => {
@@ -640,13 +640,13 @@ class DdeController < ApplicationController
                 },
             "gender" => (patient.person.gender rescue nil),
             "person_attributes" => {
-                "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
-                "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
-                "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
-                "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
-                "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Race").id).value rescue nil),
-                "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
-                "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
+                "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
+                "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
+                "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
+                "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
+                "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Race").id).value rescue nil),
+                "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
+                "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
             },
             "birthdate" => (patient.person.birthdate rescue nil),
             "patient" => {
@@ -698,7 +698,7 @@ class DdeController < ApplicationController
 
       json = JSON.parse(params[:person]) rescue {}
 
-      patient = PatientIdentifier.find_by_identifier(json["national_id"]).patient rescue nil
+      patient = Core::PatientIdentifier.find_by_identifier(json["national_id"]).patient rescue nil
 
       if !patient.nil?
 
@@ -719,13 +719,13 @@ class DdeController < ApplicationController
                 },
             "gender" => (patient.person.gender rescue nil),
             "person_attributes" => {
-                "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
-                "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
-                "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
-                "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
-                "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Race").id).value rescue nil),
-                "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
-                "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
+                "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
+                "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
+                "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
+                "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
+                "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Race").id).value rescue nil),
+                "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
+                "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
             },
             "birthdate" => (patient.person.birthdate rescue nil),
             "patient" => {
@@ -854,7 +854,7 @@ class DdeController < ApplicationController
 
       patient = person.patient # rescue nil
 
-      national_id = (patient.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("National id").id).identifier rescue nil)
+      national_id = (patient.patient_identifiers.find_by_identifier_type(Core::PatientIdentifierType.find_by_name("National id").id).identifier rescue nil)
 
       next if filter[national_id]
 
@@ -876,13 +876,13 @@ class DdeController < ApplicationController
               },
           "gender" => (patient.person.gender rescue nil),
           "person_attributes" => {
-              "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
-              "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
-              "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
-              "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
-              "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Race").id).value rescue nil),
-              "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
-              "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
+              "occupation" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Occupation").id).value rescue nil),
+              "cell_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue nil),
+              "home_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Home Phone Number").id).value rescue nil),
+              "office_phone_number" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Office Phone Number").id).value rescue nil),
+              "race" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Race").id).value rescue nil),
+              "country_of_residence" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Country of Residence").id).value rescue nil),
+              "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(Core::PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
           },
           "birthdate" => (patient.person.birthdate rescue nil),
           "patient" => {
@@ -945,7 +945,7 @@ class DdeController < ApplicationController
 
     results = []
 
-    people = PersonName.find(:all, :conditions => ["CONCAT(given_name, ' ', family_name) LIKE ?", "#{params["search"].strip}%"], :limit => 10) rescue []
+    people = Core::PersonName.find(:all, :conditions => ["CONCAT(given_name, ' ', family_name) LIKE ?", "#{params["search"].strip}%"], :limit => 10) rescue []
 
     people.each do |person|
 
@@ -1023,7 +1023,7 @@ class DdeController < ApplicationController
 
     results = []
 
-    identifiers = PatientIdentifier.find(:all, :conditions => ["identifier = ?", params["search"]], :limit => 10) rescue []
+    identifiers = Core::PatientIdentifier.find(:all, :conditions => ["identifier = ?", params["search"]], :limit => 10) rescue []
 
     identifiers.each do |identifier|
 
@@ -1119,25 +1119,25 @@ class DdeController < ApplicationController
 
       merged = data["Identifiers"]["Merged"] rescue {}
 
-      identifier = PatientIdentifier.find_by_identifier(merged["National ID"]) rescue nil
+      identifier = Core::PatientIdentifier.find_by_identifier(merged["National ID"]) rescue nil
 
       identifier.patient.person.update_attributes("voided" => 1, "void_reason" => "Merged record") rescue nil
 
       identifier.update_attributes("voided" => 1, "void_reason" => "Merged record") rescue nil
 
-      target = PatientIdentifier.find_by_identifier(data["Identifiers"]["National ID"]) rescue nil
+      target = Core::PatientIdentifier.find_by_identifier(data["Identifiers"]["National ID"]) rescue nil
 
       person_id = target.patient.person.person_id rescue nil
 
-      PatientIdentifier.create("patient_id" => person_id,
+      Core::PatientIdentifier.create("patient_id" => person_id,
                                "identifier" => merged["National ID"],
-                               "identifier_type" => PatientIdentifierType.find_by_name("Old Identification Number").id) rescue nil
+                               "identifier_type" => Core::PatientIdentifierType.find_by_name("Old Identification Number").id) rescue nil
 
       merged["Identifiers"].each do |id|
 
-        PatientIdentifier.create("patient_id" => person_id,
+        Core::PatientIdentifier.create("patient_id" => person_id,
                                  "identifier" => id[id.keys[0]],
-                                 "identifier_type" => PatientIdentifierType.find_by_name(id.keys[0]).id) rescue nil
+                                 "identifier_type" => Core::PatientIdentifierType.find_by_name(id.keys[0]).id) rescue nil
 
       end
 
@@ -1162,17 +1162,17 @@ class DdeController < ApplicationController
           "Race"
       ]
 
-      person = Person.find(person_id) rescue nil
+      person = Core::Person.find(person_id) rescue nil
 
       if !person.nil?
 
-        name = PersonName.find_by_person_id(person_id) rescue nil
+        name = Core::PersonName.find_by_person_id(person_id) rescue nil
 
-        name = PersonName.new if name.nil?
+        name = Core::PersonName.new if name.nil?
 
-        addresses = PersonAddress.find_by_person_id(person_id) rescue nil
+        addresses = Core::PersonAddress.find_by_person_id(person_id) rescue nil
 
-        addresses = PersonAddress.new if addresses.nil?
+        addresses = Core::PersonAddress.new if addresses.nil?
 
         fields.each do |field|
 
@@ -1217,9 +1217,9 @@ class DdeController < ApplicationController
 
               if ["Occupation", "Home Phone Number", "Cell Phone Number", "Office Phone Number", "Citizenship", "Race"].include?(field)
 
-                attribute = PersonAttribute.find_by_person_id(person_id, :conditions => ["person_attribute_type_id = ?", PersonAttributeType.find_by_name(field).id]) rescue nil
+                attribute = Core::PersonAttribute.find_by_person_id(person_id, :conditions => ["person_attribute_type_id = ?", Core::PersonAttributeType.find_by_name(field).id]) rescue nil
 
-                attribute = PersonAttribute.new if attribute.nil?
+                attribute = Core::PersonAttribute.new if attribute.nil?
 
                 attribute.value = data[field]
 
@@ -1340,7 +1340,7 @@ class DdeController < ApplicationController
   end
 
   def searchname(field_name, search_string)
-    @names = PersonNameCode.find_most_common(field_name, search_string).collect{|person_name| person_name.send(field_name)} # rescue []
+    @names = Core::PersonNameCode.find_most_common(field_name, search_string).collect{|person_name| person_name.send(field_name)} # rescue []
     render :text => "<li>" + @names.map{|n| n } .join("</li><li>") + "</li>"
   end
 

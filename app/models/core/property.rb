@@ -2,10 +2,10 @@ module Core
   class Property
 
     def self.clinic_appointment_limit(end_date = nil)
-      encounter_type = EncounterType.find_by_name('APPOINTMENT')
+      encounter_type = Core::EncounterType.find_by_name('APPOINTMENT')
       booked_dates = Hash.new(0)
 
-      clinic_days = GlobalProperty.find_by_property("clinic.days")
+      clinic_days = Core::GlobalProperty.find_by_property("clinic.days")
       clinic_days = clinic_days.property_value.split(',') rescue 'Monday,Tuesday,Wednesday,Thursday,Friday'.split(',')
 
       count = 0

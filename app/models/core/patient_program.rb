@@ -2,11 +2,11 @@ module Core
   class PatientProgram < ActiveRecord::Base
     set_table_name "patient_program"
     set_primary_key "patient_program_id"
-    include Openmrs
-    belongs_to :patient, :conditions => {:voided => 0}
-    belongs_to :program, :conditions => {:retired => 0}
-    belongs_to :location, :conditions => {:retired => 0}
-    has_many :patient_states, :class_name => 'PatientState', :conditions => {:voided => 0}, :dependent => :destroy
+    include Core::Openmrs
+    belongs_to :patient, :class_name => 'Core::Patient', :conditions => {:voided => 0}
+    belongs_to :program, :class_name => 'Core::Program', :conditions => {:retired => 0}
+    belongs_to :location, :class_name => 'Core::Location', :conditions => {:retired => 0}
+    has_many :patient_states, :class_name => 'Core::PatientState', :conditions => {:voided => 0}, :dependent => :destroy
 
     named_scope :current, :conditions => ['date_enrolled < NOW() AND (date_completed IS NULL OR date_completed > NOW())']
     named_scope :local, lambda { | | {:conditions => ['location_id IN (?)', Location.current_health_center.children.map { |l| l.id } + [Location.current_health_center.id]]} }
@@ -19,7 +19,7 @@ module Core
     validates_presence_of :date_enrolled, :program_id
 
     def validate
-      PatientProgram.find_all_by_patient_id(self.patient_id).each { |patient_program|
+      Core::PatientProgram.find_all_by_patient_id(self.patient_id).each { |patient_program|
         next if self.program == patient_program.program
         if self.program == patient_program.program and self.location and self.location.related_to_location?(patient_program.location) and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
           errors.add_to_base "Patient already enrolled in program #{self.program.name rescue nil} at #{self.date_enrolled.to_date} at #{self.location.parent.name rescue self.location.name}"

@@ -77,6 +77,12 @@ ActionController::Routing::Routes.draw do |map|
 
   map.remove_field '/remove_field', :controller => 'clinic', :action => 'remove_field'
 
+  map.list_observations '/list_observations', :controller => 'encounters', :action => 'list_observations'
+
+  map.void '/void', :controller => 'encounters', :action => 'void'
+
+  map.list_encounters '/list_encounters', :controller => 'encounters', :action => 'list_encounters'
+
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 end

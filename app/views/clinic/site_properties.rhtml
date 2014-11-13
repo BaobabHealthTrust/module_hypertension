@@ -1,0 +1,125 @@
+<style type="text/css">
+    body {
+        font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
+        -moz-user-select: none;
+    }
+
+    .btn {
+        min-width: 280px ! important;
+    }
+
+    #stats {
+        width: 98%;
+        border: 1px solid #eee;
+        margin: 10px;
+        margin-top: 0px;
+        background: white;
+    }
+
+    #stats td, #stats th {
+        text-align: center;
+    }
+
+    .odd {
+        background-color: #eeeef7;
+    }
+
+    .even {
+        background-color: #fff;
+    }
+
+    #table_div {
+        overflow: auto;
+        height: 320px;
+        background-color: white;
+        border: solid 1px #eee;
+        border-width: 1px;
+        overflow: hidden;
+    }
+
+    .btn {
+        min-height: 50px;
+        min-width: 250px;
+        font-size: 1.2em;
+        background-color: #6281a7;
+        color: #FFF;
+        font-weight: normal;
+        border: 5px outset #000;
+        padding: 10px;
+        cursor: pointer;
+        background: url(/touchscreentoolkit/lib/images/btn_blue.png) right repeat;
+        -moz-user-select: none;
+        -moz-user-focus: disabled;
+        display: inline-block;
+        margin: 10px;
+        border-radius: 8px;
+    }
+
+    .btn:hover {
+        background: url(/touchscreentoolkit/lib/images/btn_blue_hover.png) right repeat;
+        -moz-user-select: none;
+        -moz-user-focus: disabled;
+    }
+
+    .btn:active {
+        background: url(/touchscreentoolkit/lib/images/btn_yellow.png) right repeat;
+        border: 3px inset #000;
+    }
+
+</style>
+
+<div style="width: 100%; text-align: center;">
+  <table id="stats" style="margin-bottom: 8px;" cellpadding="5">
+    <tr style="color: #fff; background-color: #6281a7;">
+      <th colspan="3" style="padding: 5px; font-size: 24px; font-weight: normal;">
+        Site Properties
+      </th>
+    </tr>
+  </table>
+  <div style="width: 700px; height: 320px; overflow: auto; text-align: center; margin: auto;">
+
+    <button class="btn" onclick="window.parent.location='/clinic/vitals?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>'">
+          <span>
+            Vital Signs
+          </span>
+    </button>
+    <button class="btn" onclick="window.parent.location='/clinic/lab_results?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
+          <span>
+            Lab Results
+          </span>
+    </button>
+    <button class="btn" onclick="window.parent.location='/drug/drug_sets?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
+          <span>
+              Drug Sets
+          </span>
+    </button>
+    <button class="btn" onclick="window.parent.location='/clinic/appointment?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
+          <span>
+            Auto Set Appointment
+          </span>
+    </button>
+    <button class="btn" onclick="window.parent.location='/clinic/current_center?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
+          <span>
+              Set Current Health Center
+          </span>
+    </button>
+    <button class="btn" onclick="window.parent.location='/clinic/prescriptions?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
+          <span>
+              Prescription Format
+          </span>
+    </button>
+    <button class="btn" onclick="window.parent.location='/clinic/clinic_days?user_id=<%= params[:user_id]
+              %>&location_id=<%= session[:location_id] || params[:location_id] %>&src=<%= @host %>'">
+          <span>
+              Clinic Days
+          </span>
+    </button>
+  </div>
+
+</div>

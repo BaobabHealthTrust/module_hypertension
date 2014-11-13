@@ -2,24 +2,24 @@ module Core
   class Location < ActiveRecord::Base
     set_table_name "location"
     set_primary_key "location_id"
-    include Openmrs
+    include Core::Openmrs
 
     cattr_accessor :current_location, :current
 
     def site_id
-      Location.current_health_center.location_id.to_s
+      Core::Location.current_health_center.location_id.to_s
     rescue
-      raise "The id for this location has not been set (#{Location.current_location.name}, #{Location.current_location.id})"
+      raise "The id for this location has not been set (#{Core::Location.current_location.name}, #{Core::Location.current_location.id})"
     end
 
     def children
       return [] if self.name.match(/ - /)
-      Location.find(:all, :conditions => ["name LIKE ?", "%" + self.name + " - %"])
+      Core::Location.find(:all, :conditions => ["name LIKE ?", "%" + self.name + " - %"])
     end
 
     def parent
       return nil unless self.name.match(/(.*) - /)
-      Location.find_by_name($1)
+      Core::Location.find_by_name($1)
     end
 
     def site_name
@@ -39,7 +39,7 @@ module Core
     end
 
     def self.current_health_center
-      @@current_health_center ||= Location.find(GlobalProperty.find_by_property("current_health_center_id").property_value) rescue self.current_location
+      @@current_health_center ||= Core::Location.find(Core::GlobalProperty.find_by_property("current_health_center_id").property_value) rescue self.current_location
     end
 
     def self.current_arv_code

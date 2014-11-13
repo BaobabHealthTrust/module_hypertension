@@ -2,20 +2,20 @@ module Core
   class Observation < ActiveRecord::Base
     set_table_name :obs
     set_primary_key :obs_id
-    include Openmrs
-    belongs_to :encounter, :conditions => {:voided => 0}
-    belongs_to :order, :conditions => {:voided => 0}
-    belongs_to :concept, :conditions => {:retired => 0}
-    belongs_to :concept_name, :class_name => "ConceptName", :foreign_key => "concept_name", :conditions => {:voided => 0}
-    belongs_to :answer_concept, :class_name => "Concept", :foreign_key => "value_coded", :conditions => {:retired => 0}
-    belongs_to :answer_concept_name, :class_name => "ConceptName", :foreign_key => "value_coded_name_id", :conditions => {:voided => 0}
-    has_many :concept_names, :through => :concept
+    include Core::Openmrs
+    belongs_to :encounter, :class_name => 'Core::Encounter', :conditions => {:voided => 0}
+    belongs_to :order, :class_name => 'Core::Order', :conditions => {:voided => 0}
+    belongs_to :concept, :class_name => 'Core::Concept', :conditions => {:retired => 0}
+    belongs_to :concept_name, :class_name => "Core::ConceptName", :foreign_key => "concept_name", :conditions => {:voided => 0}
+    belongs_to :answer_concept, :class_name => "Core::Concept", :foreign_key => "value_coded", :conditions => {:retired => 0}
+    belongs_to :answer_concept_name, :class_name => "Core::ConceptName", :foreign_key => "value_coded_name_id", :conditions => {:voided => 0}
+    has_many :concept_names, :class_name => 'Core::ConceptName', :through => :concept
 
     named_scope :recent, lambda { |number| {:order => 'obs_datetime DESC,date_created DESC', :limit => number} }
     named_scope :old, lambda { |number| {:order => 'obs_datetime ASC,date_created ASC', :limit => number} }
     named_scope :question, lambda { |concept|
       concept_id = concept.to_i
-      concept_id = ConceptName.first(:conditions => {:name => concept}).concept_id rescue 0 if concept_id == 0
+      concept_id = Core::ConceptName.first(:conditions => {:name => concept}).concept_id rescue 0 if concept_id == 0
       {:conditions => {:concept_id => concept_id}}
     }
 
@@ -40,7 +40,7 @@ module Core
     end
 
     def concept_name=(concept_name)
-      self.concept_id = ConceptName.find_by_name(concept_name).concept_id
+      self.concept_id = Core::ConceptName.find_by_name(concept_name).concept_id
     rescue
       raise "\"#{concept_name}\" does not exist in the concept_name table"
     end
@@ -48,7 +48,7 @@ module Core
     def value_coded_or_text=(value_coded_or_text)
       return if value_coded_or_text.blank?
 
-      value_coded_name = ConceptName.find_by_name(value_coded_or_text)
+      value_coded_name = Core::ConceptName.find_by_name(value_coded_or_text)
       if value_coded_name.nil?
         # TODO: this should not be done this way with a brittle hard ref to concept name
         #self.concept_name = "DIAGNOSIS, NON-CODED" if self.concept && self.concept.name && self.concept.fullname == "DIAGNOSIS"
@@ -122,24 +122,24 @@ module Core
       #the following code is a hack
       #we need to find a better way because value_coded can also be a location - not only a concept
       return coded_name unless coded_name.blank?
-      answer = Concept.find_by_concept_id(self.value_coded).shortname rescue nil
+      answer = Core::Concept.find_by_concept_id(self.value_coded).shortname rescue nil
 
       if answer.nil?
-        answer = Concept.find_by_concept_id(self.value_coded).fullname rescue nil
+        answer = Core::Concept.find_by_concept_id(self.value_coded).fullname rescue nil
       end
 
       if answer.nil?
-        answer = Concept.find_with_voided(self.value_coded).fullname + ' - retired'
+        answer = Core::Concept.find_with_voided(self.value_coded).fullname + ' - retired'
       end
 
       return answer
     end
 
     def self.new_accession_number
-      last_accn_number = Observation.find(:last, :conditions => ["accession_number IS NOT NULL"], :order => "accession_number + 0").accession_number.to_s rescue "00" #the rescue is for the initial accession number start up
+      last_accn_number = Core::Observation.find(:last, :conditions => ["accession_number IS NOT NULL"], :order => "accession_number + 0").accession_number.to_s rescue "00" #the rescue is for the initial accession number start up
       last_accn_number_with_no_chk_dgt = last_accn_number.chop.to_i
       new_accn_number_with_no_chk_dgt = last_accn_number_with_no_chk_dgt + 1
-      chk_dgt = PatientIdentifier.calculate_checkdigit(new_accn_number_with_no_chk_dgt)
+      chk_dgt = Core::PatientIdentifier.calculate_checkdigit(new_accn_number_with_no_chk_dgt)
       new_accn_number = "#{new_accn_number_with_no_chk_dgt}#{chk_dgt}"
       return new_accn_number.to_i
     end
@@ -149,7 +149,7 @@ module Core
       formatted_name ||= self.concept_name.name rescue nil
       formatted_name ||= self.concept.concept_names.tagged(tags).first.name rescue nil
       formatted_name ||= self.concept.concept_names.first.name rescue 'Unknown concept name'
-      "#{formatted_name}:  #{Location.find(self.answer_string(tags)).name}"
+      "#{formatted_name}:  #{Core::Location.find(self.answer_string(tags)).name}"
     end
 
     def to_s_location_name(tags=[])
@@ -157,7 +157,7 @@ module Core
       formatted_name ||= self.concept_name.name rescue nil
       formatted_name ||= self.concept.concept_names.tagged(tags).first.name rescue nil
       formatted_name ||= self.concept.concept_names.first.name rescue 'Unknown concept name'
-      "#{Location.find(self.answer_string(tags)).name}"
+      "#{Core::Location.find(self.answer_string(tags)).name}"
     end
 
     def to_s_formatted
