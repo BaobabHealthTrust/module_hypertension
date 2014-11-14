@@ -12,7 +12,7 @@ class PatientsController < ApplicationController
 
     session[:patient_id] = @patient.id
     session[:user_id] = @user.id
-    session[:location_id] = params[:location_id]
+    # session[:location_id] = params[:location_id]
 
     program_id = Core::Program.find_by_name('CHRONIC CARE PROGRAM').id
     date = Date.today
