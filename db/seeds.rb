@@ -15,15 +15,15 @@ Dir.foreach("db/data").sort.each do |file|
 
       root = file.gsub(/.json$/, "")
 
-      puts "== #{root.gsub(/\_/, " ").titleize.gsub(/\s/, "")}: seeding started ============================"
+      puts "== #{root.gsub(/\_/, " ").gsub(/\-/,"::").titleize.gsub(/\//,"::").gsub(/\s/,"")}: seeding started ============================"
           
       json.each do |a|
       
-        root.gsub(/\_/, " ").titleize.gsub(/\s/, "").constantize.create!(a[root])
+        root.gsub(/\_/, " ").gsub(/\-/,"::").titleize.gsub(/\//,"::").gsub(/\s/,"").constantize.create!(a[root])
         
       end
        
-      puts "== #{root.gsub(/\_/, " ").titleize.gsub(/\s/, "")}: seeded ============================"
+      puts "== #{root.gsub(/\-/,"::").titleize.gsub(/\//,"::").gsub(/\s/,"")}: seeded ============================"
       
   elsif file.match(/.sql$/)
   
