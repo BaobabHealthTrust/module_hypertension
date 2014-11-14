@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
                                                'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
                                                'search_for_drugs','mastercard_printable', 'authenticate', 'verify', 'location_update'
   ]
-=begin
+
   before_filter :location_required, :except => ['login', 'logout', 'location',
                                                 'demographics','create_remote',
                                                 'mastercard_printable',
@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
                                                 'art_summary_dispensation', 'print_rules', 'rule_variables', 'print','new_prescription',
                                                 'search_for_drugs','mastercard_prin`table', 'authenticate', 'verify', 'location_update'
   ]
-=end
+
   before_filter :set_return_uri
 
   def get_global_property_value(global_property)
@@ -92,25 +92,25 @@ class ApplicationController < ActionController::Base
   end
 
   def location_required
-    location = session[:location_id] rescue nil
+
+    location = session[:sso_location] rescue nil
 
     if location.nil?
       redirect_to "/core_user_management/location?user_id=#{session[:user_id]}" and return if !session[:user_id].nil?
     end
 
-=begin
     if not located? and params[:location]
-      location = Location.find(params[:location]) rescue nil
+      location = Core::Location.find(params[:location]) rescue nil
       self.current_location = location if location
     end
 
     if not located? and session[:sso_location]
-      location = Location.find(session[:sso_location]) rescue nil
+      location = Core::Location.find(session[:sso_location]) rescue nil
       self.current_location = location if location
     end
 
     located? || location_denied
-=end
+
   end
 
   def set_return_uri

@@ -6,7 +6,7 @@
   <script language="javascript" type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer></script>
   <%= @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue "" %>
   <script language="javascript">
-      tstUsername = "<%= User.current_user.username rescue nil unless (User.current_user.nil? rescue false) %>";
+      tstUsername = "<%= Core::User.current_user.username rescue nil unless (Core::User.current_user.nil? rescue false) %>";
       tstCurrentDate = "<%= (session[:datetime] ? session[:datetime].to_date : DateTime.now()).strftime("%Y-%m-%d") %>";
       var tt_cancel_destination = null;
   </script>
@@ -49,18 +49,18 @@
           Reports
         </option>
 
-        <option value="/my_account?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
+        <option value="/my_account?user_id=<%= session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
           My Account
         </option>
 
         <% if (@user.admin? rescue true) %>
-            <option value="/administration?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
+            <option value="/administration?user_id=<%= session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
               User Administration
             </option>
 
       <% end %>
 
-        <option value="/clinic/site_properties?user_id=<%= params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
+        <option value="/clinic/site_properties?user_id=<%= session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>">
           Properties
         </option>
 

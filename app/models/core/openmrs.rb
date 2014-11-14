@@ -43,7 +43,7 @@ module Core
 
     def before_save
       super
-      self.changed_by = Core::User.current.id if self.attributes.has_key?("changed_by") and User.current != nil
+      self.changed_by = Core::User.current.id if self.attributes.has_key?("changed_by") and Core::User.current != nil
       self.date_changed = Time.now if self.attributes.has_key?("date_changed")
     end
 
@@ -55,16 +55,16 @@ module Core
         self.creator = Core::Person.migrated_creator if self.attributes.has_key?("creator")
 
         self.creator = Core::User.first.id if self.attributes.has_key?("creator") and (self.creator.blank? ||
-            self.creator == 0)and Core::User.first != nil and User.current.nil?
+            self.creator == 0)and Core::User.first != nil and Core::User.current.nil?
 
         self.date_created = Core::Person.migrated_datetime if self.attributes.has_key?("date_created")
       else
         self.location_id = Core::Location.current_health_center.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Core::Location.current_health_center != nil
         self.creator = Core::User.current.id if self.attributes.has_key?("creator") and
-            (self.creator.blank? || self.creator == 0)and User.current != nil
+            (self.creator.blank? || self.creator == 0)and Core::User.current != nil
 
         self.creator = Core::User.first.id if self.attributes.has_key?("creator") and (self.creator.blank? ||
-            self.creator == 0)and Core::User.first != nil and User.current.nil?
+            self.creator == 0)and Core::User.first != nil and Core::User.current.nil?
 
         self.date_created = Time.now if self.attributes.has_key?("date_created")
       end
@@ -77,7 +77,7 @@ module Core
     end
 
     def void(reason = "Voided through #{(BART_VERSION rescue "Undefined")}", date_voided = Time.now,
-             voided_by = (User.current.user_id unless User.current.nil?))
+             voided_by = (Core::User.current.user_id unless Core::User.current.nil?))
       unless voided?
         self.date_voided = date_voided
         self.voided = 1

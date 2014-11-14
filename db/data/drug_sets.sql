@@ -39,16 +39,6 @@ CREATE TABLE `drug_set` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `drug_set`
---
-
-LOCK TABLES `drug_set` WRITE;
-/*!40000 ALTER TABLE `drug_set` DISABLE KEYS */;
-INSERT INTO `drug_set` VALUES (1,275,1,'Once a day (OD)','30','2014-10-14 10:23:52','2014-10-14 10:23:52',1,0,NULL,1),(2,558,1,'Once a day (OD)','30','2014-10-14 11:04:01','2014-10-14 11:04:01',1,0,NULL,1),(3,559,1,'Once a day (OD)','30','2014-10-14 11:06:27','2014-10-14 11:06:27',1,0,NULL,2),(4,942,1,'Once a day (OD)','30','2014-10-14 11:25:17','2014-10-14 11:25:17',1,0,NULL,1),(5,943,1,'Once a day (OD)','30','2014-10-14 11:25:52','2014-10-14 11:25:52',1,0,NULL,2),(6,263,1,'Once a day (OD)','30','2014-10-14 11:27:04','2014-10-14 11:27:04',1,0,NULL,2),(7,812,1,'Once a day (OD)','30','2014-10-14 11:27:45','2014-10-14 11:27:45',1,0,NULL,1),(8,223,1,'Once a day (OD)','30','2014-10-14 11:28:33','2014-10-14 11:28:33',1,0,NULL,1),(9,266,1,'Once a day (OD)','30','2014-10-14 11:29:01','2014-10-14 11:29:01',1,0,NULL,2);
-/*!40000 ALTER TABLE `drug_set` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `dset`
 --
 
@@ -67,15 +57,6 @@ CREATE TABLE `dset` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `dset`
---
-
-LOCK TABLES `dset` WRITE;
-/*!40000 ALTER TABLE `dset` DISABLE KEYS */;
-INSERT INTO `dset` VALUES (1,'HTC Drugs','HT Drug','2014-10-14 10:23:52','2014-10-14 11:29:01',1,'active');
-/*!40000 ALTER TABLE `dset` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
