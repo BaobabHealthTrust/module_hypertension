@@ -41,3 +41,74 @@ div.header {
     font-size: 24px;
     font-weight: normal;
 }
+div.report_header{
+    height: 50px;
+    border: solid 1px #6281A7;
+    font-size: 2em;
+    color: #fff;
+    padding-top: 10px;
+    background-color: #6281A7;
+    text-align: center;
+}
+
+div.report_content {
+    height : 620px;
+    overflow: auto;
+}
+
+table.report_table{
+    width: 100%;
+    border-collapse: separate;
+    margin-bottom: 20px;
+}
+
+.report_table thead{
+
+}
+
+.report_table thead td{
+    font-weight: bold;
+    font-size: 130%;
+    color: ghostwhite;
+}
+
+.report_table thead tr{
+    background-color: grey;
+}
+
+.report_table tbody td{
+    font-size: 125%;
+    text-align: center;
+
+}
+
+.report_table tbody tr td{
+    border-bottom:1px solid #e0e0e0;
+}
+
+.sectionHeading{
+    font-weight: bold;
+    text-align: left !important;
+    padding-left: 10px;
+    line-height: 150%;
+    padding-top: 10px;
+    border: 0px;
+}
+
+.fieldTitle{
+    text-align: left !important;
+    padding-left: 25px;
+}
+
+div.clickable{
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 98%;
+    border: 1px solid darkgray;
+    border-radius: 7px;
+    color: #000000;
+    background-color: gainsboro;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

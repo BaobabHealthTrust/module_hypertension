@@ -1,0 +1,195 @@
+<link rel="stylesheet" type="text/css" href="/stylesheets/prescription/application.css" media="screen" />
+<div class="report_header">
+     <%= " Demographic and Clinical Report for #{Date::MONTHNAMES[params[:month].to_i]} #{params[:year]} "%>
+</div>
+
+<div id="report_content" class="report_content">
+    <table class="report_table" >
+       <thead>
+        <tr>
+          <td style="padding-left: 10px;">Field</td>
+          <td style="width: 20%;text-align: center;">Monthly</td>
+          <td style="width: 20%;text-align: center;">Cumulative</td>
+        </tr>
+       </thead>
+       <tbody>
+       <tr>
+         <td class="sectionHeading">Total Number Screened for Hypertension</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+        <tr>
+          <td class="sectionHeading" colspan="3">Sex</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Female</td>
+          <td><div class="clickable">0</div></td>
+          <td><div class="clickable">0</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Male</td>
+          <td><div class="clickable">0</div></td>
+          <td><div class="clickable">0</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown/Missing</td>
+          <td><div class="clickable">0</div></td>
+          <td><div class="clickable">0</div></td>
+        </tr>
+       <tr>
+         <td class="sectionHeading">Age (years), Median </td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="sectionHeading" colspan="3">Age Group </td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">20 - 29</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">30 - 39</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">40 - 49</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">50 - 59</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle"> >= 60 </td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Unknown/Missing</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="sectionHeading"> Body Mass Index (BMI) Median</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading"> BMI</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">< 18.5 - 24.9</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">25 - 29.9</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle"> >= 30</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Unknown/Missing</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Blood Pressure Classification</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Normal</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Mild</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Moderate</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Severe</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Diagnosis of Hypertension</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Newly Diagnosed Hypertension</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Existing Hypertension</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Place of Diagnosis</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Lighthouse</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Ministry of Health</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Other</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Unknown/Missing</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Outcome Occurred</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Alive and in care</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Death</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Lost to followup</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Transferred</td>
+         <td><div class="clickable">0</div></td>
+         <td><div class="clickable">0</div></td>
+       </tr>
+       </tbody>
+    </table>
+</div>
+<div id="footer">
+  <div id="buttons" class="buttonsDiv" style="">
+    <button id="finishButton" class="button navButton green" onclick="window.location='/'"><span>Finish</span></button>
+  </div>
+</div>
+

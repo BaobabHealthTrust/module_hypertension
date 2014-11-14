@@ -7,12 +7,14 @@
 
     <%= touch_select_tag "month","" ,month_name_options.gsub('<option value="Unknown">Unknown</option>', ''),
                    {:id => "month",
+                    :name => "month",
                     :helptext => "Select month",
                     :allowFreeText => 'false',
                     :condition => @durations == 'monthly'} %>
 
-    <%= touch_select_tag "month","" ,options_for_select(((Date.today.year - 5)..(Date.today.year)).collect{|y| y}.reverse ),
-                         {:id => "month",
+    <%= touch_select_tag "year","" ,options_for_select(((Date.today.year - 5)..(Date.today.year)).collect{|y| y}.reverse ),
+                         {:id => "year",
+                          :name => "year",
                           :helptext => "Select year",
                           :allowFreeText => 'false'} %>
 
