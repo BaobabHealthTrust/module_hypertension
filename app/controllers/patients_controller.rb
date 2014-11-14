@@ -2,6 +2,8 @@ class PatientsController < ApplicationController
 
   before_filter :find_patient
 
+  before_filter :check_project_members
+
   def show
     @patient = Core::Patient.find(params[:id] || params[:patient_id]) # rescue nil
 
@@ -1011,6 +1013,17 @@ class PatientsController < ApplicationController
 
     @patient = Core::Patient.find(params[:id] || params[:patient_id]) rescue nil
 
+
+  end
+
+  def check_project_members
+
+    project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
+
+    current_user_activities = Core::UserProperty.find_by_user_id_and_property(user_id,
+                                                                              "#{project}.activities").property_value.split(",").collect { |a| a.downcase } rescue {}
+
+    redirect_to "/" if current_user_activities.empty?
 
   end
 
