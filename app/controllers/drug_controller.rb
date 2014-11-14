@@ -1,6 +1,6 @@
 class DrugController < ApplicationController
   def drug_sets
-    @user = User.find(session[:user_id] || params[:user_id])
+    @user = Core::User.find(session[:user_id] || params[:user_id])
     @sets = GeneralSet.all(:order => ["date_updated DESC"],
       :conditions => ["status = 'active'"]) +
       GeneralSet.all(:order => ["date_updated DESC"],
@@ -38,7 +38,7 @@ class DrugController < ApplicationController
 
     already_selected = DrugSet.find_all_by_set_id(params[:set_id]).collect{|d| d.drug_inventory_id} rescue []
     already_selected = [-1] if already_selected.blank?
-    @drugs = [["", ""]] + Drug.all(:conditions => ["drug_id NOT IN (?)",
+    @drugs = [["", ""]] + Core::Drug.all(:conditions => ["drug_id NOT IN (?)",
         already_selected]).collect{|drug| [drug.name, drug.id]}
 
     @frequencies = ["", "Once a day (OD)", "Twice a day (BD)", "Three a day (TDS)",
