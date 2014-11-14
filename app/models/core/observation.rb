@@ -12,6 +12,7 @@ module Core
     has_many :concept_names, :class_name => 'Core::ConceptName', :through => :concept
 
     named_scope :recent, lambda { |number| {:order => 'obs_datetime DESC,date_created DESC', :limit => number} }
+    named_scope :before, lambda {|date| {:conditions => ["obs_datetime < ? ", date], :order => 'obs_datetime DESC, date_created DESC', :limit => 1}}
     named_scope :old, lambda { |number| {:order => 'obs_datetime ASC,date_created ASC', :limit => number} }
     named_scope :question, lambda { |concept|
       concept_id = concept.to_i

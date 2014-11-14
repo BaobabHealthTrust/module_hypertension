@@ -1007,6 +1007,86 @@ class PatientsController < ApplicationController
                     ORDER BY  obs_datetime DESC, date_created DESC LIMIT 1").first #rescue nil
   end
 
+  def treatment_dashboard
+    @user = Core::User.find(params[:user_id]) rescue nil
+    @patient = Core::Patient.find(params[:id]) rescue Patient.find(params[:patient_id]) rescue nil
+    @dispense = get_global_property_value('use_drug_barcodes_only')
+    #@patient_bean = PatientService.get_patient(@patient.person)
+    @amount_needed = 0
+    @amounts_required = 0
+
+    type = Core::EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    Core::Order.find(:all,
+               :joins => "INNER JOIN encounter e USING (encounter_id)",
+               :conditions => ["encounter_type = ? AND e.patient_id = ? AND DATE(encounter_datetime) = ?",
+                               type.id,@patient.id,session_date]).each{|order|
+
+      @amount_needed = @amount_needed + (order.drug_order.amount_needed.to_i rescue 0)
+
+      @amounts_required = @amounts_required + (order.drug_order.total_required rescue 0)
+
+    }
+
+    @dispensed_order_id = params[:dispensed_order_id]
+
+    @project = get_global_property_value("project.name") rescue "Unknown"
+
+    @advanced = get_global_property_value("prescription.types") rescue "Unknown"
+
+    render :layout => false
+  end
+
+  def treatment
+    @user = Core::User.find(params[:user_id]) rescue nil
+    @patient = Core::Patient.find(params[:patient_id] || params[:id]) rescue nil
+    type = Core::EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    @prescriptions = Core::Order.find(:all,
+                                :joins => "INNER JOIN encounter e USING (encounter_id)",
+                                :conditions => ["encounter_type = ? AND e.patient_id = ? AND DATE(start_date) = ?",
+                                                type.id,@patient.id,session_date])
+
+    #raise session_date.to_date.to_yaml
+    @restricted = Core::ProgramLocationRestriction.all(:conditions => {:location_id => Core::Location.current_health_center.id })
+
+    @restricted.each do |restriction|
+      @prescriptions = restriction.filter_orders(@prescriptions)
+    end
+
+    @encounters = @patient.encounters.find_by_date(session_date)
+
+    @transfer_out_site = nil
+
+    @encounters.each do |enc|
+      enc.observations.map do |obs|
+        @transfer_out_site = obs.to_s if obs.to_s.include?('Transfer out to')
+      end
+    end
+    #@reason_for_art_eligibility = PatientService.reason_for_art_eligibility(@patient)
+    #@arv_number = PatientService.get_patient_identifier(@patient, 'ARV Number')
+
+    render :layout => false
+  end
+
+  def history_treatment
+    @user = Core::User.find(params[:user_id]) rescue nil
+    @patient = Core::Patient.find(params[:patient_id] || params[:id])
+    type = Core::EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    @prescriptions = Core::Order.find(:all,
+                                :joins => "INNER JOIN encounter e USING (encounter_id)",
+                                :conditions => ["encounter_type = ? AND e.patient_id = ?",type.id,@patient.id])
+
+    @historical = @patient.orders.historical.prescriptions.all
+    @restricted = Core::ProgramLocationRestriction.all(:conditions => {:location_id => Core::Location.current_health_center.id })
+    @restricted.each do |restriction|
+      @historical = restriction.filter_orders(@historical)
+    end
+
+    render :layout => false
+  end
+
   protected
 
   def find_patient

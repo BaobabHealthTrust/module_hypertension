@@ -175,7 +175,7 @@
   } %>
 
 <form method='post' action='/encounters/create'>
-	<input type='hidden' name='program' value='HYPETENSION PROGRAM' />
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
 	<input type='hidden' name='encounter_type' value='LAB RESULTS' />
 	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
 	<input type='hidden' name='user_id' value='<%= @user.id %>' />
@@ -599,7 +599,7 @@
       :condition    => "(getSelected2().match(/CREATININE/i)) && ($('ctn_unit').value == 'Lo/Hi')",
       :helpText     =>"Creatinine",
       :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'cf');__$('nextButton').style.display = 'block'; showCategory('Lab Results')",
-      :tt_requireNextClick => false
+      :tt_requireNextClick => true
     }) %>
     <%= select_tag("ctn_value_lo_or_hi", options_for_select(["","Lo","Hi"]), options ) %>
 

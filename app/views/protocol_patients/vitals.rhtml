@@ -132,6 +132,7 @@
   var systolicColor = "";
   var diastolicColor = "";
   var conditions = [];
+  var timedEvent;
 
   function getSelected(){
     var choices = "";
@@ -482,7 +483,7 @@
 </script>
 
 <form method='post' action='/encounters/create' id="vitals">
-	<input type='hidden' name='program' value='HYPETENSION PROGRAM' />
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
 	<input type='hidden' name='encounter_type' value='VITALS' />
 	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
 	<input type='hidden' name='user_id' value='<%= @user.id %>' />
@@ -498,15 +499,16 @@
   %>
 
 	<%= select_tag "choice", options_for_select(vital_signs),
-		{	:helpText => 'Select vital signs <span id="helper">Vitals</span> ',
+		{	:helpText => 'Select vital signs',
 			:id => "choice",
 			:multiple => true ,
+            :tt_pageStyleClass => "MultiSelectList longSelectList",
 			:optional => true,
-			:tt_onLoad =>""} %>
+			:tt_onLoad =>"showCategory('Vitals')"} %>
 
 	  <input type='text' id='waist_circumference'
 	  name='concept[waist circumference]'
-	  helpText='Waist circumference (in cm) <span id="helper">Vitals</span> '
+	  helpText='Waist circumference (in cm)'
 	  field_type='number'
 	  pos='3'
 	  allowFreeText = 'true'
@@ -514,25 +516,25 @@
 	 min = 10
 	 max = 300
 	 units = 'cm'
-	 tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
+	 tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal" tt_onLoad="showCategory('Vitals')"
 	  />
 
 	 <input type='text' id='temperature'
 	 name='concept[Temperature]'
-	 helpText='Temperature  <span id="helper">Vitals</span>'
+	 helpText='Temperature '
 	 field_type='number'
 	 pos='9'
 	 allowFreeText = 'true'
 	 condition = "getSelected().match(/TEMPERATURE/i)"
 	 min = 35
 	 max = 41
-	 units = 'Degrees Celcius'
+	 units = 'Degrees Celcius'  tt_onLoad="showCategory('Vitals')"
 	 tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
 	 />
 
 	 <input type='text' id='respiratory_rate'
 	 name='concept[Respiratory rate]'
-	 helpText='Respiratory rate<span id="helper">Vitals</span>'
+	 helpText='Respiratory rate'
 	 validationRule = "([0-9]+(\\.[0-9])?)|Unknown$"
 	 validationMessage = "You must enter a decimal between 0 and 9 (for example: 37<b>.6</b>)"
 	 field_type='number'
@@ -540,30 +542,30 @@
 	 max = 61
 	 condition = "getSelected().match(/RESPIRATORY\sRATE/i)"
 	 absoluteMin = 0
-	 absoluteMax = 250
+	 absoluteMax = 250  tt_onLoad="showCategory('Vitals')"
 	 tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
 	 />
 
 	 <input type='text' id='expiratory_flow_rate'
 	 name='concept[Peak flow]'
-	 helpText='Expiratory flow rate (Litres per minute)<span id="helper">Vitals</span> '
+	 helpText='Expiratory flow rate (Litres per minute)'
 	 field_type='number'
 	 pos='6'
 	 min = 50
 	 max = 800
 	 condition = "getSelected().match(/EXPIRATORY\sFLOW\sRATE/i)"
 	 absoluteMin = 0
-	 absoluteMax = 1000
+	 absoluteMax = 1000  tt_onLoad="showCategory('Vitals')"
 	 tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
 	 />
 
 	 <input type='text' id='systolic_blood_pressure'
 	 name='concept[Systolic blood pressure]'
-	 helpText='Systolic blood pressure<span id="helper">Vitals</span> '
+	 helpText='Systolic blood pressure'
 	 field_type='number'
-	 pos='4'
+	 pos='4'  tt_onLoad="showCategory('Vitals')"
 	 tt_pageStyleClass = "NumbersWithUnknown"
-	 tt_onLoad = "timedEvent = setTimeout('calculateBP(1)', 100);"
+	 tt_onLoad = "timedEvent = setTimeout('calculateBP(1)', 100); showCategory('Vitals');"
 	 tt_onUnLoad = "clearTimeout(timedEvent);"
 	 condition = "getSelected().match(/BLOOD\sPRESSURE/i)"
 	 absoluteMin = 0
@@ -572,11 +574,11 @@
 
 	 <input type='text' id='diastolic_blood_pressure'
 	  name='concept[Diastolic blood pressure]'
-	  helpText='Diastolic blood pressure <span id="helper">Vitals</span>'
+	  helpText='Diastolic blood pressure '
 	  field_type='number'
 	  pos='5'
 	  tt_pageStyleClass = "NumbersWithUnknown"
-	  tt_onLoad = "timedEvent = setTimeout('calculateBP(2)', 100);"
+	  tt_onLoad = "timedEvent = setTimeout('calculateBP(2)', 100); showCategory('Vitals');"
 	  tt_onUnLoad = "clearTimeout(timedEvent);"
 	  condition = "getSelected().match(/BLOOD\sPRESSURE/i)"
 	  absoluteMin = 0
@@ -585,9 +587,9 @@
 
 	 <input type='text' id='pulse'
 	 name='concept[Pulse]'
-	 helpText='Pulse rate<span id="helper">Vitals</span> '
+	 helpText='Pulse rate '
 	 field_type='number'
-	 tt_onLoad = "timedEvent = setTimeout('calculateBP(3)', 100);"
+	 tt_onLoad = "timedEvent = setTimeout('calculateBP(3)', 100); showCategory('Vitals');"
 	 tt_onUnLoad = "clearTimeout(timedEvent);"
 	 pos='7'
 	 condition = "getSelected().match(/PULSE\sRATE/i)"
@@ -601,11 +603,11 @@
 <% if @current_hieght.blank? || @current_hieght == 0 || @patient.age.to_i < 14 %>
 	<input type='text' id='height'
 	name='concept[Height (cm)]'
-	helpText='Height (cm)<span id="helper">Vitals</span>'
+	helpText='Height (cm)'
 	field_type='number'
 	tt_pageStyleClass = "Numeric NumbersWithUnknown"
 	min = 50
-	max = 180
+	max = 180 tt_onLoad="showCategory('Vitals')"
 	/>
 <% end %>
 
@@ -614,7 +616,7 @@
 			{	:id => "weight",
 				:name => "concept[weight (kg)]",
 				:field_type => "number",
-				:tt_onLoad => "$('clearButton').style.display = 'inline';",
+				:tt_onLoad => "$('clearButton').style.display = 'inline'; showCategory('Vitals')",
 				:min => number_with_precision(@min_weight, :precision => 1),
 				:max => number_with_precision(@max_weight, :precision => 1),
 				:absoluteMin => 0,
@@ -622,8 +624,8 @@
 				:units => 'kg',
 				:validationRule => "([0-9]+\\.[0-9])|Unknown$",
 				:validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-		       	        :tt_pageStyleClass => "Numeric NumbersOnlyWithUnknown",
-				:helpText => "Weight (Kg)<span id='helper'>Vitals</span>" } %>
+		       	        :tt_pageStyleClass => "Numeric NumbersWithUnknownAndDecimal",
+				:helpText => "Weight (Kg)" } %>
 
 	 <%#= raise @current_hieght.to_yaml %>
 <%# if @current_height.to_i == 0 %> <% # || @patient.age <= 14 %>
@@ -633,9 +635,9 @@
    <input type='text'
    id='oxygen'
    name='concept[Blood Oxygen saturation]'
-   helpText='Oxygen saturation <span id="helper">Vitals</span>'
+   helpText='Oxygen saturation '
    field_type='number'
-   tt_onLoad = "timedEvent = setTimeout('calculateBP(4)', 100);"
+   tt_onLoad = "timedEvent = setTimeout('calculateBP(4)', 100); showCategory('Vitals')"
    tt_onUnLoad = "clearTimeout(timedEvent);"
    pos='8'
    min = 85
@@ -646,9 +648,9 @@
    tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
    />
    
-  <label for='summary'>Summary<span id="helper">Vitals</span></label>
+  <label for='summary'>Summary</label>
 	<%= text_field_tag :summary, nil, {
-	  :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';",
+	  :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none'; showCategory('Vitals')",
 	  :optional => "true",
 	  :tt_pageStyleClass => "NoControls" } %>
 

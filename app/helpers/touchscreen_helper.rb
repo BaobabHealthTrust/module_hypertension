@@ -35,7 +35,7 @@ module TouchscreenHelper
 
   def touch_cd4_count_numeric_tag(concept, patient, value, options={}, time=DateTime.now())
     # Try to find an associated concept_numeric for limits
-    concept_name = ConceptName.first(:conditions => {:name => concept},
+    concept_name = Core::ConceptName.first(:conditions => {:name => concept},
       :include => {:concept => [:concept_numeric]})
     precision = concept_name.concept.concept_numeric.precision rescue {}
     options = precision.merge(options)
@@ -55,7 +55,7 @@ module TouchscreenHelper
 
   def touch_numeric_tag(concept, patient, value, options={}, time=DateTime.now())
     # Try to find an associated concept_numeric for limits
-    concept_name = ConceptName.first(:conditions => {:name => concept},
+    concept_name = Core::ConceptName.first(:conditions => {:name => concept},
       :include => {:concept => [:concept_numeric]})
     precision = concept_name.concept.concept_numeric.precision rescue {}
     options = precision.merge(options)
@@ -168,8 +168,8 @@ module TouchscreenHelper
     }.merge(options)                 
     content = ""
     content << hidden_field_tag("identifiers[][patient_id]", patient.id) 
-    content << hidden_field_tag("identifiers[][location_id]", Location.current_health_center.location_id) 
-    content << hidden_field_tag("identifiers[][identifier_type]", PatientIdentifierType.find_by_name(type).patient_identifier_type_id)
+    content << hidden_field_tag("identifiers[][location_id]", Core::Location.current_health_center.location_id)
+    content << hidden_field_tag("identifiers[][identifier_type]", Core::PatientIdentifierType.find_by_name(type).patient_identifier_type_id)
     content << text_field_tag("identifiers[][identifier]", value, options) 
     content
   end
