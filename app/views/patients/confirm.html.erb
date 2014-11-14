@@ -123,7 +123,7 @@ task = @task
    <span id="patient_gender"><%= @patient.gender %></span>
    <span id="guardian"><%= (@patient.guardian rescue nil) || 'NONE'%></span>
    <div id="patient_card">
-    <span value="<%= @patient.national_id_with_dashes %>">National ID</spant>
+    <span value="<%= @patient.national_id_with_dashes %>">National ID</span>
    </div>
   <select id="tabs">
       <option value='/patients/patient_bp?user_id=<%= @user["user_id"] %>&patient_id=<%= @patient.id %>'>BP</option>
