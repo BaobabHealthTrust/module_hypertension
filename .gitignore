@@ -7,3 +7,4 @@ public/touchscreentoolkit
 *.lock
 vendor/plugins/usermanagement
 
+*.save
