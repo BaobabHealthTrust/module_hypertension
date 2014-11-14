@@ -1018,10 +1018,10 @@ class PatientsController < ApplicationController
 
   def check_project_members
 
-    project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
+    project = get_global_property_value("project.name").downcase.gsub(/\s/, ".").downcase rescue nil
 
-    current_user_activities = Core::UserProperty.find_by_user_id_and_property(user_id,
-                                                                              "#{project}.activities").property_value.split(",").collect { |a| a.downcase } rescue {}
+    current_user_activities = Core::UserProperty.find_by_user_id_and_property(Core::User.find(session[:user_id]),
+        "#{project}.activities").property_value.split(",").collect { |a| a.downcase } rescue {}
 
     redirect_to "/" if current_user_activities.empty?
 
