@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="/stylesheets/prescription/application.css" media="screen" />
+
 <div class="report_header">
      <%= " Demographic and Clinical Report for #{Date::MONTHNAMES[params[:month].to_i]} #{params[:year]} "%>
 </div>
@@ -15,174 +16,170 @@
        <tbody>
        <tr>
          <td class="sectionHeading">Total Number Screened for Hypertension</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="screenedMonthly" onclick="drillDown(this.getAttribute('ids'))"   class="clickable">0</div></td>
+         <td><div id="screenedCumulative" class="clickable">0</div></td>
        </tr>
         <tr>
           <td class="sectionHeading" colspan="3">Sex</td>
         </tr>
         <tr>
           <td class="fieldTitle">Female</td>
-          <td><div class="clickable">0</div></td>
-          <td><div class="clickable">0</div></td>
+          <td><div id="monthlyFemales" class="clickable" ids="">0</div></td>
+          <td><div id="cumulativeFemales" class="clickable">0</div></td>
         </tr>
         <tr>
           <td class="fieldTitle">Male</td>
-          <td><div class="clickable">0</div></td>
-          <td><div class="clickable">0</div></td>
+          <td><div id="monthlyMales" class="clickable">0</div></td>
+          <td><div id="cumulativeMales" class="clickable">0</div></td>
         </tr>
         <tr>
           <td class="fieldTitle">Unknown/Missing</td>
-          <td><div class="clickable">0</div></td>
-          <td><div class="clickable">0</div></td>
+          <td><div id="monthlyMissing" class="clickable">0</div></td>
+          <td><div id="cumulativeMissing" class="clickable">0</div></td>
         </tr>
        <tr>
          <td class="sectionHeading">Age (years), Median </td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyAgeMedian" class="clickable">0</div></td>
+         <td><div id="cumulativeAgeMedian" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="sectionHeading" colspan="3">Age Group </td>
        </tr>
        <tr>
          <td class="fieldTitle">20 - 29</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthly20to29" class="clickable">0</div></td>
+         <td><div id="cumulative20to29" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">30 - 39</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthly30to39" class="clickable">0</div></td>
+         <td><div id="cumulative30to39" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">40 - 49</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthly40to49" class="clickable">0</div></td>
+         <td><div id="cumulative40to49" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">50 - 59</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthly50to59" class="clickable">0</div></td>
+         <td><div id="cumulative50to59" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle"> >= 60 </td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyAbove59" class="clickable">0</div></td>
+         <td><div id="cumulativeAbove59" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Unknown/Missing</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyUnkAge" class="clickable">0</div></td>
+         <td><div id="culUnkAge" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="sectionHeading"> Body Mass Index (BMI) Median</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBmiMedian" class="clickable">0</div></td>
+         <td><div id="culBmiMedian" class="clickable">0</div></td>
        </tr>
        <tr>
          <td colspan="3" class="sectionHeading"> BMI</td>
        </tr>
        <tr>
          <td class="fieldTitle">< 18.5 - 24.9</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBmi1" class="clickable">0</div></td>
+         <td><div id="culBmi1" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">25 - 29.9</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBmi2" class="clickable">0</div></td>
+         <td><div id="culBmi2" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle"> >= 30</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBmi3" class="clickable">0</div></td>
+         <td><div id="culBmi3" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Unknown/Missing</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBmiUnk" class="clickable">0</div></td>
+         <td><div id="culBmiUnk" class="clickable">0</div></td>
        </tr>
        <tr>
          <td colspan="3" class="sectionHeading">Blood Pressure Classification</td>
        </tr>
        <tr>
          <td class="fieldTitle">Normal</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBpNormal" class="clickable">0</div></td>
+         <td><div id="culBpNormal" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Mild</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBpMild" class="clickable">0</div></td>
+         <td><div id="culBpMild" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Moderate</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBpMod" class="clickable">0</div></td>
+         <td><div id="culBpMod" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Severe</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyBpSevere" class="clickable">0</div></td>
+         <td><div id="culBpSevere" class="clickable">0</div></td>
        </tr>
        <tr>
          <td colspan="3" class="sectionHeading">Diagnosis of Hypertension</td>
        </tr>
        <tr>
          <td class="fieldTitle">Newly Diagnosed Hypertension</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyNewDiag" class="clickable">0</div></td>
+         <td><div id="culNewDiag" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Existing Hypertension</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyExisting" class="clickable">0</div></td>
+         <td><div id="culExisting" class="clickable">0</div></td>
        </tr>
        <tr>
          <td colspan="3" class="sectionHeading">Place of Diagnosis</td>
        </tr>
        <tr>
          <td class="fieldTitle">Lighthouse</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyPodLighthouse" class="clickable">0</div></td>
+         <td><div id="culPodLighthouse" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Ministry of Health</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyPodMoh" class="clickable">0</div></td>
+         <td><div id="culPodMoh" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Other</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyPodOther" class="clickable">0</div></td>
+         <td><div id="culPodOther" class="clickable">0</div></td>
        </tr>
        <tr>
          <td class="fieldTitle">Unknown/Missing</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td><div id="monthlyPodUnk" class="clickable">0</div></td>
+         <td><div id="culPodUnk" class="clickable">0</div></td>
        </tr>
        <tr>
          <td colspan="3" class="sectionHeading">Outcome Occurred</td>
        </tr>
        <tr>
-         <td class="fieldTitle">Alive and in care</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td colspan="2" class="fieldTitle">Alive and in care</td>
+         <td><div id="alive" class="clickable">0</div></td>
        </tr>
        <tr>
-         <td class="fieldTitle">Death</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td colspan="2" class="fieldTitle">Death</td>
+         <td><div id="dead" class="clickable">0</div></td>
        </tr>
        <tr>
-         <td class="fieldTitle">Lost to followup</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td colspan="2" class="fieldTitle">Lost to followup</td>
+         <td><div id="lostToFollowup" class="clickable">0</div></td>
        </tr>
        <tr>
-         <td class="fieldTitle">Transferred</td>
-         <td><div class="clickable">0</div></td>
-         <td><div class="clickable">0</div></td>
+         <td colspan="2" class="fieldTitle">Transferred</td>
+         <td><div id="transferred" class="clickable">0</div></td>
        </tr>
        </tbody>
     </table>
@@ -193,3 +190,16 @@
   </div>
 </div>
 
+<script type="text/javascript" src="/javascripts/jquery.js"></script>
+<script type="text/javascript" src="/javascripts/application.js"></script>
+<script type="text/javascript">
+    <!--
+    var fields = [["screenedMonthly","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["screenedCumulative","/report/total_screened?start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["transferred","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""]
+    ];
+
+
+    loadFields();
+    //-->
+</script>
