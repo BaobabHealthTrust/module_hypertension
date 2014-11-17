@@ -1,21 +1,26 @@
 <script>
     var tt_cancel_destination = "/" // /reports"
 </script>
+<style>
+    #tt_page_select_month .options{height:515px;}
+</style>
 
 <% form_tag :controller => 'report', :action => @path do %>
 
 
-    <%= touch_select_tag "month","" ,month_name_options.gsub('<option value="Unknown">Unknown</option>', ''),
-                   {:id => "month",
-                    :name => "month",
-                    :helptext => "Select month",
-                    :allowFreeText => 'false',
-                    :condition => @durations == 'monthly'} %>
+    <%= text_field_tag "year", nil,
+                       {:helpText => 'Select Year',
+                        :field_type => 'number',
+                        :absoluteMin => "1890",
+                        :min => "1940",
+                        :absoluteMax => Date.today.year,
+                        :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
 
-    <%= touch_select_tag "year","" ,options_for_select(((Date.today.year - 5)..(Date.today.year)).collect{|y| y}.reverse ),
-                         {:id => "year",
-                          :name => "year",
-                          :helptext => "Select year",
-                          :allowFreeText => 'false'} %>
+    <%= select_tag "month", month_name_options.gsub('<option value="Unknown">Unknown</option>', ''),
+                   {:helpText => 'Select Month',
+                    :validationMessage => 'Please enter a valid month',
+                    :condition => @durations == 'monthly',
+                    :tt_onLoad => "__$('keyboard').style.display = 'none'"}%>
+
 
 <% end %>
