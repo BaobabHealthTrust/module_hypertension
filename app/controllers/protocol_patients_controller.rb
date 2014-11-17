@@ -1,6 +1,8 @@
 
 class ProtocolPatientsController < ApplicationController
 
+  before_filter :check_project_members
+
 	def update_hiv_status
 
     @patient = Core::Patient.find(params[:patient_id]) rescue nil
@@ -491,5 +493,17 @@ class ProtocolPatientsController < ApplicationController
     @current_program = current_program
 	end
 
+  protected
+
+  def check_project_members
+
+    project = get_global_property_value("project.name").downcase.gsub(/\s/, ".").downcase rescue nil
+
+    current_user_activities = Core::UserProperty.find_by_user_id_and_property(Core::User.find(session[:user_id]),
+       "#{project}.activities").property_value.split(",").collect { |a| a.downcase } rescue {}
+
+    redirect_to "/" if current_user_activities.empty?
+
+  end
   
 end

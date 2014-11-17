@@ -101,7 +101,7 @@ list-style-type: none;
   this_year = Date.today.year
   begin @select_init_diagnosis_year << Array.new(1){this_year.to_s}; this_year = this_year - 1; end while (this_year != 1949)
 %>
-  <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+  <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
   <input type='hidden' name='encounter_type' value='DIABETES HYPERTENSION INITIAL VISIT' />
   <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
   <input type='hidden' name='user_id' value='<%= @user.id %>' />

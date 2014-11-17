@@ -2,7 +2,7 @@
 class EncountersController < ApplicationController
 
   def create
-     
+
     @retrospective = session[:datetime]
 		@retrospective = Time.now if session[:datetime].blank?
     Core::User.current = Core::User.find(@user["user_id"]) rescue nil
@@ -97,7 +97,7 @@ class EncountersController < ApplicationController
 					begin   
 						redirect_to @task.asthma_next_task(host,remote_ip).url and return if current_program == "ASTHMA PROGRAM"
 						redirect_to @task.epilepsy_next_task(host,remote_ip).url and return if current_program == "EPILEPSY PROGRAM"
-            redirect_to @task.hypertension_next_task(host,remote_ip).url and return if current_program == "HYPETENSION PROGRAM"
+            redirect_to @task.hypertension_next_task(host,remote_ip).url and return if current_program == "HYPERTENSION PROGRAM"
 						redirect_to @task.next_task(host,remote_ip).url and return
 					rescue
 						redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{params[:user_id]}&disable=true" and return

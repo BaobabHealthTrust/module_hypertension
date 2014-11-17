@@ -116,7 +116,7 @@ class ClinicController < ApplicationController
     @project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
 
     unless params[:target].nil? || @project.nil?
-      user = User.find(params[:target]) rescue nil
+      user = Core::User.find(params[:target]) rescue nil
 
       unless user.nil?
         user.user_properties.find_by_property("#{@project}.activities").delete

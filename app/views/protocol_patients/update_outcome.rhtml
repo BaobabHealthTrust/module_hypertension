@@ -15,8 +15,8 @@
 	</script>
 
 <form method='post' action='/encounters/create'>
-	<input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
-	<input type='hidden' name='encounter_type' value='OUTCOME ' />
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+	<input type='hidden' name='encounter_type' value='UPDATE OUTCOME' />
 	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
 	<input type='hidden' name='user_id' value='<%= @user.id %>' />
 	<table>
@@ -25,7 +25,7 @@
 				Outcome
 			</td>
 			<td>
-<select id='1.1.1' name='concept[asthma[][outcome]]' helpText='Outcome <span id="helper">Outcomes</span> ' field_type='number'  pos='1' >
+<select id='1.1.1' name='concept[outcome]' helpText='Outcome' field_type='number'  pos='1' tt_onLoad="showCategory('Visit Outcome')" >
 <option></option>
 <option value='Defaulted'>Defaulted</option>
  <option value='Stop treatment'>Stop treatment</option>

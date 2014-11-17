@@ -20,7 +20,7 @@
 </script>
 
 <form method='post' action='/encounters/create'>
-  <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+  <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
   <input type='hidden' name='encounter_type' value='TREATMENT' />
   <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
   <input type='hidden' name='user_id' value='<%= @user.id %>' />
@@ -70,8 +70,8 @@
           <select id="1.1.2" name="concept[treatment][]"
                   condition='__$("1.1.1").value.toLowerCase() == "mild"'
                   multiple='true'
-                  tt_onload=""
-                  helpText='Recommended Treatment for category : <%= @category %><span id="helper">Treatment</span>'
+                  tt_onload="showCategory('Treatment')"
+                  helpText='Recommended Treatment for category : <%= @category %>'
                   optional='true'>
                     <% if @bp < @normal_bp %>
               <option value="Aspirin">Aspirin (75mg tablet)</option>
@@ -94,21 +94,22 @@
 
           <%= select_tag "recommended treatment", options_for_select(@moderate_list),
             { :field_type => 'text',
-            :helpText => "Treatment Recommendation for category : Moderate<span id='helper'>Treatment</span>",
+            :helpText => "Treatment Recommendation for category : Moderate",
             :id => "recommended_treatment",
             :name=> "concept[treatment][]",
             :condition => '$("1.1.1").value.toLowerCase() == "moderate"',
             :multiple => true,
             :tt_pageStyleClass => "MultiSelectList",
+            :tt_onload=>"showCategory('Treatment')",
             :optional => true} %>
 
           <select id="recommended_treatment" name="concept[treatment][]"
                   condition='__$("1.1.1").value.toLowerCase() == "severe"'
                   multiple='multiple'
-                  tt_onload=""
+                  tt_onload="showCategory('Treatment')"
                   tt_pageStyleClass = "MultiSelectList"
                    
-                  helpText='Recommended Treatment for category : <%= @category %><span id="helper">Treatment</span>'
+                  helpText='Recommended Treatment for category : <%= @category %>'
                   optional='true'>
             <option></option>
             
@@ -146,14 +147,14 @@
         %>
           <%= select_tag "You receive helpful advice on important things in your life", options_for_select(@changes_list),
             { :field_type => 'text',
-            :helpText => "Advise on Life Changes<span id='helper'>Treatment</span>",
+            :helpText => "Advise on Life Changes",
             :id => "1.1.3",
             :name=> "concept[You receive helpful advice on important things in your life][]",
             :multiple => true,
             :tt_pageStyleClass => "MultiSelectList",
             :condition => '__$("1.1.1").value.toLowerCase() == "mild"',
             :optional => true,
-            :tt_onload=> ""} %>
+            :tt_onload=> "showCategory('Treatment')"} %>
 
         </td>
       </tr>
@@ -165,8 +166,8 @@
           <% if params[:ext].to_i != 1 %>
             <% unless @previous_treatment.blank? %>
               <select id='1.1.4' name='concept[continue treatment]'
-                      helpText='Is current treatment effective  for category : <%= @category %> ?<span id="helper">Treatment</span>' pos='4'
-                      condition='__$("1.1.1").value.toLowerCase() != "mild"' tt_onload="" >
+                      helpText='Is current treatment effective  for category : <%= @category %> ?' pos='4'
+                      condition='__$("1.1.1").value.toLowerCase() != "mild"' tt_onload="showCategory('Treatment')" >
                 <option></option>
                 <option value='No'>No</option>
                 <option value='Yes'>Yes</option>
@@ -183,9 +184,9 @@
         <td>
           <select id='1.1.5'
                   name='concept[Refer to other hospital]'
-                  helpText='Refer to Secondary Level? <span id="helper">Treatment</span>' pos='5'
+                  helpText='Refer to Secondary Level? ' pos='5'
                   condition='(__$("1.1.1").value.toLowerCase() == "moderate" || __$("1.1.1").value.toLowerCase() == "severe") &&  __$("1.1.4").value.toLowerCase() == "no"'
-                  tt_onload="">
+                  tt_onload="showCategory('Treatment')">
             <option></option>
             <option value='Refer to Tertial Level'>Refer to Tertial Level</option>
             <option value='Refer to Secondary Level'>Refer to Secondary Level</option>
@@ -207,10 +208,10 @@
             {	:id => "location",
             :value_datetime => true,
             :name => "concept[Patient referred to another site]",
-            :helpText => "Select Location<span id='helper'>Treatment</span>",
+            :helpText => "Select Location",
             :ajaxURL => "#{ajax_url}",
             :condition => '$("1.1.5").value != "UNKNOWN" && $("1.1.4").value.toLowerCase() == "no" && $("1.1.5").value == "Refer to Secondary Level"',
-            :tt_onload=> "",
+            :tt_onload=> "showCategory('Treatment')",
             :tt_onUnload => "changeProgram()"}%>
         </td>
 
@@ -219,10 +220,10 @@
             {	:id => "location",
             :value_datetime => true,
             :name => "concept[Patient referred to another site]",
-            :helpText => "Select Tertiary Location<span id='helper'>Treatment</span>",
+            :helpText => "Select Tertiary Location",
             :ajaxURL => "#{ajax_url1}",
             :condition => '$("1.1.5").value != "UNKNOWN" && $("1.1.4").value.toLowerCase() == "no" && $("1.1.5").value == "Refer to Tertial Level"',
-            :tt_onload=> "",
+            :tt_onload=> "showCategory('Treatment')",
             :tt_onUnload => "changeProgram()"}%>
         </td>
 
@@ -230,9 +231,9 @@
 
           <select id='1.1.10'
                   name='concept[Reason for referral][]'
-                  helpText='Referal Reason<span id="helper">Treatment</span>'
+                  helpText='Referal Reason'
                   multiple='multiple'
-                  tt_onload=""
+                  tt_onload="showCategory('Treatment')"
                   tt_pageStyleClass = "MultiSelectList"
                    
                   condition='$("1.1.5").value != "UNKNOWN" && $("1.1.4").value.toLowerCase() == "no"' >
@@ -252,13 +253,13 @@
         <% @changes_list = ["Cigarette or smoke free environment", "Correct use of in-haler", "Loose weight", "Breathing control exercise", "Allergen avoidance", "Acid reflux"] %>
         <%= select_tag "You receive helpful advice on important things in your life", options_for_select(@changes_list),
           { :field_type => 'text',
-          :helpText => "Advise on Life Changes<span id='helper'>Treatment</span>",
+          :helpText => "Advise on Life Changes",
           :id => "1.1.3",
           :name=> "concept[You receive helpful advice on important things in your life][]",
           :multiple => true,
           :tt_pageStyleClass => "MultiSelectList",
           :optional => true,
-          :tt_onload=> ""} %>
+          :tt_onload=> "showCategory('Treatment')"} %>
       <% end %>
     </tr>
 
@@ -268,7 +269,7 @@
       </td>
       <td>
         <% if params[:ext].to_i != 1 %>
-          <select id='1.1.7' name='concept[Prescribe Drugs]' helpText='Prescribe Drugs?<span id="helper">Treatment</span> ' pos='7' tt_onload="">
+          <select id='1.1.7' name='concept[Prescribe Drugs]' helpText='Prescribe Drugs? ' tt_onload="showCategory('Treatment')" pos='7' tt_onload="">
             <option></option>
             <option value='Yes'>Yes</option>
             <option value='No'>No</option>
