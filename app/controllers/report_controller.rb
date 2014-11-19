@@ -12,11 +12,13 @@ class ReportController < ApplicationController
   end
 
   def among_those_with_hypertension
-
+   @start_date = "#{params[:year]}/#{params[:month]}/01".to_date
+   @end_date = @start_date.end_of_month
   end
 
   def alive_and_in_care_report
-
+   @start_date = "#{params[:year]}/#{params[:month]}/01".to_date
+   @end_date = @start_date.end_of_month
   end
 
   def program_evaluation_baseline
@@ -36,7 +38,17 @@ class ReportController < ApplicationController
   end
 
   def total_screened
-     render :json => [8,8,9,3,1,8,2,3].to_json and return
+
+   bp_concepts = Core::ConceptName.find(:all,:conditions => ["name in (?)",
+                                  ['Systolic blood pressure','Diastolic blood pressure']]).collect { |x| x.concept_id }
+
+   patients = Core::Observation.patients_with_particular_observations(bp_concepts, params[:start_date].to_date,params[:end_date].to_date)
+
+   if params[:gender]
+     patients = Core::Person.find(:all, :conditions => ["person_id in (?) AND COALESCE(gender,'unknown') in (?)",
+                                                        patients,params[:gender] ]).collect{ |x| x.person_id}
+   end
+   render :json => patients.to_json
   end
 
   def total_screened_by_outcome(start_date, end_date, outcome)

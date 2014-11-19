@@ -1,0 +1,375 @@
+<link rel="stylesheet" type="text/css" href="/stylesheets/prescription/application.css" media="screen" />
+
+<div class="report_header">
+  <%= " Among Those With Hypertension Report for #{Date::MONTHNAMES[params[:month].to_i]} #{params[:year]} "%>
+</div>
+
+
+<div id="report_content" class="report_content">
+  <table class="report_table" >
+    <thead>
+    <tr>
+      <td style="padding-left: 10px;">Field</td>
+      <td style="width: 20%;text-align: center;">Monthly</td>
+      <td style="width: 20%;text-align: center;">Cumulative</td>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="sectionHeading">Total with diagnosis of hypertension</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Outcome Occurred</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Alive and in care</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Opted out of care</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Death</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Lost to follow up</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Transferred</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown / Missing</td>
+          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Sex</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Female</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Male</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Age Groups</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">20 - 29 </td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">30 - 39</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">40 - 49</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">50 - 59</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle"> >= 60</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Cardiovascular disease risk factors</td>
+        </tr>
+        <tr>
+          <td colspan="3" class="fieldTitle">Diabetes</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Yes</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">No</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="fieldTitle">Smoking</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Yes</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">No</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Never</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Body Mass Index (BMI)</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle"> <18.5 - 24.9 </td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">25 - 29.9</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">>= 30</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Hypertension Treatment And Control</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">On antihypertensive medications</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Blood Pressure < 140/90 </td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Hypertensive Medications</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Hydrochlorothiazide</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Bendrofluazide < 140/90 </td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Amlodipine</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Nifedipine SR< 140/90 </td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Enalapril</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Captopril</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Atenool</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Propanolol</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Other</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown/missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Antiretroviral Therapy</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 0A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 1A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 2A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 3A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 4A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 5A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 6A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 7A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Regimen 8A</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Other</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">HIV Indicators</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Baseline CD4 cell count (cell/ml)</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;"> < 200</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;"> 200 - 500</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;"> > 500</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Viral Load</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Undetectable</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Detectable</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td colspan="3" class="sectionHeading">Tuberculosis (TB)</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Never TB/ TB > 12months ago</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">TB with the last 12 months</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Current Episode of TB</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown / Missing</td>
+          <td><div class="clickable">&nbsp;</div></td>
+          <td><div class="clickable">&nbsp;</div></td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="footer">
+  <div id="buttons" class="buttonsDiv" style="">
+    <button id="finishButton" class="button navButton green" onclick="window.location='/'"><span>Finish</span></button>
+  </div>
+</div>
+
+<script type="text/javascript" src="/javascripts/jquery.js"></script>
+<script type="text/javascript" src="/javascripts/application.js"></script>

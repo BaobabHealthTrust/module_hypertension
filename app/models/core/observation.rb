@@ -175,5 +175,10 @@ module Core
       [formatted_name, self.answer_string(tags)]
     end
 
+   def self.patients_with_particular_observations(concepts,start_date= "1900/01/01".to_date, end_date=Date.today)
+    Core::Observation.find_by_sql("SELECT DISTINCT person_id FROM obs WHERE concept_id in (#{concepts.join(',')})
+    AND obs_datetime BETWEEN '#{start_date.strftime('%Y-%m-%d 00:00:00')}' AND
+    '#{end_date.strftime('%Y-%m-%d 23:59:59')}' AND voided = 0").collect { |x| x.person_id }
+   end
   end
 end
