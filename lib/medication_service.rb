@@ -1,13 +1,14 @@
 module MedicationService
   require 'csv'
 
+
 	def self.arv(drug)
 		arv_drugs.map(&:concept_id).include?(drug.concept_id) rescue false
 	end
 
 	def self.arv_drugs
-		arv_concept       = ConceptName.find_by_name("ANTIRETROVIRAL DRUGS").concept_id
-		arv_drug_concepts = ConceptSet.all(:conditions => ['concept_set = ?', arv_concept])
+		arv_concept       = Core::ConceptName.find_by_name("ANTIRETROVIRAL DRUGS").concept_id
+		arv_drug_concepts = Core::ConceptSet.all(:conditions => ['concept_set = ?', arv_concept])
 		arv_drug_concepts
 	end
 
@@ -16,8 +17,8 @@ module MedicationService
 	end
 
 	def self.tb_drugs
-		tb_medication_concept       = ConceptName.find_by_name("Tuberculosis treatment drugs").concept_id
-		tb_medication_drug_concepts = ConceptSet.all(:conditions => ['concept_set = ?', tb_medication_concept])
+		tb_medication_concept       = Core::ConceptName.find_by_name("Tuberculosis treatment drugs").concept_id
+		tb_medication_drug_concepts = Core::ConceptSet.all(:conditions => ['concept_set = ?', tb_medication_concept])
 		tb_medication_drug_concepts
 	end
 	
@@ -26,8 +27,8 @@ module MedicationService
 	end	
 	
 	def self.diabetes_drugs
-		diabetes_medication_concept       = ConceptName.find_by_name("DIABETES MEDICATION").concept_id
-		diabetes_medication_drug_concepts = ConceptSet.all(:conditions => ['concept_set = ?', diabetes_medication_concept])
+		diabetes_medication_concept       = Core::ConceptName.find_by_name("DIABETES MEDICATION").concept_id
+		diabetes_medication_drug_concepts = Core::ConceptSet.all(:conditions => ['concept_set = ?', diabetes_medication_concept])
 		diabetes_medication_drug_concepts
 	end
 
@@ -74,7 +75,7 @@ module MedicationService
   end
   
   def self.current_treatment_encounter(patient)
-    type = EncounterType.find_by_name("TREATMENT")
+    type = Core::EncounterType.find_by_name("TREATMENT")
     encounter = patient.encounters.current.find_by_encounter_type(type.id)
     encounter ||= patient.encounters.create(:encounter_type => type.id)
   end
@@ -84,7 +85,7 @@ module MedicationService
  
  		medication_tag = CoreService.get_global_property_value("application_generic_medication")
  			   
-    all_drugs = Drug.all.collect {|drug|
+    all_drugs = Core::Drug.all.collect {|drug|
       # [Concept.find(drug.concept_id).name.name, drug.concept_id] rescue nil
 
       [(drug.concept.fullname rescue drug.concept.shortname rescue ' '), drug.concept_id]
@@ -103,7 +104,7 @@ module MedicationService
   end
 
   def self.frequencies
-    ConceptName.find_by_sql("SELECT name FROM concept_name WHERE concept_id IN \
+   Core::ConceptName.find_by_sql("SELECT name FROM concept_name WHERE concept_id IN \
                         (SELECT answer_concept FROM concept_answer c WHERE \
                         concept_id = (SELECT concept_id FROM concept_name \
                         WHERE name = 'DRUG FREQUENCY CODED')) AND concept_name_id \
@@ -115,8 +116,8 @@ module MedicationService
   end
   
 	def self.fully_specified_frequencies
-		concept_id = ConceptName.find_by_name('DRUG FREQUENCY CODED').concept_id
-		set = ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
+		concept_id = Core::ConceptName.find_by_name('DRUG FREQUENCY CODED').concept_id
+		set = Core::ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
 		frequencies = []
 		options = set.each{ | item | 
 			next if item.concept.blank?
@@ -125,15 +126,15 @@ module MedicationService
 		frequencies
 	end
   
-	def self.dosages(generic_drug_concept_id)    
-		Drug.find(:all, :conditions => ["concept_id = ?", generic_drug_concept_id]).collect {|d|
+	def self.dosages(generic_drug_concept_id)
+  Core::Drug.find(:all, :conditions => ["concept_id = ?", generic_drug_concept_id]).collect {|d|
 			["#{d.name.upcase rescue ""}", "#{d.dose_strength.to_f rescue 1}", "#{d.units.upcase rescue ""}"]
 		}.uniq.compact rescue []
 	end
 	
   def self.concept_set(concept_name)
-    concept_id = ConceptName.find(:first, :conditions =>["name = ?", concept_name]).concept_id
-    set = ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
+    concept_id = Core::ConceptName.find(:first, :conditions =>["name = ?", concept_name]).concept_id
+    set = Core::ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
     options = set.map{|item|next if item.concept.blank? ; [item.concept.fullname, item.concept.concept_id] }
     return options
   end
@@ -151,9 +152,9 @@ module MedicationService
       possible_combinations[regimen] << row[1].strip
     end
    
-    amount_dispensed_concept = ConceptName.find_by_name('Amount dispensed').concept
+    amount_dispensed_concept = Core::ConceptName.find_by_name('Amount dispensed').concept
     dispensed_drugs = []
-    dispensed_arvs_ids = Observation.find_by_sql("
+    dispensed_arvs_ids = Core::Observation.find_by_sql("
       SELECT drug_inventory_id FROM obs
       INNER JOIN drug_order d ON d.order_id = obs.order_id
       AND obs.voided = 0 AND obs.concept_id = #{amount_dispensed_concept.id}
@@ -181,9 +182,9 @@ module MedicationService
   end
 
   def self.latest_arv_dispensed_date(patient_id)
-    amount_dispensed_concept = ConceptName.find_by_name('Amount dispensed').concept
+    amount_dispensed_concept = Core::ConceptName.find_by_name('Amount dispensed').concept
     
-    obs = Observation.find_by_sql("
+    obs = Core::Observation.find_by_sql("
       SELECT MAX(obs_datetime) obs_datetime FROM obs
       INNER JOIN drug_order d ON d.order_id = obs.order_id
       AND obs.voided = 0 AND obs.concept_id = #{amount_dispensed_concept.id}
@@ -195,11 +196,11 @@ module MedicationService
   end
 
  def self.hypertension_drugs
-  hypertension_medication_concept  = ConceptName.find_by_name("HYPERTENSION MEDICATION").concept_id
-  diabetes_medication_concept  = ConceptName.find_by_name("DIABETES MEDICATION").concept_id
-  cardiac_medication_concept   = ConceptName.find_by_name("CARDIAC MEDICATION").concept_id
-  kidney_failure_medication_concept       = ConceptName.find_by_name("KIDNEY FAILURE CARDIAC MEDICATION").concept_id
-  medication_drug_concepts = ConceptName.find_by_sql("SELECT * FROM concept_set WHERE concept_set
+  hypertension_medication_concept  = Core::ConceptName.find_by_name("HYPERTENSION MEDICATION").concept_id
+  diabetes_medication_concept  = Core::ConceptName.find_by_name("DIABETES MEDICATION").concept_id
+  cardiac_medication_concept   = Core::ConceptName.find_by_name("CARDIAC MEDICATION").concept_id
+  kidney_failure_medication_concept       = Core::ConceptName.find_by_name("KIDNEY FAILURE CARDIAC MEDICATION").concept_id
+  medication_drug_concepts = Core::ConceptName.find_by_sql("SELECT * FROM concept_set WHERE concept_set
 		IN (#{hypertension_medication_concept}, #{diabetes_medication_concept}, #{cardiac_medication_concept},
          #{kidney_failure_medication_concept})")
 
