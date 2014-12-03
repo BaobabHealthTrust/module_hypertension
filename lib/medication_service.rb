@@ -195,7 +195,7 @@ module MedicationService
     return obs.first.obs_datetime
   end
 
- def self.hypertension_drugs
+ def self.hypertension_dm_drugs
   hypertension_medication_concept  = Core::ConceptName.find_by_name("HYPERTENSION MEDICATION").concept_id
   diabetes_medication_concept  = Core::ConceptName.find_by_name("DIABETES MEDICATION").concept_id
   cardiac_medication_concept   = Core::ConceptName.find_by_name("CARDIAC MEDICATION").concept_id

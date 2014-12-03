@@ -9,7 +9,7 @@ module Core
     belongs_to :patient, :class_name => 'Core::Patient', :conditions => {:voided => 0}
     belongs_to :provider, :foreign_key => 'orderer', :class_name => 'Core::User', :conditions => {:voided => 0}
     belongs_to :observation, :foreign_key => 'obs_id', :class_name => 'Core::Observation', :conditions => {:voided => 0}
-    has_one :drug_order # no default scope
+    has_one :drug_order, :class_name => 'Core::DrugOrder' # no default scope
 
     named_scope :current, :conditions => 'DATE(encounter.encounter_datetime) = CURRENT_DATE()', :include => :encounter
     named_scope :historical, :conditions => 'DATE(encounter.encounter_datetime) <> CURRENT_DATE()', :include => :encounter

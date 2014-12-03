@@ -402,12 +402,13 @@ module PatientService
   end
 
   def self.current_treatment_encounter(patient, date = Time.now(), provider = user_person_id)
-    type = EncounterType.find_by_name("TREATMENT")
+    type = Core::EncounterType.find_by_name("TREATMENT")
     encounter = patient.encounters.find(:first,:conditions =>["encounter_datetime BETWEEN ? AND ? AND encounter_type = ?",
     									date.to_date.strftime('%Y-%m-%d 00:00:00'),
     									date.to_date.strftime('%Y-%m-%d 23:59:59'),
     									type.id])
     encounter ||= patient.encounters.create(:encounter_type => type.id,:encounter_datetime => date, :provider_id => provider)
+
   end
 
   def self.count_by_type_for_date(date)

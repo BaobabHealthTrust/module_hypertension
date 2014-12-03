@@ -34,7 +34,7 @@ class HtnEncounterController < ApplicationController
 
    if @patient.get_general_health(session[:datetime])
     @existing_conditions = ["Heart disease", "Stroke", "TIA", "Diabetes", "Kidney Disease"]
-    @drugs = MedicationService.hypertension_drugs.collect { |x| x.concept.fullname}
+    @drugs = MedicationService.hypertension_dm_drugs.collect { |x| x.concept.fullname}
     @drugs = @drugs.sort.uniq
    else
     redirect_to next_task(@patient)

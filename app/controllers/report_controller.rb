@@ -15,8 +15,8 @@ class ReportController < ApplicationController
    @start_date = "#{params[:year]}/#{params[:month]}/01".to_date
    @end_date = @start_date.end_of_month
 
-   htn_patients = Core::PatientProgram.find(:all, :conditions => ["program_id = ? ",
-                                                                  Core::Program.find_by_name("HYPERTENSION PROGRAM").id])
+   htn_patients = Core::PatientProgram.find(:all, :conditions => ["program_id = ? AND date_enrolled <= ?",
+                                                                  Core::Program.find_by_name("HYPERTENSION PROGRAM").id,@end_date])
 
    @htn_patients = htn_patients.collect { |x| x.patient_id }.uniq
 
@@ -241,6 +241,7 @@ class ReportController < ApplicationController
                           (SELECT DISTINCT person_id FROM obs WHERE concept_id = #{indicator}
                           AND voided = 0 AND obs_datetime <= '#{params[:end_date].to_date.strftime('%Y-%m-%d 23:59:59')}')
                           AND person_id in  (#{(params[:ids].blank? ? -1 : params[:ids])})").collect { |x| x.person_id }
+
     when "controlled bp"
      sbp_concept = Core::Concept.find_by_name('Systolic blood pressure').id
      dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
@@ -257,6 +258,47 @@ class ReportController < ApplicationController
                                         FROM obs as o WHERE o.person_id in  (#{(params[:ids].blank? ? -1 : params[:ids])})
                                         HAVING SBP BETWEEN #{params[:start_sbp]} AND #{params[:end_sbp]} AND DBP BETWEEN
                                         #{params[:start_dbp]} AND #{params[:end_dbp]}").collect { |x| x.person_id }
+    when "answer in range"
+     factor = Core::Concept.find_by_name(params[:factor]).id
+     answer = Core::ConceptName.find(:all, :conditions => ["name in (?)",params[:answer].split(',')]).collect{ |x| x.concept_id}
+
+     patients = Core::Observation.find_by_sql("SELECT DISTINCT person_id FROM obs
+                                               WHERE person_id in  (#{(params[:ids].blank? ? -1 : params[:ids])}) AND
+                                               obs_datetime BETWEEN '#{params[:start_date].to_date.strftime('%Y-%m-%d 00:00:00')}'
+                                               AND '#{params[:end_date].to_date.strftime('%Y-%m-%d 23:59:59')}' AND
+                                               concept_id = #{factor} AND value_coded in
+                                               (#{answer.join(',')})").collect { |x| x.person_id }
+
+
+    when "on drug"
+      patients = Core::Order.find_by_sql("SELECT p.patient_id FROM patient p
+              INNER JOIN encounter e ON e.patient_id = p.patient_id
+              INNER JOIN orders o ON o.encounter_id = e.encounter_id
+              INNER JOIN concept_name c ON c.concept_id = o.concept_id
+              WHERE c.`name` like '%#{params[:drug]}%' AND e.voided = 0
+			           AND o.start_date BETWEEN '#{params[:start_date].to_date.strftime('%Y-%m-%d 00:00:00')}'
+              AND '#{params[:end_date].to_date.strftime('%Y-%m-%d 23:59:59')}'
+              AND p.patient_id IN (#{(params[:ids].blank? ? -1 : params[:ids])})").collect { |x| x.patient_id }
+
+    when "outcomes"
+     outcomes = {"alive" => "'On treatment','Lifestyle Changes Only'",
+                 "dead" => "'Patient died'", 'lof' => "'Patient defaulted'",
+                 'transferred' => "'Patient transferred out'",
+                 'opted out' => "'Patient opted out'", 'unknown' => "'unknown','alive'"}
+
+     htn_program = Core::Program.find_by_name("HYPERTENSION PROGRAM").id
+
+     patients = Core::PatientState.find_by_sql("SELECT DISTINCT p.patient_id FROM patient p
+                INNER JOIN  patient_program pp on pp.patient_id = p.patient_id
+                inner join patient_state ps on ps.patient_program_id = pp.patient_program_id
+                INNER JOIN  program_workflow_state pw ON
+                pw.program_workflow_state_id = current_state_for_program(p.patient_id, #{htn_program},'#{params[:end_date].to_date}')
+                INNER JOIN concept_name c ON c.concept_id = pw.concept_id WHERE
+                ps.start_date <= '#{params[:end_date].to_date}'
+                AND ps.start_date >= '#{params[:start_date].to_date}'
+                AND c.name IN (#{outcomes[params[:outcome]]})
+                AND p.patient_id IN (#{(params[:ids].blank? ? -1 : params[:ids])})").collect { |x| x.patient_id }
+
    end
 
    render :json => patients.to_json
