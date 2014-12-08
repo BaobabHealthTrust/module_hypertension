@@ -1,21 +1,93 @@
-<script>
-    var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>";
-</script>
-<style type="text/css">
-    #summary {
-        padding: 0px;
-        font-size:1.2em;
-        margin-left: 25px;
-        height: 70vh;
-        max-height: 80vh;
-        overflow: hide;
-
+<style>
+    #helper {
+        display: block;
+        float:right;
+        color: black;
+        background-color: #EEFFEE;
+        border: 1px solid #CCCCCC;
+        border-radius: 20px 20px 20px 20px;
+    }
+    #tt_page_select_vital_signs .inputFrameClass {
+        height: 495px;
     }
 
-    #charts {
+    #tt_page_select_vital_signs .options {
+        height: 19em;
+    }
+
+    #tt_page_life_threatening_condition .inputFrameClass {
+        height: 480px;
+    }
+
+    #tt_page_life_threatening_condition .options {
+        height: 17em;
+    }
+
+
+
+    #tt_page_select_triage_category .inputFrameClass {
+        height: 11em;
+    }
+
+    #tt_page_select_triage_category .options {
+        height: 17em;
+    }
+
+    #tt_page_summary .inputFrameClass {
+        height: 610px;
+    }
+    #tt_page_summary #viewport {
+        height: 560px;
+    }
+    /* ................................ */
+
+    #summary_container {
+        bottom: 124px;
+        font-size: 20px;
+        left: 25px;
         position: absolute;
-        width: 95% ! important;
-        height: 60% ! important;
+        z-index: 600;
+        border-radius: 10px 10px 10px 10px;
+        width: 47.2em;
+        border-style: solid;
+        border-width: 1px;
+        background-color: lightgrey;
+        display: none;
+        -moz-user-select: none;
+        height: 18em;
+        overflow: auto;
+    }
+
+    .summary {
+        font-size: 27px;
+        padding-left: 15px;
+    }
+
+    .data {
+        color: black;
+        font-size: 25px;
+    }
+
+    .header {
+        font-size: 27px;
+        color: white;
+        padding-left: 30px;
+        border-style: solid;
+        border-width: 0px 0px 1px 0px;
+    }
+    .alertLabel {
+        background-color: #EEFFEE;
+        color: #FF0000;
+        border: 1px solid #CCCCCC;
+        border-radius: 20px 20px 20px 20px;
+        font-size: 2em;
+        left: -475px;
+        margin-left: 50%;
+        padding: 15px;
+        position: absolute;
+        top: 210px;
+        width: 915px;
+        display: none;
     }
 
     #char {
@@ -25,8 +97,6 @@
         text-decoration:underline;
         margin-right:10px;
     }
-
-
 
     .lowWeightForHeight{color:black;background:red;}
     .medWeightForHeight {color:black;background:yellow;}
@@ -39,41 +109,19 @@
     .medHeightForAge {color:black;background:yellow;}
     .goodHeightForAge {color:black;}
 
-    #tt_page_summary .inputFrameClass { height:90%;}
-    .inputFrameClass, .touchscreenTextInput, .keyboard, .inputPage{
-        width: 97.5%;
-    }
-
-    #qwerty{ display:none; }
-
     .unknownButton .numericKeyboard #char, #slash, #star, #plus, #date, #minus, #comma, #percent {
         display: none;
     }
-
 </style>
+
 <script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
 <script language="javascript" type="text/javascript" src="/javascripts/jquery.js"></script>
-
-<%= javascript_include_tag "Highcharts/js/jquery.min.js" %>
-<script type="text/javascript">
-    function hasHighBp()
-    {
-        var sbp = document.getElementById("systolic_blood_pressure").value
-        var dbp = document.getElementById("diastolic_blood_pressure").value
-
-        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
-            return true
-        }
-        else
-        {
-            return false
-        }
-    }
-</script>
+<script language="javascript" type="text/javascript" src="/javascripts/jquery.flot.js"></script>
 <script language="javascript">
     jQuery.noConflict();
 
-
+    tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+    tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
     var currentBmi;
     var currentWeight;
     var currentHeight;
@@ -81,99 +129,235 @@
     var currentWeightPercentile;
     var displayText;
     var medianWeightHeight;
+    var systolicColor = "";
+    var diastolicColor = "";
+    var conditions = [];
+    var timedEvent;
+    var bpOverRide = false;
 
-    <%
-    dateToday = session[:datetime].to_date rescue Date.today
-    %>
-    age = "<%=  @patient.person.age(dateToday) rescue 99999%>"
+    function getComplaints(){
+        var complaints = "";
+
+        for(var o = 0; o < $('multiple').options.length; o++){
+            if($('multiple').options[o].selected == true){
+                complaints += $('multiple').options[o].innerHTML + " ";
+            }
+        }
+
+        return complaints;
+    }
+
+    function calculateBP(pos){
+        var bp;
+
+        if(!$('bp')){
+            var div = document.createElement("div");
+            div.id = "bp";
+            div.className = "statusLabel";
+
+            $("inputFrame" + tstCurrentPage).appendChild(div);
+        }
+
+        if(pos == 1){
+            if (parseInt($("touchscreenInput" + tstCurrentPage).value) >= 120 && parseInt($("touchscreenInput" + tstCurrentPage).value) < 140){
+                systolicColor = ": #FFE47A"
+            }
+            if (parseInt($("touchscreenInput" + tstCurrentPage).value) >= 140 && parseInt($("touchscreenInput" + tstCurrentPage).value) < 160){
+                systolicColor = ": #FF9933"
+            }
+
+            if (parseInt($("touchscreenInput" + tstCurrentPage).value) >= 160 && parseInt($("touchscreenInput" + tstCurrentPage).value) <= 180){
+                systolicColor = ": #FF3333"
+            }
+
+            if ( parseInt($("touchscreenInput" + tstCurrentPage).value) < 120)
+                systolicColor = ": #336600"
+
+            if ( parseInt($("touchscreenInput" + tstCurrentPage).value) > 180)
+                systolicColor = ": #B8002E"
+
+            bp = ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0 ? "<i style='color" + systolicColor + "'>" + $("touchscreenInput" +
+                    tstCurrentPage).value.trim() + "</i>" : "?") +
+                    "/" + ($("diastolic_blood_pressure").value.trim().length > 0 ? "<i style='color" + diastolicColor + "'>" + $("diastolic_blood_pressure").value.trim() + "</i>" : "?");
+            $("bp").innerHTML = "Blood Pressure: <i style='font-size: 1.2em; float: right;'>" + bp + "</i>";
+        } else if(pos == 2){
+
+            if (parseInt($("touchscreenInput" + tstCurrentPage).value) >= 80 && parseInt($("touchscreenInput" + tstCurrentPage).value) < 90){
+                diastolicColor = ": #FFE47A"
+            }
+            if (parseInt($("touchscreenInput" + tstCurrentPage).value) >= 90 && parseInt($("touchscreenInput" + tstCurrentPage).value) < 100){
+                diastolicColor = ": #FF9933"
+            }
+
+            if (parseInt($("touchscreenInput" + tstCurrentPage).value) >= 100 && parseInt($("touchscreenInput" + tstCurrentPage).value) <= 110){
+                diastolicColor = ": #FF3333"
+            }
+
+            if ( parseInt($("touchscreenInput" + tstCurrentPage).value) < 80)
+            {
+                diastolicColor = ": #336600"
+            }
+
+
+            if ( parseInt($("touchscreenInput" + tstCurrentPage).value) > 110){
+                diastolicColor = ": #B8002E"
+            }
+
+
+            bp = ($("systolic_blood_pressure").value.trim().length > 0 ? "<i style='color" + systolicColor + "'>" + $("systolic_blood_pressure").value.trim() + "</i>" : "?") +
+                    "/" + ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0 ? "<i style='color" + diastolicColor + "'>" + $("touchscreenInput" +
+                    tstCurrentPage).value.trim() + "</i>" : "?");
+            $("bp").innerHTML = "Blood Pressure: <i style='font-size: 1.2em; float: right;'>" + bp + "</i>";
+        }else if(pos == 3){
+            if ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0)
+                if (parseInt($("touchscreenInput" + tstCurrentPage).value) > 130 || parseInt($("touchscreenInput" + tstCurrentPage).value) < 40){
+                    $("bp").innerHTML = "Pulse Rate: <i style='font-size: 1.2em; float: right;'>" + $("touchscreenInput" + tstCurrentPage).value + " : Emergency</i>";
+                }
+                else{
+                    $("bp").innerHTML = "Pulse Rate: <i style='font-size: 1.2em; float: right;'>" + $("touchscreenInput" + tstCurrentPage).value + ": Normal</i>";
+                }
+            else{
+                $("bp").innerHTML = "Pulse Rate: <i style='font-size: 1.2em; float: right;'> Specify</i>";
+            }
+        }else if(pos == 4){
+            if ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0)
+                if (parseInt($("touchscreenInput" + tstCurrentPage).value) < 90){
+                    $("bp").innerHTML = "Oxygen Saturation: <i style='font-size: 1.2em; float: right;'>" + $("touchscreenInput" + tstCurrentPage).value + " : Emergency</i>";
+                }
+                else{
+                    $("bp").innerHTML = "Oxygen Saturation: <i style='font-size: 1.2em; float: right;'>" + $("touchscreenInput" + tstCurrentPage).value + ": Normal</i>";
+                }
+            else{
+                $("bp").innerHTML = "Oxygen Saturation: <i style='font-size: 1.2em; float: right;'> Specify</i>";
+            }
+        }
+
+
+        timedEvent = setTimeout('calculateBP(' + pos + ')', 500);
+    }
+
+
+
+    /* starts */
+
+    function showSelectedConditions() {
+        currentHeight = '<%= @current_hieght.to_i %>';
+        console.log(currentHeight)
+        conditions = [];
+        sex = '<%= @patient.gender.downcase  rescue "" %>'
+        if (sex == "female")
+            sex = "f"
+
+        if (sex == "male")
+            sex = "m"
+
+        if ($('weight').value.length > 0){
+
+            currentWeight = $('weight').value
+            //console.log($('height').value)
+            conditions.push("Weight: " + $('weight').value);
+        }
+        try {
+
+            if ($('height').value.length > 0){
+                currentHeight = $('height').value;
+                conditions.push("Height: " + $('height').value);
+            }
+        } catch(e){
+
+        }
+
+        currentBmi = (currentWeight/(currentHeight*currentHeight)*10000).toFixed(1);
+        console.log(currentHeight)
+
+        conditions.push("BMI : " + currentBmi + "<br>");
+        //growthIndicators()
+        $('bmi').value = currentBmi;
+        var col = "<i>"
+
+        if ($('temperature').value.length > 0)
+            conditions.push("Temperature: " + $('temperature').value);
+
+
+        var alert = ""
+        var form = $('vitals');
+        if($('systolic_blood_pressure').value.length > 0 && $('diastolic_blood_pressure').value.length > 0){
+            if ($('systolic_blood_pressure').value < 120 && $('diastolic_blood_pressure').value < 80){
+                $("cva").value = "Normal"
+                alert = "  : <i style='color: #336600'> Normal</i>"
+                col = "<i style='color: #336600'>"
+            }
+
+            if (($('systolic_blood_pressure').value >= 120 && $('systolic_blood_pressure').value < 140) || ($('diastolic_blood_pressure').value >= 80 && $('diastolic_blood_pressure').value < 90)){
+                $("cva").value = "Uncoplicated hypertension"
+                alert = "  : <i style='color: #FFE47A'> Prehypertension</i>"
+                col = "<i style='color: #FFE47A'>"
+            }
+
+            if (($('systolic_blood_pressure').value >= 140 && $('systolic_blood_pressure').value < 160) || ($('diastolic_blood_pressure').value >= 90 && $('diastolic_blood_pressure').value < 100)){
+                $("cva").value = "Hypertension Stage 1"
+                alert = "  : <i style='color: #FF9933'> Hypertension Stage 1</i>"
+                col = "<i style='color: #FF9933'>"
+            }
+
+            if (($('systolic_blood_pressure').value >= 160 && $('systolic_blood_pressure').value < 180) || ($('diastolic_blood_pressure').value >= 100 && $('diastolic_blood_pressure').value < 110)){
+                $("cva").value = "Hypertension Stage 2"
+                alert = "  : <i style='color: #FF3333'> Hypertension Stage 2</i>"
+                col = "<i style='color: #FF3333'>"
+            }
+
+            if (($('systolic_blood_pressure').value >= 180) || ($('diastolic_blood_pressure').value >= 110)){
+                $("cva").value = "Hypertensive crisis"
+                alert = "  : <i style='color: #B8002E'> Hypertension Crisis. Emergency care needed </i>"
+                col = "<i style='color: #B8002E'>"
+            }
+
+            conditions.push("BP: "+ col + $('systolic_blood_pressure').value +"</i>/"+ col +$('diastolic_blood_pressure').value + "</i>" + alert);
+
+        }
+
+        //var container = $("summary_container");
+        var html
+        html = "<ul>"
+        for(var i=0;i < conditions.length;i++) {
+            if (conditions[i].length > 0)
+                html += "<li class='data'>" + conditions[i] + "</li>";
+
+        }
+        html += "</ul>"
+
+        //document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div><div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div>' ;
+        //conditions.push('<div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div>');
+        //jQuery('#charts').empty().load('/patients/graph/<%= @patient.id -%>?user_id=<%= @user.id %>&data=weight&currentWeight=' + currentWeight);
+
+        $('inputFrame'+tstCurrentPage).innerHTML = '<table width="100%"><tr><td width="50%" valign="top"><div id="summary">' + html + '</div></td><td  width="50%" valign="top"><div style="font-size:18px;">Weight Chart</div><div id="charts" style="margin:2px 6px 6px;padding:2px;width:500px;font-size:18px;"></div></td></tr></table>' ;
+     //   jQuery('#charts').empty().load('/patients/graph/<%= @patient.id -%>?user_id=<%= @user.id %>&data=weight&currentWeight=' + currentWeight);
+
+        $("clearButton").style.display = "none";
+    }
 
     function $(e) {
         return document.getElementById(e);
     }
 
-    function showSummary()
-    {
-        jQuery('#keyboard').empty();
-        displayText = "";
-        var sbp = document.getElementById("systolic_blood_pressure").value
-        var dbp = document.getElementById("diastolic_blood_pressure").value
-
-        displayText += "<div><span class='title'>Weight (Kg) :</span>" + __$('weight').value + "<br/>";
-        displayText += "<div><span class='title'>Height (cm) :</span>" + currentHeight + "<br/>";
-        displayText += "<div><span class='title'>BMI :</span>";
-        if (currentBmi > 18.5) {
-            displayText += currentBmi;
-        } else {
-            displayText += "<span class='lowBMI'>" + currentBmi + "</span> <span class='recommendation'>Eligible for therapeutic feeding</span>";
-        }
-        displayText += "</div>"
-
-        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
-
-            displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp +"/" +
-                    dbp + "</span><span class='recommendation'>Patient's blood pressure is high</span><br/>";
-        }
-        else
-        {
-            displayText += "<div><span class='title'>BP:</span>" + sbp +"/" + dbp + "<br/>";
-        }
-
-        displayText += "<div><span class='title'>Waist Circumference :</span>" + __$('waistCircumference').value + "<br/>";
-        displayText += "<div><span class='title'>Respiratory Rate :</span>" + __$('respiratoryRate').value + "<br/>";
-        displayText += "<div><span class='title'>Pulse Rate :</span>" + __$('pulseRate').value + "<br/>";
-        displayText += "<div><span class='title'>Oxygen Saturation :</span>" + __$('oxygenSaturation').value + "<br/>";
-        displayText += "<div><span class='title'>Temperature :</span>" + __$('temperature').value + "<br/>";
-        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>' ;
-    }
-
     function growthIndicators(){
         //These values pulled from the tt_onLoad bit in the third form...
-
         try{
             currentHeight = document.getElementById('height').value;
         }catch(e){
-            currentHeight = <%= @current_height %>
+            currentHeight = '<%= @current_height %>';
         }
 
         currentWeight = document.getElementById('weight').value;
-        medianWeightHeight = [<%= WeightHeightForAge.median_weight_height(@patient_bean.age_in_months, @patient.person.gender).join(',') rescue nil -%>];
+        medianWeightHeight = [<%= WeightHeightForAge.median_weight_height(@patient.age_in_months, @patient.gender).join(',') rescue nil -%>];
         currentWeightPercentile = (currentWeight/(medianWeightHeight[0])*100).toFixed(0);
         currentHeightPercentile = (currentHeight/(medianWeightHeight[1])*100).toFixed(0);
-        jQuery('#keyboard').empty();
-        if (('<%= @patient_bean.age %>') > 14) {
-            showBMI();
-        } else {
-            showWeightHeightForAge();
-            showWeightForHeight();
-        }
-
-        age = "<%=  @patient.person.age(dateToday) rescue 99999%>";
-        currentWeight = document.getElementById('weight').value;
-
-        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div>' + displayText + '</div><div id="charts" style="overflow: hidden;height:185px;margin:2px 6px 6px !important;padding:2px !important;width:380px;"></div></div>' ;
-
-
-        if (age < 6){
-            jQuery('#keyboard').empty();
-            jQuery('#charts').load('/patients/baby_chart/<%= @patient.id -%>?patient_id=<%= @patient.id -%>&cur_weight=' + currentWeight, null, function(){jQuery('#keyboard').hide(); hookKeyboard()});
-
-        }else{
-            jQuery('#keyboard').empty();
-            jQuery('#charts').empty().load('/patients/graphs/<%= @patient.id -%>?data=weight&currentWeight=' + currentWeight);
-        }
-
-    }
-
-    function hookKeyboard(){
-
-        __$("nextButton").onclick = function(){
-            __$('keyboard').style.display = "block";
-        }
-        __$("backButton").onclick = function(){
-            __$('keyboard').style.display = "block";
-
-        }
-
+        //if (('<%= @patient.age %>') > 14) {
+        showBMI();
+        // } else {
+        // showWeightHeightForAge();
+        // showWeightForHeight();
+        // }
     }
 
     function showWeightHeightForAge(){
@@ -204,27 +388,27 @@
 
     function showWeightForHeight() {
         var currentHeightRounded = (currentHeight % Math.floor(currentHeight) < 0.5 ? 0 : 0.5) + Math.floor(currentHeight);
-        var weightForHeights = <%= WeightForHeight.patient_weight_for_height_values.to_json -%>;
+        var weightForHeights = <%= Core::WeightForHeight.patient_weight_for_height_values.to_json -%>;
         var medianWeightHeight = weightForHeights[currentHeightRounded.toFixed(1)];
         var weightForHeightPercentile = (currentWeight/(medianWeightHeight)*100).toFixed(0);
 
         document.getElementById('weight_for_height').value = weightForHeightPercentile;
 
-        displayText += "<div id='displayText'><span class='title'>Weight for height:</span>";
+        displayText += "<div><span class='title'>Weight for height:</span>";
 
         if (weightForHeightPercentile >= 80) {
             displayText += "<span class='goodWeightForHeight'>" + weightForHeightPercentile + "%</span><br>";
         } else if (weightForHeightPercentile >= 75) {
             displayText += "<span class='medWeightForHeight'>" + weightForHeightPercentile + "%</span>" + " <span class='recommendation'> Moderate wasting</span><br>";
         } else {
-            displayText += "<span class='lowWeightForHeight'>" + weightForHeightPercentile + "%</span>" + "<span class='recommendation'> Severe wasting</span><br>";
+            displayText += "<span class='lowWeightForHeight'>" + weightForHeightPercentile + "%</span> <br/><span class='recommendation'> Severe wasting</span><br>";
         }
         displayText += "</div>";
     }
 
     function showBMI() {
         currentBmi = (currentWeight/(currentHeight*currentHeight)*10000).toFixed(1);
-        document.getElementById('bmi').value = currentBmi;
+        document.getElementById('bmi_value').value = currentBmi;
 
         displayText = "<div><span class='title'>BMI:</span>";
         if (currentBmi > 18.5) {
@@ -237,145 +421,115 @@
         displayText += "</div>";
     }
 
+    function captureBP()
+    {
+        if ((<%= htn_activated %>) && (<%= @patient_eligible %> || bpOverRide))
+        {
+          return true
+        }
+        else{
+          return false
+        }
+
+    }
+    /* end */
 
 </script>
 
-<form action="/htn_encounter/create/vitals">
-      <%= hidden_field_tag "encounter[encounter_type_name]", "VITALS" %>
-      <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
-      <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
-      <%= hidden_field_tag "encounter[provider_id]", User.current.user_id %>
+<form method='post' action='/encounters/create' id="vitals">
+  <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+  <input type='hidden' name='encounter_type' value='VITALS' />
+  <input type='hidden' name='encounter[encounter_type_name]' value='VITALS' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= @user.id %>' />
 
-      <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
+  <input type='hidden' name="concept[bmi]" id="bmi" />
+  <input type='hidden' name="concept[cardiovascular system diagnosis]" id="cva" />
+  <input type='hidden' name="concept[peak flow predicted]" id="estimated" />
+  <%= hidden_field_tag "bmi_value", true %>
+
+
+  <input type='text' id='temperature'
+         name='concept[Temperature]'
+         helpText='Temperature '
+         field_type='number'
+         pos='9'
+         allowFreeText = 'true'
+         condition = '<%= ask_temperature %>'
+         min = 35
+         max = 41
+         units = 'Degrees Celcius'  tt_onLoad="showCategory('Vitals')"
+         tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
+  />
+
+
+
+  <% if @patient_bean.age < 18 || @current_height == 0 %>
+      <input type='text' id='height'
+             name='concept[Height (cm)]'
+             helpText='Height (cm)'
+             field_type='number'
+             tt_pageStyleClass = "Numeric NumbersWithUnknown"
+             min = 50
+             max = 180 tt_onLoad=""
+      />
+  <% end %>
+
+
+  <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
                         {	:id => "weight",
-                            :field_type => "number",
-                            :tt_onLoad => "$('clearButton').style.display = 'inline';",
-                            :min => number_with_precision(@min_weight, :precision => 1),
-                            :max => number_with_precision(@max_weight, :precision => 1),
-                            :absoluteMin => 0,
-                            :absoluteMax => 250,
-                            :units => 'kg',
-                            :validationRule => "([0-9]+\\.[0-9])|Unknown$",
-                            :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                            :tt_pageStyleClass => "Keyboard Numeric NumbersOnlyWithDecimal",
-                            :helpText => "Weight (Kg)" } %>
-
-      <% if @patient_bean.age > 18 and not @current_height == 0 %>
-          <%= touch_hidden_tag "HEIGHT (CM)", @patient, @current_height %>
-      <% else %>
-          <%= touch_numeric_tag "HEIGHT (CM)", @patient, nil,
-                        {	:id => "height",
-                            :field_type => "number",
-                            :min => number_with_precision(@min_height, :precision => 1),
-                            :max => number_with_precision(@max_height, :precision => 1),
-                            :absoluteMin => 10,
-                            :absoluteMax => 228,
-                            :units => 'cm',
-                            :validationRule => "^([0-9]+)|Unknown$",
-                            :validationMessage => "You must enter numbers only (for example 157)",
-                            :tt_pageStyleClass => "Numeric NumbersOnly",
-                            :helpText => "Height (cm)" } %>
-      <% end %>
-      <%= text_field_tag :showSummary, nil,
-                     {	:tt_onLoad => "growthIndicators();  $('clearButton').style.display = 'none';  ",
-                        :tt_onUnLoad => " $('clearButton').style.display = 'block';",
-                        :helpText => "Weight Summary",
-                        :optional => "true"
-                     } %>
-
-      <%= touch_numeric_tag "WAIST CIRCUMFERENCE", @patient, nil,
-                     {	:id => "waistCircumference",
-                        :field_type => "number",
-                        :helpText => "Waist circumference (cm)",
-                        :absoluteMin => 10,
-                        :absoluteMax => 300,
-                        :units => 'cm',
-                        :validationRule => "([0-9]+\\.[0-9])|Unknown$",
-                        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                        :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
-
-      <%= touch_numeric_tag "SYSTOLIC BLOOD PRESSURE", @patient, nil,
-                     {	:id => "systolic_blood_pressure",
-                        :field_type => "number",
-                        :helpText => "Systolic blood pressure (?/Y)",
-                        :absoluteMin => 80,
-                        :absoluteMax => 180,
-                        :validationRule => "^([0-9]+)|Unknown$",
-                        :validationMessage => "You must enter numbers only (for example 157)",
-                        :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
-
-
-      <%= touch_numeric_tag "DIASTOLIC BLOOD PRESSURE", @patient, nil,
-                      {	:id => "diastolic_blood_pressure",
-                        :field_type => "number",
-                        :helpText => "Diastolic blood pressure (X/?)",
-                        :absoluteMin => 50,
-                        :absoluteMax => 110,
-                        :validationRule => "^([0-9]+)|Unknown$",
-                        :validationMessage => "You must enter numbers only (for example 157)",
-                        :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
-
-  <%= touch_numeric_tag "RESPIRATORY RATE", @patient, nil,
-                        {	:id => "respiratoryRate",
+                             :name => "concept[weight (kg)]",
                              :field_type => "number",
-                             :helpText => "Respiratory rate",
-                             :min => 8,
-                             :max => 61,
+                             :tt_onLoad => "$('clearButton').style.display = 'inline';",
+                             :min => number_with_precision(@min_weight, :precision => 1),
+                             :max => number_with_precision(@max_weight, :precision => 1),
                              :absoluteMin => 0,
                              :absoluteMax => 250,
+                             :units => 'kg',
                              :validationRule => "([0-9]+\\.[0-9])|Unknown$",
                              :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
-
-  <%= touch_numeric_tag "PULSE", @patient, nil,
-                        {	:id => "pulseRate",
-                             :field_type => "number",
-                             :helpText => "Pulse rate",
-                             :min => 50,
-                             :max => 120,
-                             :units => "bpm",
-                             :validationRule => "([0-9]+\\.[0-9])|Unknown$",
-                             :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
-
-  <%= touch_numeric_tag "BLOOD OXYGEN SATURATION", @patient, nil,
-                        {	:id => "oxygenSaturation",
-                             :field_type => "number",
-                             :helpText => "Oxygen saturation",
-                             :min => 85,
-                             :max => 100,
-                             :min => 85,
-                             :absoluteMax => 250,
-                             :absoluteMin => 0,
-                             :units => "bpm",
-                             :validationRule => "^([0-9]+)|Unknown$",
-                             :validationMessage => "You must enter a number",
-                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
+                             :tt_pageStyleClass => "Numeric NumbersWithUnknownAndDecimal",
+                             :helpText => "Weight (Kg)" } %>
 
 
-  <%= touch_numeric_tag "TEMPERATURE", @patient, nil,
-                        {	:id => "temperature",
-                             :field_type => "number",
-                             :helpText => "Temperature",
-                             :min => 35,
-                             :max => 41,
-                             :units => "bpm",
-                             :validationRule => "([0-9]+\\.[0-9])|Unknown$",
-                             :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
-                             :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
+  <input type='text' id='systolic_blood_pressure'
+         name='concept[Systolic blood pressure]'
+         helpText='Systolic blood pressure'
+         field_type='number'
+         pos='4'  tt_onLoad=""
+         tt_pageStyleClass = "NumbersWithUnknown"
+         tt_onLoad = "timedEvent = setTimeout('calculateBP(1)', 100);;"
+         tt_onUnLoad = "clearTimeout(timedEvent);"
+         condition = 'captureBP()'
+         absoluteMin = 0
+         max = 250
+  />
 
-  <%= text_field_tag :summary, nil,
-                     {	:tt_onLoad => "showSummary();",
-                          :helpText => "Summary",
-                          :optional => "true"
-                     } %>
+  <input type='text' id='diastolic_blood_pressure'
+         name='concept[Diastolic blood pressure]'
+         helpText='Diastolic blood pressure '
+         field_type='number'
+         pos='5'
+         tt_pageStyleClass = "NumbersWithUnknown"
+         tt_onLoad = "timedEvent = setTimeout('calculateBP(2)', 100);;"
+         tt_onUnLoad = "clearTimeout(timedEvent);"
+         condition = 'captureBP()'
+         absoluteMin = 0
+         max = 180
+  />
 
-  <% if @patient_bean.age > 14 %>
-      <%= touch_hidden_tag "BODY MASS INDEX, MEASURED", @patient, nil, { :id => 'bmi' , :kind => "value_numeric"} %>
+
+  <label for='summary'>Summary</label>
+  <%= text_field_tag :summary, nil, {
+          :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';",
+          :optional => "true",
+          :tt_pageStyleClass => "NoControls" } %>
+
+  <% if @retrospective %>
+      <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
+        <%= text_field "filter" , 'provider', :helpText => 'Staff who provided the information (Provider)', :ajaxURL => '/user/username?username=' %></p>
   <% else %>
-      <%= touch_hidden_tag "WT FOR HT", @patient, nil, {:id => 'weight_for_height'} %>
-      <%= touch_hidden_tag "WT FOR AGE", @patient, nil, {:id => 'weight_for_age'} %>
-      <%= touch_hidden_tag "HT FOR AGE", @patient, nil, {:id => 'height_for_age'} %>
+      <%= hidden_field_tag "filter[provider]", nil %>
   <% end %>
 
   <%= submit_tag "Finish" %>

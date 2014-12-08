@@ -1,11 +1,13 @@
 class HtnEncounterController < ApplicationController
+  unloadable
   def index
   end
 
   def vitals
 
-   patient = Patient.find(params[:patient_id])
+   patient = Core::Patient.find(params[:patient_id])
    @patient = patient
+   @patient_eligible = patient.eligible_for_htn_screening()
    @patient_bean = PatientService.get_patient(@patient.person)
    if session[:datetime]
     @retrospective = true
@@ -18,6 +20,7 @@ class HtnEncounterController < ApplicationController
    @max_weight = PatientService.get_patient_attribute_value(@patient, "max_weight")
    @min_height = PatientService.get_patient_attribute_value(@patient, "min_height")
    @max_height = PatientService.get_patient_attribute_value(@patient, "max_height")
+   @user = current_user
   end
 
   def family_history

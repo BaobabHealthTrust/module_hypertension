@@ -32,6 +32,19 @@ class ReportController < ApplicationController
   def alive_and_in_care_report
    @start_date = "#{params[:year]}/#{params[:month]}/01".to_date
    @end_date = @start_date.end_of_month
+
+   htn_patients = Core::PatientProgram.find(:all, :conditions => ["program_id = ? AND date_enrolled <= ?",
+                                                                  Core::Program.find_by_name("HYPERTENSION PROGRAM").id,@end_date])
+
+   @htn_patients = htn_patients.collect { |x| x.patient_id }.uniq
+
+
+   @htn_patients_in_month = Core::Encounter.find_by_sql("SELECT DISTINCT patient_id FROM encounter
+                       WHERE encounter_datetime BETWEEN '#{@start_date.strftime('%Y-%m-%d 00:00:00')}'
+                       AND '#{@end_date.strftime('%Y-%m-%d 23:59:59')}' AND patient_id IN
+                       (#{@htn_patients.blank? ? -1 : @htn_patients.join(",")})
+                       AND voided = 0").collect { |x| x.patient_id }
+
   end
 
   def program_evaluation_baseline
@@ -299,6 +312,14 @@ class ReportController < ApplicationController
                 AND c.name IN (#{outcomes[params[:outcome]]})
                 AND p.patient_id IN (#{(params[:ids].blank? ? -1 : params[:ids])})").collect { |x| x.patient_id }
 
+    when "on bp meds"
+     hypertension_medication_id = Core::Concept.find_by_name("HYPERTENSION MEDICATION").id
+
+     patients = Core::Order.find_by_sql("SELECT DISTINCT patient_id FROM orders WHERE patient_id IN
+                                       (#{(params[:ids].blank? ? -1 : params[:ids])}) AND concept_id
+                                       in (SELECT concept_id FROM concept_set WHERE
+                                       concept_set = #{hypertension_medication_id}) AND voided = 0
+                                       AND orders.start_date <= '#{params[:end_date].to_date}'").collect { |x| x.patient_id }
    end
 
    render :json => patients.to_json
@@ -310,4 +331,27 @@ class ReportController < ApplicationController
    len = sorted.length
    return (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
   end
+
+  def defaulters(ids)
+   hypertension_medication_id = Core::Concept.find_by_name("HYPERTENSION MEDICATION").id
+   names = ["PATIENT DIED", "PATIENT TRANSFERRED OUT", "TREATMENT STOPPED"]
+   states = []
+   names.each { |name|
+    concept_name = ConceptName.find_all_by_name(name)
+    states += ProgramWorkflowState.find(:first, :conditions => ["concept_id IN (?)",concept_name.map{|c|c.concept_id}] ).program_workflow_state_id
+   }
+   states = states.join(',')
+
+   @orders = Order.find_by_sql("SELECT orders.patient_id  current_state_for_program(orders.patient_id, #{@program_id}, '#{@end_date}') AS state FROM orders LEFT OUTER JOIN patient ON
+                                        patient.patient_id = orders.patient_id WHERE DATEDIFF('#{@end_date}', auto_expire_date)/30 > 2
+                                        AND DATE_FORMAT(patient.date_created, '%Y-%m-%d') >= '" +
+                                 @start_date + "' AND DATE_FORMAT(patient.date_created, '%Y-%m-%d') <= '" + @end_date + "'
+                                        AND patient.voided = 0
+                                        AND state NOT IN (#{states})
+                                        AND patient.patient_id IN (#{ids})
+                                        AND orders.concept_id IN (SELECT concept_id FROM concept_set WHERE
+                                        concept_set IN (#{hypertension_medication_id}))
+                                        GROUP BY patient_id").length rescue 0
+  end
+
 end

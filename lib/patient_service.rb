@@ -919,14 +919,14 @@ module PatientService
     when "INITIAL_BMI"
       obs = patient.person.observations.old(1).question("BMI").all
       return obs.last.answer_string.to_f rescue nil
-    when "MIN_WEIGHT"
-      return WeightHeight.min_weight(sex, patient_bean.age_in_months).to_f
+     when "MIN_WEIGHT"
+      return Core::WeightHeight.min_weight(sex, patient_bean.age_in_months).to_f
     when "MAX_WEIGHT"
-      return WeightHeight.max_weight(sex, patient_bean.age_in_months).to_f
+      return Core::WeightHeight.max_weight(sex, patient_bean.age_in_months).to_f
     when "MIN_HEIGHT"
-      return WeightHeight.min_height(sex, patient_bean.age_in_months).to_f
+      return Core::WeightHeight.min_height(sex, patient_bean.age_in_months).to_f
     when "MAX_HEIGHT"
-      return WeightHeight.max_height(sex, patient_bean.age_in_months).to_f
+      return Core::WeightHeight.max_height(sex, patient_bean.age_in_months).to_f
      when "PATIENT HAS DIABETES"
       return self.current_vitals(patient, attribute_name).value_coded
     end

@@ -6,360 +6,360 @@
 
 
 <div id="report_content" class="report_content">
-  <table class="report_table" >
-    <thead>
-    <tr>
-      <td style="padding-left: 10px;">Field</td>
-      <td style="width: 20%;text-align: center;">Monthly</td>
-      <td style="width: 20%;text-align: center;">Cumulative</td>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="sectionHeading">Total with diagnosis of hypertension</td>
-          <td><div id="diagnosedMonthly" class="clickable"><%= @htn_patients_in_month.length %></div></td>
-          <td><div id="diagnosedCul" class="clickable"><%= @htn_patients.length %></div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Outcome Occurred</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Alive and in care</td>
-          <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Opted out of care</td>
-          <td><div id="optedOutMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="optedOutCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Death</td>
-          <td><div id="deadMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="deadCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Lost to follow up</td>
-          <td><div id="lofMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="lofCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Transferred</td>
-          <td><div id="transMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="transCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Unknown / Missing</td>
-          <td><div id="unkMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="unkCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Sex</td>
-        </tr>
+<table class="report_table" >
+<thead>
+<tr>
+  <td style="padding-left: 10px;">Field</td>
+  <td style="width: 20%;text-align: center;">Monthly</td>
+  <td style="width: 20%;text-align: center;">Cumulative</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td class="sectionHeading">Total with diagnosis of hypertension</td>
+  <td><div id="diagnosedMonthly" class="clickable"><%= @htn_patients_in_month.length %></div></td>
+  <td><div id="diagnosedCul" class="clickable"><%= @htn_patients.length %></div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Outcome Occurred</td>
+</tr>
+<tr>
+  <td class="fieldTitle">Alive and in care</td>
+  <td><div id="aliveMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="aliveCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Opted out of care</td>
+  <td><div id="optedOutMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="optedOutCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Death</td>
+  <td><div id="deadMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="deadCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Lost to follow up</td>
+  <td><div id="lofMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="lofCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Transferred</td>
+  <td><div id="transMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="transCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Unknown / Missing</td>
+  <td><div id="unkMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="unkCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Sex</td>
+</tr>
 
-        <tr>
-          <td class="fieldTitle">Female</td>
-          <td><div id="monthlyFemales" class="clickable" ids="">&nbsp;</div></td>
-          <td><div id="cumulativeFemales" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Male</td>
-          <td><div id="monthlyMales" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulativeMales" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Unknown/Missing</td>
-          <td><div id="monthlyMissing" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulativeMissing" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Age Groups</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">20 - 29</td>
-          <td><div id="monthly20to29" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulative20to29" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">30 - 39</td>
-          <td><div id="monthly30to39" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulative30to39" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">40 - 49</td>
-          <td><div id="monthly40to49" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulative40to49" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">50 - 59</td>
-          <td><div id="monthly50to59" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulative50to59" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle"> >= 60 </td>
-          <td><div id="monthlyAbove59" class="clickable">&nbsp;</div></td>
-          <td><div id="cumulativeAbove59" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Unknown/Missing</td>
-          <td><div id="monthlyUnkAge" class="clickable">&nbsp;</div></td>
-          <td><div id="culUnkAge" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Cardiovascular disease risk factors</td>
-        </tr>
-        <tr>
-          <td colspan="3" class="fieldTitle">Diabetes</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Yes</td>
-          <td><div id="diabeticMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="diabeticCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">No</td>
-          <td><div id="nonDiabeticMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="nonDiabeticCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
-          <td><div id="unkDiabeticMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="unkDiabeticCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="fieldTitle">Smoking</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Yes</td>
-          <td><div id="smokerMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="smokerCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">No</td>
-          <td><div id="nonSmokerMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="nonSmokerCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Never</td>
-          <td><div id="neverSmokedMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="neverSmokedCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
-          <td><div id="unkSmokingMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="unkSmokingCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Body Mass Index (BMI)</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle"> 18.5 - 24.9</td>
-          <td><div id="monthlyBmi1" class="clickable">&nbsp;</div></td>
-          <td><div id="culBmi1" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">25 - 29.9</td>
-          <td><div id="monthlyBmi2" class="clickable">&nbsp;</div></td>
-          <td><div id="culBmi2" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle"> >= 30</td>
-          <td><div id="monthlyBmi3" class="clickable">&nbsp;</div></td>
-          <td><div id="culBmi3" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Hypertension Treatment And Control</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">On antihypertensive medications</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Blood Pressure < 140/90 </td>
-          <td><div id="controlledBPMonth" class="clickable">&nbsp;</div></td>
-          <td><div id="controlledBPCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Hypertensive Medications</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Hydrochlorothiazide</td>
-          <td><div id="hctMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="hctCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Bendrofluazide</td>
-          <td><div id="bendroMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="bendroCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Amlodipine</td>
-          <td><div id="amlodipineMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="amlodipineCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Nifedipine SR</td>
-          <td><div id="nifedipineMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="nifedipineCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Enalapril</td>
-          <td><div id="enalaprilMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="enalaprilCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Captopril</td>
-          <td><div id="captoprilMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="captoprilCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Atenolol</td>
-          <td><div id="atenololMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="atenololCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Propanolol</td>
-          <td><div id="propanololMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="propanololCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Other</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Unknown/missing</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Antiretroviral Therapy</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 0A</td>
-          <td><div id="monthly0A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul0A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 1A</td>
-          <td><div id="monthly1A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul1A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 2A</td>
-          <td><div id="monthly2A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul2A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 3A</td>
-          <td><div id="monthly3A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul3A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 4A</td>
-          <td><div id="monthly4A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul4A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 5A</td>
-          <td><div id="monthly5A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul5A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 6A</td>
-          <td><div id="monthly6A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul6A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 7A</td>
-          <td><div id="monthly7A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul7A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Regimen 8A</td>
-          <td><div id="monthly8A" class="clickable">&nbsp;</div></td>
-          <td><div id="cul8A" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Other</td>
-          <td><div id="monthlyRegOther" class="clickable">&nbsp;</div></td>
-          <td><div id="culRegOther" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Unknown / Missing</td>
-          <td><div id="monthlyRegUnk" class="clickable">&nbsp;</div></td>
-          <td><div id="culRegUnk" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">HIV Indicators</td>
-        </tr>
-        <tr>
-          <td colspan="3" class="fieldTitle">Baseline CD4 cell count (cell/ml)</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;"> < 200</td>
-          <td><div id="monthlyCD4Cat1" class="clickable">&nbsp;</div></td>
-          <td><div id="culCD4Cat1" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;"> 200 - 500</td>
-          <td><div id="monthlyCD4Cat2" class="clickable">&nbsp;</div></td>
-          <td><div id="culCD4Cat2" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;"> > 500</td>
-          <td><div id="monthlyCD4Cat3" class="clickable">&nbsp;</div></td>
-          <td><div id="culCD4Cat3" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
-          <td><div id="monthlyCD4Cat4" class="clickable">&nbsp;</div></td>
-          <td><div id="culCD4Cat4" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="fieldTitle">Viral Load</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Undetectable</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Detectable</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td colspan="3" class="sectionHeading">Tuberculosis (TB)</td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Never TB/ TB > 12months ago</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">TB within the last 12 months</td>
-          <td><div id="lastYrTBMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="lastYrTBCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Current Episode of TB</td>
-          <td><div id="currentTBMonthly" class="clickable">&nbsp;</div></td>
-          <td><div id="currentTBCul" class="clickable">&nbsp;</div></td>
-        </tr>
-        <tr>
-          <td class="fieldTitle">Unknown / Missing</td>
-          <td><div class="clickable">&nbsp;</div></td>
-          <td><div class="clickable">&nbsp;</div></td>
-        </tr>
-    </tbody>
-  </table>
+<tr>
+  <td class="fieldTitle">Female</td>
+  <td><div id="monthlyFemales" class="clickable" ids="">&nbsp;</div></td>
+  <td><div id="cumulativeFemales" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Male</td>
+  <td><div id="monthlyMales" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulativeMales" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Unknown/Missing</td>
+  <td><div id="monthlyMissing" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulativeMissing" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Age Groups</td>
+</tr>
+<tr>
+  <td class="fieldTitle">20 - 29</td>
+  <td><div id="monthly20to29" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulative20to29" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">30 - 39</td>
+  <td><div id="monthly30to39" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulative30to39" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">40 - 49</td>
+  <td><div id="monthly40to49" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulative40to49" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">50 - 59</td>
+  <td><div id="monthly50to59" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulative50to59" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle"> >= 60 </td>
+  <td><div id="monthlyAbove59" class="clickable">&nbsp;</div></td>
+  <td><div id="cumulativeAbove59" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Unknown/Missing</td>
+  <td><div id="monthlyUnkAge" class="clickable">&nbsp;</div></td>
+  <td><div id="culUnkAge" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Cardiovascular disease risk factors</td>
+</tr>
+<tr>
+  <td colspan="3" class="fieldTitle">Diabetes</td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Yes</td>
+  <td><div id="diabeticMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="diabeticCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">No</td>
+  <td><div id="nonDiabeticMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="nonDiabeticCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+  <td><div id="unkDiabeticMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="unkDiabeticCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="fieldTitle">Smoking</td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Yes</td>
+  <td><div id="smokerMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="smokerCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">No</td>
+  <td><div id="nonSmokerMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="nonSmokerCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Never</td>
+  <td><div id="neverSmokedMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="neverSmokedCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+  <td><div id="unkSmokingMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="unkSmokingCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Body Mass Index (BMI)</td>
+</tr>
+<tr>
+  <td class="fieldTitle"> 18.5 - 24.9</td>
+  <td><div id="monthlyBmi1" class="clickable">&nbsp;</div></td>
+  <td><div id="culBmi1" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">25 - 29.9</td>
+  <td><div id="monthlyBmi2" class="clickable">&nbsp;</div></td>
+  <td><div id="culBmi2" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle"> >= 30</td>
+  <td><div id="monthlyBmi3" class="clickable">&nbsp;</div></td>
+  <td><div id="culBmi3" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Hypertension Treatment And Control</td>
+</tr>
+<tr>
+  <td class="fieldTitle">On antihypertensive medications</td>
+  <td><div id="onBPMedsMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="onBPMedsCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Blood Pressure < 140/90 </td>
+  <td><div id="controlledBPMonth" class="clickable">&nbsp;</div></td>
+  <td><div id="controlledBPCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Hypertensive Medications</td>
+</tr>
+<tr>
+  <td class="fieldTitle">Hydrochlorothiazide</td>
+  <td><div id="hctMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="hctCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Bendrofluazide</td>
+  <td><div id="bendroMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="bendroCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Amlodipine</td>
+  <td><div id="amlodipineMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="amlodipineCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Nifedipine SR</td>
+  <td><div id="nifedipineMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="nifedipineCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Enalapril</td>
+  <td><div id="enalaprilMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="enalaprilCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Captopril</td>
+  <td><div id="captoprilMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="captoprilCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Atenolol</td>
+  <td><div id="atenololMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="atenololCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Propanolol</td>
+  <td><div id="propanololMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="propanololCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Other</td>
+  <td><div class="clickable">&nbsp;</div></td>
+  <td><div class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Unknown/missing</td>
+  <td><div class="clickable">&nbsp;</div></td>
+  <td><div class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Antiretroviral Therapy</td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 0A</td>
+  <td><div id="monthly0A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul0A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 1A</td>
+  <td><div id="monthly1A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul1A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 2A</td>
+  <td><div id="monthly2A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul2A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 3A</td>
+  <td><div id="monthly3A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul3A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 4A</td>
+  <td><div id="monthly4A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul4A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 5A</td>
+  <td><div id="monthly5A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul5A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 6A</td>
+  <td><div id="monthly6A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul6A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 7A</td>
+  <td><div id="monthly7A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul7A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Regimen 8A</td>
+  <td><div id="monthly8A" class="clickable">&nbsp;</div></td>
+  <td><div id="cul8A" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Other</td>
+  <td><div id="monthlyRegOther" class="clickable">&nbsp;</div></td>
+  <td><div id="culRegOther" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Unknown / Missing</td>
+  <td><div id="monthlyRegUnk" class="clickable">&nbsp;</div></td>
+  <td><div id="culRegUnk" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">HIV Indicators</td>
+</tr>
+<tr>
+  <td colspan="3" class="fieldTitle">Baseline CD4 cell count (cell/ml)</td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;"> < 200</td>
+  <td><div id="monthlyCD4Cat1" class="clickable">&nbsp;</div></td>
+  <td><div id="culCD4Cat1" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;"> 200 - 500</td>
+  <td><div id="monthlyCD4Cat2" class="clickable">&nbsp;</div></td>
+  <td><div id="culCD4Cat2" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;"> > 500</td>
+  <td><div id="monthlyCD4Cat3" class="clickable">&nbsp;</div></td>
+  <td><div id="culCD4Cat3" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+  <td><div id="monthlyCD4Cat4" class="clickable">&nbsp;</div></td>
+  <td><div id="culCD4Cat4" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="fieldTitle">Viral Load</td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Undetectable</td>
+  <td><div class="clickable">&nbsp;</div></td>
+  <td><div class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Detectable</td>
+  <td><div class="clickable">&nbsp;</div></td>
+  <td><div class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle" style="padding-left: 40px;">Unknown / Missing</td>
+  <td><div class="clickable">&nbsp;</div></td>
+  <td><div class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td colspan="3" class="sectionHeading">Tuberculosis (TB)</td>
+</tr>
+<tr>
+  <td class="fieldTitle">Never TB/ TB > 12months ago</td>
+  <td><div id="neverTBMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="neverTBCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">TB within the last 12 months</td>
+  <td><div id="lastYrTBMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="lastYrTBCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Current Episode of TB</td>
+  <td><div id="currentTBMonthly" class="clickable">&nbsp;</div></td>
+  <td><div id="currentTBCul" class="clickable">&nbsp;</div></td>
+</tr>
+<tr>
+  <td class="fieldTitle">Unknown / Missing</td>
+  <td><div class="clickable">&nbsp;</div></td>
+  <td><div class="clickable">&nbsp;</div></td>
+</tr>
+</tbody>
+</table>
 </div>
 
 <div id="footer">
@@ -372,292 +372,298 @@
 <script type="text/javascript" src="/javascripts/application.js"></script>
 
 <script type="text/javascript">
-  var fields = [
-      ["aliveMonthly", "/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=alive&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
-      ["aliveCul","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=alive&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
-      ["optedOutMonthly","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=opted out&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
-      ["optedOutCul","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=opted out&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
-      ["deadMonthly","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=dead&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
-      ["deadCul","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=dead&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
-      ["lofMonthly","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=lof&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
-      ["lofCul","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=lof&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
-      ["transMonthly","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=transferred&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
-      ["transCul","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=transferred&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
-      ["unkMonthly","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=unknown&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
-      ["unkCul","/report/those_with_htn_fields?category=outcomes&" +
-              "outcome=unknown&start_date=<%= @start_date %>"+
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
-      ["monthlyFemales","/report/those_with_htn_fields?category=gender&" +
-              "&gender=F &ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulativeFemales","/report/those_with_htn_fields?category=gender" +
-              "&gender=F&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyMales","/report/those_with_htn_fields?category=gender" +
-              "&gender=M&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulativeMales","/report/those_with_htn_fields?category=gender" +
-              "&gender=M&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyMissing","/report/those_with_htn_fields?category=gender" +
-              "&ids=<%= @htn_patients_in_month.join(',')%>&gender=unknown", ""],
-      ["cumulativeMissing","/report/those_with_htn_fields?category=gender" +
-              "&gender=unknown&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthly20to29","/report/those_with_htn_fields?category=age&start_age=20" +
-              "&end_age=29&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulative20to29","/report/those_with_htn_fields?category=age&start_age=20" +
-              "&end_age=29&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthly30to39","/report/those_with_htn_fields?category=age&start_age=30&" +
-              "end_age=39&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulative30to39","/report/those_with_htn_fields?category=age&start_age=30" +
-              "&end_age=39&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthly40to49","/report/those_with_htn_fields?category=age&start_age=40" +
-              "&end_age=49&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulative40to49","/report/those_with_htn_fields?category=age&start_age=40" +
-              "&end_age=49&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthly50to59","/report/those_with_htn_fields?category=age&start_age=50" +
-              "&end_age=59&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulative50to59","/report/those_with_htn_fields?category=age&start_age=50" +
-              "&end_age=59&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyAbove59","/report/those_with_htn_fields?category=age&start_age=60" +
-              "&end_age=999&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["cumulativeAbove59","/report/those_with_htn_fields?category=age&start_age=60" +
-              "&end_age=999&start_date='1900/01/01'&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyUnkAge","/report/those_with_htn_fields?category=age&start_age=unknown" +
-              "&end_age=unknown&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culUnkAge","/report/those_with_htn_fields?category=age&start_age=unknown" +
-              "&end_age=unknown&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["diabeticMonthly", "/report/those_with_htn_fields?category=risk factors&answer=yes" +
-              "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["diabeticCul", "/report/those_with_htn_fields?category=risk factors&answer=yes" +
-              "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["nonDiabeticMonthly","/report/those_with_htn_fields?category=risk factors&answer=no" +
-              "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["nonDiabeticCul","/report/those_with_htn_fields?category=risk factors&answer=no" +
-              "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["unkDiabeticMonthly", "/report/those_with_htn_fields?category=missing hiv indicators" +
-              "&indicator=Patient has diabetes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["unkDiabeticCul", "/report/those_with_htn_fields?category=missing hiv indicators" +
-              "&indicator=Patient has diabetes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["smokerMonthly","/report/those_with_htn_fields?category=risk factors&answer=yes" +
-              "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["smokerCul","/report/those_with_htn_fields?category=risk factors&answer=yes" +
-              "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["nonSmokerMonthly","/report/those_with_htn_fields?category=risk factors&answer=no" +
-              "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["nonSmokerCul","/report/those_with_htn_fields?category=risk factors&answer=no" +
-              "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["neverSmokedMonthly","/report/those_with_htn_fields?category=risk factors&answer=no" +
-              "&factor=Smoking history&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["neverSmokedCul","/report/those_with_htn_fields?category=risk factors&answer=no" +
-              "&factor=Smoking history&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["unkSmokingMonthly", "/report/those_with_htn_fields?category=missing hiv indicators" +
-              "&indicator=Smoking history&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["unkSmokingCul", "/report/those_with_htn_fields?category=missing hiv indicators" +
-              "&indicator=Smoking history&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyBmi1","/report/those_with_htn_fields?category=bmi&start_bmi=18.5&end_bmi=24.9" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culBmi1","/report/those_with_htn_fields?category=bmi&start_bmi=18.5&end_bmi=24.9" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyBmi2","/report/those_with_htn_fields?category=bmi&start_bmi=25&end_bmi=29.9" +
-              "&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culBmi2","/report/those_with_htn_fields?category=bmi&start_bmi=25&end_bmi=29.9" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyBmi3","/report/those_with_htn_fields?category=bmi&start_bmi=30&end_bmi=100" +
-              "&start_date='1900/01/01' &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culBmi3","/report/those_with_htn_fields?category=bmi&start_bmi=30&end_bmi=100" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["hctMonthly","/report/those_with_htn_fields?category=on drug&drug=Hydrochlorothiazide" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["hctCul","/report/those_with_htn_fields?category=on drug&drug=Hydrochlorothiazide" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["bendroMonthly","/report/those_with_htn_fields?category=on drug&drug=Bendrofluazide" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["bendroCul","/report/those_with_htn_fields?category=on drug&drug=Bendrofluazide" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["amlodipineMonthly","/report/those_with_htn_fields?category=on drug&drug=amlodipine" +
-              "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["amlodipineCul","/report/those_with_htn_fields?category=on drug&drug=amlodipine" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["nifedipineMonthly","/report/those_with_htn_fields?category=on drug&drug=nifedipine" +
-              "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["nifedipineCul", "/report/those_with_htn_fields?category=on drug&drug=nifedipine" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["enalaprilMonthly", "/report/those_with_htn_fields?category=on drug&drug=enalapril" +
-              "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["enalaprilCul", "/report/those_with_htn_fields?category=on drug&drug=enalapril" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["captoprilMonthly", "/report/those_with_htn_fields?category=on drug&drug=captopril" +
-              "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["captoprilCul", "/report/those_with_htn_fields?category=on drug&drug=captopril" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["atenololMonthly", "/report/those_with_htn_fields?category=on drug&drug=atenolol" +
-              "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["atenololCul", "/report/those_with_htn_fields?category=on drug&drug=atenolol" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["propanololMonthly", "/report/those_with_htn_fields?category=on drug&drug=propanolol" +
-              "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["propanololCul", "/report/those_with_htn_fields?category=on drug&drug=propanolol" +
-              "&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthly0A","/report/those_with_htn_fields?category=art_regimen&regimen=0A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul0A","/report/those_with_htn_fields?category=art_regimen&regimen=0A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""] ,
-      ["monthly1A","/report/those_with_htn_fields?category=art_regimen&regimen=1A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul1A","/report/those_with_htn_fields?category=art_regimen&regimen=1A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
-      ["monthly2A","/report/those_with_htn_fields?category=art_regimen&regimen=2A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""],
-      ["cul2A", "/report/those_with_htn_fields?category=art_regimen&regimen=2A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
-      ["monthly3A","/report/those_with_htn_fields?category=art_regimen&regimen=3A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul3A", "/report/those_with_htn_fields?category=art_regimen&regimen=3A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
-      ["monthly4A","/report/those_with_htn_fields?category=art_regimen&regimen=4A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul4A","/report/those_with_htn_fields?category=art_regimen&regimen=4A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
-      ["monthly5A","/report/those_with_htn_fields?category=art_regimen&regimen=5A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul5A","/report/those_with_htn_fields?category=art_regimen&regimen=5A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
-      ["monthly6A","/report/those_with_htn_fields?category=art_regimen&regimen=6A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul6A", "/report/those_with_htn_fields?category=art_regimen&regimen=6A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
-      ["monthly7A", "/report/those_with_htn_fields?category=art_regimen&regimen=7A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul7A", "/report/those_with_htn_fields?category=art_regimen&regimen=7A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""] ,
-      ["monthly8A","/report/those_with_htn_fields?category=art_regimen&regimen=8A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
-      ["cul8A", "/report/those_with_htn_fields?category=art_regimen&regimen=8A" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""] ,
-      ["monthlyRegOther","/report/those_with_htn_fields?category=art_regimen&regimen=unknown" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""],
-      ["culRegOther","/report/those_with_htn_fields?category=art_regimen&regimen=unknown" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
-      ["monthlyRegUnk","/report/those_with_htn_fields?category=unknown_regimen&regimen=unknown" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""],
-      ["culRegUnk","/report/those_with_htn_fields?category=unknown_regimen&regimen=unknown" +
-              "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
-      ["monthlyCD4Cat1", "/report/those_with_htn_fields?category=hiv indicators" +
-              "&indicator=CD4 count&min=0&max=199&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culCD4Cat1", "/report/those_with_htn_fields?category=hiv indicators" +
-              "&indicator=CD4 count&min=0&max=199&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyCD4Cat2", "/report/those_with_htn_fields?category=hiv indicators" +
-              "&indicator=CD4 count&min=200&max=500&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culCD4Cat2", "/report/those_with_htn_fields?category=hiv indicators" +
-              "&indicator=CD4 count&min=200&max=500&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyCD4Cat3", "/report/those_with_htn_fields?category=hiv indicators" +
-              "&indicator=CD4 count&min=501&max=99999&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culCD4Cat3", "/report/those_with_htn_fields?category=hiv indicators" +
-              "&indicator=CD4 count&min=501&max=99999&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["monthlyCD4Cat4", "/report/those_with_htn_fields?category=missing hiv indicators" +
-              "&indicator=CD4 count&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["culCD4Cat4", "/report/those_with_htn_fields?category=missing hiv indicators" +
-              "&indicator=CD4 count&end_date=<%= @end_date %>" +
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["neverTBMonthly","/report/those_with_htn_fields?category=never had tb&factor=TB status"+
-              "&end_date=<%= (@end_date - 1.month).end_of_month %>&start_date=<%= (@start_date - 1.year) %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["neverTBCul","/report/those_with_htn_fields?category=never had tb&factor=TB status"+
-              "&end_date=<%= (@end_date - 1.month).end_of_month %>&start_date=<%= (@start_date - 1.year) %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["lastYrTBMonthly","/report/those_with_htn_fields?category=answer in range&answer=Confirmed TB on treatment," +
-              "Confirmed TB not on treatment&factor=TB status&end_date=<%= (@end_date - 1.month).end_of_month %>"+
-              "&start_date=<%= (@start_date - 1.year) %>&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["lastYrTBCul","/report/those_with_htn_fields?category=answer in range&answer=Confirmed TB on treatment," +
-              "Confirmed TB not on treatment&factor=TB status&end_date=<%= (@end_date - 1.month).end_of_month %>"+
-              "&start_date=<%= (@start_date - 1.year) %>&ids=<%= @htn_patients.join(',')%>", ""],
-      ["currentTBMonthly","/report/those_with_htn_fields?category=answer in range&answer=Confirmed TB on treatment," +
-              "Confirmed TB not on treatment&factor=TB status&end_date=<%= @end_date %>&start_date=<%= @start_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["currentTBCul","/report/those_with_htn_fields?category=risk factors&answer=Confirmed TB on treatment" +
-              "&factor=TB status&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""],
-      ["controlledBPMonth","/report/those_with_htn_fields?category=controlled bp&start_sbp=50&end_sbp=139" +
-              "&start_dbp=1&end_dbp=89&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
-      ["controlledBPCul","/report/those_with_htn_fields?category=controlled bp&start_sbp=50&end_sbp=139" +
-              "&start_dbp=1&end_dbp=89&start_date=1900/01/01&end_date=<%= @end_date %>"+
-              "&ids=<%= @htn_patients.join(',')%>", ""]
+    var fields = [
+        ["aliveMonthly", "/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=alive&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
+        ["aliveCul","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=alive&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
+        ["optedOutMonthly","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=opted out&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
+        ["optedOutCul","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=opted out&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
+        ["deadMonthly","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=dead&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
+        ["deadCul","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=dead&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
+        ["lofMonthly","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=lof&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
+        ["lofCul","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=lof&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
+        ["transMonthly","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=transferred&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
+        ["transCul","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=transferred&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
+        ["unkMonthly","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=unknown&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>"],
+        ["unkCul","/report/those_with_htn_fields?category=outcomes&" +
+                "outcome=unknown&start_date=<%= @start_date %>"+
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>"],
+        ["monthlyFemales","/report/those_with_htn_fields?category=gender&" +
+                "&gender=F &ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulativeFemales","/report/those_with_htn_fields?category=gender" +
+                "&gender=F&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyMales","/report/those_with_htn_fields?category=gender" +
+                "&gender=M&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulativeMales","/report/those_with_htn_fields?category=gender" +
+                "&gender=M&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyMissing","/report/those_with_htn_fields?category=gender" +
+                "&ids=<%= @htn_patients_in_month.join(',')%>&gender=unknown", ""],
+        ["cumulativeMissing","/report/those_with_htn_fields?category=gender" +
+                "&gender=unknown&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthly20to29","/report/those_with_htn_fields?category=age&start_age=20" +
+                "&end_age=29&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulative20to29","/report/those_with_htn_fields?category=age&start_age=20" +
+                "&end_age=29&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthly30to39","/report/those_with_htn_fields?category=age&start_age=30&" +
+                "end_age=39&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulative30to39","/report/those_with_htn_fields?category=age&start_age=30" +
+                "&end_age=39&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthly40to49","/report/those_with_htn_fields?category=age&start_age=40" +
+                "&end_age=49&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulative40to49","/report/those_with_htn_fields?category=age&start_age=40" +
+                "&end_age=49&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthly50to59","/report/those_with_htn_fields?category=age&start_age=50" +
+                "&end_age=59&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulative50to59","/report/those_with_htn_fields?category=age&start_age=50" +
+                "&end_age=59&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyAbove59","/report/those_with_htn_fields?category=age&start_age=60" +
+                "&end_age=999&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["cumulativeAbove59","/report/those_with_htn_fields?category=age&start_age=60" +
+                "&end_age=999&start_date='1900/01/01'&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyUnkAge","/report/those_with_htn_fields?category=age&start_age=unknown" +
+                "&end_age=unknown&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culUnkAge","/report/those_with_htn_fields?category=age&start_age=unknown" +
+                "&end_age=unknown&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["diabeticMonthly", "/report/those_with_htn_fields?category=risk factors&answer=yes" +
+                "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["diabeticCul", "/report/those_with_htn_fields?category=risk factors&answer=yes" +
+                "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["nonDiabeticMonthly","/report/those_with_htn_fields?category=risk factors&answer=no" +
+                "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["nonDiabeticCul","/report/those_with_htn_fields?category=risk factors&answer=no" +
+                "&factor=Patient has diabetes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["unkDiabeticMonthly", "/report/those_with_htn_fields?category=missing hiv indicators" +
+                "&indicator=Patient has diabetes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["unkDiabeticCul", "/report/those_with_htn_fields?category=missing hiv indicators" +
+                "&indicator=Patient has diabetes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["smokerMonthly","/report/those_with_htn_fields?category=risk factors&answer=yes" +
+                "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["smokerCul","/report/those_with_htn_fields?category=risk factors&answer=yes" +
+                "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["nonSmokerMonthly","/report/those_with_htn_fields?category=risk factors&answer=no" +
+                "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["nonSmokerCul","/report/those_with_htn_fields?category=risk factors&answer=no" +
+                "&factor=Patient currently smokes&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["neverSmokedMonthly","/report/those_with_htn_fields?category=risk factors&answer=no" +
+                "&factor=Smoking history&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["neverSmokedCul","/report/those_with_htn_fields?category=risk factors&answer=no" +
+                "&factor=Smoking history&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["unkSmokingMonthly", "/report/those_with_htn_fields?category=missing hiv indicators" +
+                "&indicator=Smoking history&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["unkSmokingCul", "/report/those_with_htn_fields?category=missing hiv indicators" +
+                "&indicator=Smoking history&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyBmi1","/report/those_with_htn_fields?category=bmi&start_bmi=18.5&end_bmi=24.9" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culBmi1","/report/those_with_htn_fields?category=bmi&start_bmi=18.5&end_bmi=24.9" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyBmi2","/report/those_with_htn_fields?category=bmi&start_bmi=25&end_bmi=29.9" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culBmi2","/report/those_with_htn_fields?category=bmi&start_bmi=25&end_bmi=29.9" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyBmi3","/report/those_with_htn_fields?category=bmi&start_bmi=30&end_bmi=100" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culBmi3","/report/those_with_htn_fields?category=bmi&start_bmi=30&end_bmi=100" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["hctMonthly","/report/those_with_htn_fields?category=on drug&drug=Hydrochlorothiazide" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["hctCul","/report/those_with_htn_fields?category=on drug&drug=Hydrochlorothiazide" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["bendroMonthly","/report/those_with_htn_fields?category=on drug&drug=Bendrofluazide" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["bendroCul","/report/those_with_htn_fields?category=on drug&drug=Bendrofluazide" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["amlodipineMonthly","/report/those_with_htn_fields?category=on drug&drug=amlodipine" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["amlodipineCul","/report/those_with_htn_fields?category=on drug&drug=amlodipine" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["nifedipineMonthly","/report/those_with_htn_fields?category=on drug&drug=nifedipine" +
+                "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["nifedipineCul", "/report/those_with_htn_fields?category=on drug&drug=nifedipine" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["enalaprilMonthly", "/report/those_with_htn_fields?category=on drug&drug=enalapril" +
+                "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["enalaprilCul", "/report/those_with_htn_fields?category=on drug&drug=enalapril" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["captoprilMonthly", "/report/those_with_htn_fields?category=on drug&drug=captopril" +
+                "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["captoprilCul", "/report/those_with_htn_fields?category=on drug&drug=captopril" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["atenololMonthly", "/report/those_with_htn_fields?category=on drug&drug=atenolol" +
+                "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["atenololCul", "/report/those_with_htn_fields?category=on drug&drug=atenolol" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["propanololMonthly", "/report/those_with_htn_fields?category=on drug&drug=propanolol" +
+                "&start_date=<%= @start_date%>&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["propanololCul", "/report/those_with_htn_fields?category=on drug&drug=propanolol" +
+                "&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthly0A","/report/those_with_htn_fields?category=art_regimen&regimen=0A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul0A","/report/those_with_htn_fields?category=art_regimen&regimen=0A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""] ,
+        ["monthly1A","/report/those_with_htn_fields?category=art_regimen&regimen=1A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul1A","/report/those_with_htn_fields?category=art_regimen&regimen=1A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
+        ["monthly2A","/report/those_with_htn_fields?category=art_regimen&regimen=2A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""],
+        ["cul2A", "/report/those_with_htn_fields?category=art_regimen&regimen=2A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
+        ["monthly3A","/report/those_with_htn_fields?category=art_regimen&regimen=3A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul3A", "/report/those_with_htn_fields?category=art_regimen&regimen=3A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
+        ["monthly4A","/report/those_with_htn_fields?category=art_regimen&regimen=4A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul4A","/report/those_with_htn_fields?category=art_regimen&regimen=4A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
+        ["monthly5A","/report/those_with_htn_fields?category=art_regimen&regimen=5A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul5A","/report/those_with_htn_fields?category=art_regimen&regimen=5A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
+        ["monthly6A","/report/those_with_htn_fields?category=art_regimen&regimen=6A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul6A", "/report/those_with_htn_fields?category=art_regimen&regimen=6A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>","" ],
+        ["monthly7A", "/report/those_with_htn_fields?category=art_regimen&regimen=7A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul7A", "/report/those_with_htn_fields?category=art_regimen&regimen=7A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""] ,
+        ["monthly8A","/report/those_with_htn_fields?category=art_regimen&regimen=8A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""] ,
+        ["cul8A", "/report/those_with_htn_fields?category=art_regimen&regimen=8A" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""] ,
+        ["monthlyRegOther","/report/those_with_htn_fields?category=art_regimen&regimen=unknown" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""],
+        ["culRegOther","/report/those_with_htn_fields?category=art_regimen&regimen=unknown" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
+        ["monthlyRegUnk","/report/those_with_htn_fields?category=unknown_regimen&regimen=unknown" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients_in_month.join(',')%>",""],
+        ["culRegUnk","/report/those_with_htn_fields?category=unknown_regimen&regimen=unknown" +
+                "&end_date=<%= @end_date %>&ids=<%= @htn_patients.join(',')%>",""],
+        ["monthlyCD4Cat1", "/report/those_with_htn_fields?category=hiv indicators" +
+                "&indicator=CD4 count&min=0&max=199&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culCD4Cat1", "/report/those_with_htn_fields?category=hiv indicators" +
+                "&indicator=CD4 count&min=0&max=199&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyCD4Cat2", "/report/those_with_htn_fields?category=hiv indicators" +
+                "&indicator=CD4 count&min=200&max=500&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culCD4Cat2", "/report/those_with_htn_fields?category=hiv indicators" +
+                "&indicator=CD4 count&min=200&max=500&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyCD4Cat3", "/report/those_with_htn_fields?category=hiv indicators" +
+                "&indicator=CD4 count&min=501&max=99999&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culCD4Cat3", "/report/those_with_htn_fields?category=hiv indicators" +
+                "&indicator=CD4 count&min=501&max=99999&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["monthlyCD4Cat4", "/report/those_with_htn_fields?category=missing hiv indicators" +
+                "&indicator=CD4 count&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["culCD4Cat4", "/report/those_with_htn_fields?category=missing hiv indicators" +
+                "&indicator=CD4 count&end_date=<%= @end_date %>" +
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["neverTBMonthly","/report/those_with_htn_fields?category=never had tb&factor=TB status"+
+                "&end_date=<%= (@end_date - 1.month).end_of_month %>&start_date=<%= (@start_date - 1.year) %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["neverTBCul","/report/those_with_htn_fields?category=never had tb&factor=TB status"+
+                "&end_date=<%= (@end_date - 1.month).end_of_month %>&start_date=<%= (@start_date - 1.year) %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["lastYrTBMonthly","/report/those_with_htn_fields?category=answer in range&answer=Confirmed TB on treatment," +
+                "Confirmed TB not on treatment&factor=TB status&end_date=<%= (@end_date - 1.month).end_of_month %>"+
+                "&start_date=<%= (@start_date - 1.year) %>&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["lastYrTBCul","/report/those_with_htn_fields?category=answer in range&answer=Confirmed TB on treatment," +
+                "Confirmed TB not on treatment&factor=TB status&end_date=<%= (@end_date - 1.month).end_of_month %>"+
+                "&start_date=<%= (@start_date - 1.year) %>&ids=<%= @htn_patients.join(',')%>", ""],
+        ["currentTBMonthly","/report/those_with_htn_fields?category=answer in range&answer=Confirmed TB on treatment," +
+                "Confirmed TB not on treatment&factor=TB status&end_date=<%= @end_date %>&start_date=<%= @start_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["currentTBCul","/report/those_with_htn_fields?category=risk factors&answer=Confirmed TB on treatment" +
+                "&factor=TB status&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["onBPMedsMonthly","/report/those_with_htn_fields?category=on bp meds" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["onBPMedsCul","/report/those_with_htn_fields?category=on bp meds" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""],
+        ["controlledBPMonth","/report/those_with_htn_fields?category=controlled bp&start_sbp=50&end_sbp=139" +
+                "&start_dbp=1&end_dbp=89&start_date=<%= @start_date %> &end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients_in_month.join(',')%>", ""],
+        ["controlledBPCul","/report/those_with_htn_fields?category=controlled bp&start_sbp=50&end_sbp=139" +
+                "&start_dbp=1&end_dbp=89&start_date=1900/01/01&end_date=<%= @end_date %>"+
+                "&ids=<%= @htn_patients.join(',')%>", ""]
 
-  ];
-  setTimeout('loadFields()',300);
+    ];
+    setTimeout('loadFields()',300);
 </script>
