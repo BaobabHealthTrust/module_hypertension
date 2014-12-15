@@ -432,6 +432,24 @@
         }
 
     }
+
+    function toggleOverride()
+    {
+        bpOverRide = (!bpOverRide);
+        console.log(bpOverRide);
+    }
+
+    function addButton() {
+        if ((<%= htn_activated %>) && (<%= !@patient_eligible %>))
+        {
+            var bp = document.createElement("button");
+            bp.innerHTML = "<span>Capture BP</span>";
+            bp.setAttribute("onClick", "toggleOverride()");
+            document.getElementById("buttons").appendChild(bp);
+        }
+
+    }
+    setTimeout("addButton()", 300)
     /* end */
 
 </script>
