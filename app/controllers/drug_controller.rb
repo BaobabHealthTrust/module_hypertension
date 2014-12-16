@@ -1,4 +1,5 @@
 class DrugController < ApplicationController
+  unloadable
   def drug_sets
     @user = Core::User.find(session[:user_id] || params[:user_id])
     @sets = GeneralSet.all(:order => ["date_updated DESC"],

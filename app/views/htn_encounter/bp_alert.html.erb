@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<script>
+			var tt_next_destination = "/htn_encounter/vitals_confirmation?patient_id=<%=@patient.id%>"
+		</script>
+		<style>
+			.body{
+				margin-top: 10%;
+				color: gray;
+				text-align: center;
+				width: 99%;
+				text-decoration: none;		
+			}
+			.header{
+				width: 99%;
+				text-align: center;
+				margin-top: 3%;	
+			}
+			.bp{
+				color: red;
+				font-style: italic;			
+			}
+			.name{
+				color: blue;
+				font-style: italic;
+			}
+			.green{
+				width: 170px;
+			}			
+		</style>
+	</head>
+		<body>
+			<div class="header">
+				<h1> High BP </h1>
+			</div>
+			
+			<div class="body">
+				<h2> <span class="name"><%= @patient_bean.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
+				</span>  <br /> Recapture vitals! </h2>
+
+			</div>
+			
+			<div class="buttonsDiv footer">
+				<button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">
+				<span>Continue</span></button>
+			</div>
+		</body>
+</html>

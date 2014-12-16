@@ -1,4 +1,5 @@
 class PrescriptionsController < ApplicationController
+  unloadable
 # Is this used?
   def index
     @user = Core::User.find(params[:user_id]) rescue nil

@@ -1,6 +1,7 @@
 require "rest-client"
 
-class DdeController < ApplicationController
+class DdeController < ActionController::Base
+  unloadable
 
   def index
     session[:cohort] = nil
