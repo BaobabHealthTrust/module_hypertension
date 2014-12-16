@@ -21,6 +21,28 @@ class HtnEncounterController < ApplicationController
    @max_height = PatientService.get_patient_attribute_value(@patient, "max_height")
   end
 
+  def bp_alert
+    @patient = Patient.find(params[:patient_id])
+    @patient_bean = PatientService.get_patient(@patient.person)
+    @bp = @patient.current_bp()
+  end
+
+  def vitals_confirmation
+    @patient = Patient.find(params[:patient_id])
+    @patient_bean = PatientService.get_patient(@patient.person)
+    if session[:datetime]
+      @retrospective = true
+    else
+      @retrospective = false
+    end
+    #@ask_blood_pressure = patient.eligible_for_htn_diagnosis
+    @current_height = PatientService.get_patient_attribute_value(@patient, "current_height")
+    @min_weight = PatientService.get_patient_attribute_value(@patient, "min_weight")
+    @max_weight = PatientService.get_patient_attribute_value(@patient, "max_weight")
+    @min_height = PatientService.get_patient_attribute_value(@patient, "min_height")
+    @max_height = PatientService.get_patient_attribute_value(@patient, "max_height")
+  end
+
   def family_history
    patient = Patient.find(params[:patient_id])
    @patient = patient
@@ -69,6 +91,13 @@ class HtnEncounterController < ApplicationController
   encounter.provider_id = user_person_id
   encounter.save
   create_obs(encounter, params)
+
+  if encounter.name == "VITALS" && encounter.observations.length == 2
+    bp  = encounter.patient.current_bp
+    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
+      redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
+    end
+  end
   redirect_to next_task(Patient.find(params['encounter']['patient_id']))
  end
 
