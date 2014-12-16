@@ -5,8 +5,9 @@ class HtnEncounterController < ApplicationController
 
   def vitals
 
-   patient = Patient.find(params[:patient_id])
+   patient = Core::Patient.find(params[:patient_id])
    @patient = patient
+   @patient_eligible = patient.eligible_for_htn_screening()
    @patient_bean = PatientService.get_patient(@patient.person)
    if session[:datetime]
     @retrospective = true
@@ -19,6 +20,7 @@ class HtnEncounterController < ApplicationController
    @max_weight = PatientService.get_patient_attribute_value(@patient, "max_weight")
    @min_height = PatientService.get_patient_attribute_value(@patient, "min_height")
    @max_height = PatientService.get_patient_attribute_value(@patient, "max_height")
+   @user = current_user
   end
 
   def bp_alert
@@ -57,7 +59,7 @@ class HtnEncounterController < ApplicationController
 
    if @patient.get_general_health(session[:datetime])
     @existing_conditions = ["Heart disease", "Stroke", "TIA", "Diabetes", "Kidney Disease"]
-    @drugs = MedicationService.hypertension_drugs.collect { |x| x.concept.fullname}
+    @drugs = MedicationService.hypertension_dm_drugs.collect { |x| x.concept.fullname}
     @drugs = @drugs.sort.uniq
    else
     redirect_to next_task(@patient)

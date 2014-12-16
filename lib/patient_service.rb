@@ -402,12 +402,13 @@ module PatientService
   end
 
   def self.current_treatment_encounter(patient, date = Time.now(), provider = user_person_id)
-    type = EncounterType.find_by_name("TREATMENT")
+    type = Core::EncounterType.find_by_name("TREATMENT")
     encounter = patient.encounters.find(:first,:conditions =>["encounter_datetime BETWEEN ? AND ? AND encounter_type = ?",
     									date.to_date.strftime('%Y-%m-%d 00:00:00'),
     									date.to_date.strftime('%Y-%m-%d 23:59:59'),
     									type.id])
     encounter ||= patient.encounters.create(:encounter_type => type.id,:encounter_datetime => date, :provider_id => provider)
+
   end
 
   def self.count_by_type_for_date(date)
@@ -918,14 +919,14 @@ module PatientService
     when "INITIAL_BMI"
       obs = patient.person.observations.old(1).question("BMI").all
       return obs.last.answer_string.to_f rescue nil
-    when "MIN_WEIGHT"
-      return WeightHeight.min_weight(sex, patient_bean.age_in_months).to_f
+     when "MIN_WEIGHT"
+      return Core::WeightHeight.min_weight(sex, patient_bean.age_in_months).to_f
     when "MAX_WEIGHT"
-      return WeightHeight.max_weight(sex, patient_bean.age_in_months).to_f
+      return Core::WeightHeight.max_weight(sex, patient_bean.age_in_months).to_f
     when "MIN_HEIGHT"
-      return WeightHeight.min_height(sex, patient_bean.age_in_months).to_f
+      return Core::WeightHeight.min_height(sex, patient_bean.age_in_months).to_f
     when "MAX_HEIGHT"
-      return WeightHeight.max_height(sex, patient_bean.age_in_months).to_f
+      return Core::WeightHeight.max_height(sex, patient_bean.age_in_months).to_f
      when "PATIENT HAS DIABETES"
       return self.current_vitals(patient, attribute_name).value_coded
     end

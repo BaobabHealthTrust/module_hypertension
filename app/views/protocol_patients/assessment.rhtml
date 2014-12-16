@@ -294,10 +294,10 @@
         $("bp").innerHTML = "Reassess cardiovascular risk in 6 months<br>";
       }
       else{
-  <% if Location.current_health_center.description.match(/district hospital/i) %>
+  <% if Core::Location.current_health_center.description.match(/district hospital/i) %>
           $("bp").innerHTML = "Follow-up monthly<br>Reassess cardiovascular risk in 3 months<br>";
   <% end %>
-  <% if Location.current_health_center.description.match(/health center/i) %>
+  <% if Core::Location.current_health_center.description.match(/health center/i) %>
           $("bp").innerHTML = "<a class='create_button' href='/protocol_patients/treatment?ext=1&patient_id=<%= @patient.id %>&user_id=<%= @user.id %>'>Refer to next level</a><br>";
   <% end %>
       }
@@ -307,10 +307,10 @@
         $("bp").innerHTML = "Counsel on diet, physical activity, smoking cessation<br>";
       }
       else{
-  <% if Location.current_health_center.description.match(/district hospital/i) %>
+  <% if Core::Location.current_health_center.description.match(/district hospital/i) %>
           $("bp").innerHTML = "Treat accordingly & follow-up<br>";
   <% end %>
-  <% if Location.current_health_center.description.match(/health center/i) %>
+  <% if Core::Location.current_health_center.description.match(/health center/i) %>
           $("bp").innerHTML = "<a class='create_button' href='/protocol_patients/treatment?ext=1&patient_id=<%= @patient.id %>&user_id=<%= @user.id %>'>Refer to next level</a><br>";
   <% end %>
       }
@@ -538,9 +538,7 @@
     //}
       
   }
-
-
-
+//-->
 </script>
 <% if @cholesterol_value == 0 || @systolic_value == 0 %>
   <div class="inputPage NoKeyboard" id="page" style="display: block;">
@@ -567,7 +565,7 @@
 <% else %>
 
   <form method='post' action='/encounters/create' id="assessment">
-    <input type='hidden' name='program' value='HYPETENSION PROGRAM' />
+    <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
     <input type='hidden' name='encounter_type' value='ASSESSMENT ' />
     <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
     <input type='hidden' name='user_id' value='<%= @user.id %>' />

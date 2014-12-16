@@ -1,7 +1,7 @@
 class Regimen < ActiveRecord::Base
   set_table_name "regimen"
   set_primary_key "regimen_id"
-  include Openmrs
+  include Core::Openmrs
   belongs_to :concept, :conditions => {:retired => 0}
   belongs_to :program, :conditions => {:retired => 0}
   has_many :regimen_drug_orders # no default scope

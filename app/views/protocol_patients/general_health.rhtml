@@ -214,7 +214,7 @@
 end
 @concept = @concept.sort.uniq %>
 <form method='post' action="/encounters/create">
-  <input type='hidden' name='program' value='HYPETENSION PROGRAM' />
+  <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
   <input type='hidden' name='encounter_type' value='GENERAL HEALTH' />
   <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
   <input type='hidden' name='user_id' value='<%= @user.id %>' />

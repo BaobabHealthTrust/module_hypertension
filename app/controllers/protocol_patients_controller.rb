@@ -89,7 +89,7 @@ class ProtocolPatientsController < ApplicationController
 
 	def medical_history
 
-    @patient = Patient.find(params[:patient_id]) rescue nil
+    @patient = Core::Patient.find(params[:patient_id]) rescue nil
 
     redirect_to '/encounters/no_patient' and return if @patient.nil?
 
@@ -506,5 +506,4 @@ class ProtocolPatientsController < ApplicationController
     redirect_to "/" if current_user_activities.empty?
 
   end
-  
 end
