@@ -1,4 +1,5 @@
 class PeopleController < ApplicationController
+  unloadable
   def set_datetime
   end
 

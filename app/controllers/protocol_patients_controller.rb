@@ -1,5 +1,6 @@
 
 class ProtocolPatientsController < ApplicationController
+  unloadable
 
   before_filter :check_project_members
 

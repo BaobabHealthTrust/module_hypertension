@@ -1,5 +1,6 @@
 
 class EncountersController < ApplicationController
+  unloadable
 
   def create
 

@@ -1,4 +1,5 @@
 class HtnEncounterController < ApplicationController
+  unloadable
   def index
   end
 

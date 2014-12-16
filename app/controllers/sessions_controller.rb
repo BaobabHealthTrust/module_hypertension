@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  unloadable
 	skip_before_filter :authenticate_user!, :except => [:location, :update]
 	skip_before_filter :location_required
 

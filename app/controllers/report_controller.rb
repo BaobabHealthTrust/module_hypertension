@@ -1,4 +1,5 @@
 class ReportController < ApplicationController
+  unloadable
   def index
   end
 

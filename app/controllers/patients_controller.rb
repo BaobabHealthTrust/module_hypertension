@@ -1,4 +1,5 @@
 class PatientsController < ApplicationController
+  unloadable
 
   before_filter :find_patient
 

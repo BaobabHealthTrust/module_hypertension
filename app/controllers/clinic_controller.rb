@@ -1,8 +1,9 @@
 class ClinicController < ApplicationController
-
+  unloadable
   before_filter :sync_user, :except => [:index, :set_datetime, :update_datetime, :reset_datetime]
 
   def index
+
     @facility = Core::Location.current_health_center.name rescue ''
 
     @location = Core::Location.find(session[:location_id]).name rescue ""

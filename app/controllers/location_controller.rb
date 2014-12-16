@@ -1,4 +1,5 @@
 class LocationController < ApplicationController
+    unloadable
     def management
       render :layout => "menu"
     end
