@@ -230,7 +230,7 @@ class HtnEncounterController < ApplicationController
  def bp_management
   @patient = Core::Patient.find(params[:patient_id])
  end
-  
+
  def bp_drug_management
   @patient = Core::Patient.find(params[:patient_id])
  end
