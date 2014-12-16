@@ -1,0 +1,90 @@
+<style>
+  div.option {
+      font-size: 1.5em;
+      padding-left: 10px;
+      padding-top: 5px;
+  }
+  th{
+      background-color: silver;
+      height: 20px;
+      font-size: 1.1em;
+      padding: 5px;
+  }
+  div.heading{
+      background-color: lightgrey;
+      font-size: 1.5em;
+      padding: 10px;
+  }
+  tr:nth-child(even) {background: lightskyblue}
+  tr:nth-child(odd) {background: #ffffff}
+</style>
+<script type="text/javascript">
+  <!--
+    function select(option)
+    {
+        
+    }
+  //-->
+</script>
+<div class="table" style="width: 100%;">
+  <div class="row"  style="">
+    <div class="cell">
+      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;padding: 10px;height: 43vh;overflow:auto;">
+        <table style="width: 100%; margin-left: auto;margin-right: auto;">
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>Systolic</th>
+            <th>Diastolic</th>
+            <th>BP Drugs</th>
+            <th>Plan</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% (0..5).each do  |x|  %>
+              <tr>
+                <td><%= Date.today %></td>
+                <td> 175 </td>
+                <td> 78 </td>
+                <td> HCZ </td>
+                <td> Continue </td>
+              </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row" >
+    <div class="cell" >
+      <div style="border:1px solid #000000; width: 97vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;height: 25vh;overflow:auto;">
+        <div class="heading">
+          Select Action
+        </div>
+
+          <div class="table" style="width: 100%;">
+            <div class="row">
+              <div class="cell"><div class="option" onclick="selected(this)">Lifestyle Advice given</div></div>
+              <div class="cell"><div class="option">Not yet stable on ART</div></div>
+            </div>
+            <div class="row">
+              <div class="cell"><div class="option">Patient Declining BP drugs</div></div>
+              <div class="cell"><div class="option">Did not take prescribed BP drugs today</div></div>
+            </div>
+            <div class="row">
+              <div class="cell"><div class="option">Pregnant</div></div>
+              <div class="cell"><div class="option">Review BP Drugs</div></div>
+            </div>
+          </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="buttons" class="buttonsDiv">
+  <button id="nextButton" class="button green navButton" onmousedown="gotoNextPage()"><span>Next</span></button>
+</div>
+  

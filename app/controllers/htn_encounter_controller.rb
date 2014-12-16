@@ -87,8 +87,10 @@ class HtnEncounterController < ApplicationController
 
   if params[:filter] and !params[:filter][:provider].blank?
    user_person_id = User.find_by_username(params[:filter][:provider]).person_id
+
   else
    user_person_id = User.find_by_user_id(params['encounter']['provider_id']).person_id
+
   end
   encounter.provider_id = user_person_id
   encounter.save
@@ -252,5 +254,13 @@ class HtnEncounterController < ApplicationController
 
   @first_visit = false #is_first_hypertension_clinic_visit(@patient.id)
 
+ end
+
+ def bp_management
+  @patient = Core::Patient.find(params[:patient_id])
+ end
+
+ def bp_drug_management
+  @patient = Core::Patient.find(params[:patient_id])
  end
 end
