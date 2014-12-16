@@ -1,0 +1,47 @@
+<script type="text/javascript">
+  <!--
+  function loadIntro()
+  {
+      var html
+      html = "<ul>"
+              html += "<li class='data'>test </li>";
+
+
+      html += "</ul>"
+      $('inputFrame'+tstCurrentPage).innerHTML = '<table width="100%"><tr><td width="50%" valign="top"><div id="summary">' + html + '</div></td></tr></table>' ;
+  }
+  //-->
+</script>
+<form method="post" action="/htn_encounter/create">
+
+  <%= text_field_tag :introduction, nil, {
+          :tt_onLoad => "loadIntro();__$('keyboard').style.display = 'none';",
+          :optional => "true",
+          :tt_pageStyleClass => "NoControls" } %>
+
+  <%= touch_text_field_tag "SYSTOLIC BLOOD PRESSURE", @patient, nil,
+                           {	:id => "systolic_blood_pressure",
+                                :field_type => "number",
+                                :helpText => "Systolic blood pressure (?/Y)",
+                                :absoluteMin => 80,
+                                :tt_onLoad => "timedEvent = setTimeout('calculateBP(1)', 100);",
+                                :tt_onUnLoad => "clearTimeout(timedEvent);",
+                                :absoluteMax => 180,
+                                :validationRule => "^([0-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only (for example 157)",
+                                :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
+
+
+  <%= touch_text_field_tag "DIASTOLIC BLOOD PRESSURE", @patient, nil,
+                           {	:id => "diastolic_blood_pressure",
+                                :field_type => "number",
+                                :helpText => "Diastolic blood pressure (X/?)",
+                                :absoluteMin => 50,
+                                :tt_onLoad => "$('clearButton').style.display = 'inline'; timedEvent = setTimeout('calculateBP(2)', 100)",
+                                :tt_onUnLoad => "clearTimeout(timedEvent);",
+                                :absoluteMax => 110,
+                                :validationRule => "^([0-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only (for example 157)",
+                                :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
+
+</form>

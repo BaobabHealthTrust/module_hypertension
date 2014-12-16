@@ -4,7 +4,7 @@ class EncountersController < ApplicationController
   def create
 
     @retrospective = session[:datetime]
-		@retrospective = Time.now if session[:datetime].blank?
+		  @retrospective = Time.now if session[:datetime].blank?
     Core::User.current = Core::User.find(@user["user_id"]) rescue nil
 
     remote_ip = request.remote_ip

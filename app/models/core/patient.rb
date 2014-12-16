@@ -100,5 +100,27 @@ module Core
     end
     return false
    end
+
+   def bp_normal()
+    diastolic = Core::Observation.find(:last,:conditions => ["person_id = ? AND concept_id = ? AND obs_datetime = ?",
+                                              self.id,Core::Concept.find_by_name("diastolic blood pressure").concept_id,
+                                              Date.today])
+    systolic = Core::Observation.find(:last,:conditions => ["person_id = ? AND concept_id = ? AND obs_datetime = ?",
+                                             self.id,Core::Concept.find_by_name("systolic blood pressure").concept_id,
+                                             Date.today])
+    if (diastolic.blank? || systolic.blank?)
+     raise "Patient has no BP measurements".to_s
+    else
+     if (diastolic.value_text.to_i >= 90 || systolic.value_text.to_i >= 140)
+       false
+     else
+      true
+     end
+    end
+   end
+
+   def on_hypertensive_medicine()
+
+   end
   end
 end

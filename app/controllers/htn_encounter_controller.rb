@@ -224,4 +224,22 @@ class HtnEncounterController < ApplicationController
   @first_visit = false #is_first_hypertension_clinic_visit(@patient.id)
 
  end
+
+ def confirmatory_bp_check
+  @patient = Core::Patient.find(params[:patient_id])
+=begin
+  if (@patient.bp_normal)
+     if (@patient.on_hypertensive_medicine)
+         bp_drug_management
+     else
+         #return to normal flow
+     end
+  else
+
+=end
+ end
+
+ def bp_drug_management
+
+ end
 end
