@@ -241,7 +241,7 @@
     /* starts */
 
     function showSelectedConditions() {
-        currentHeight = '<%= @current_hieght.to_i %>';
+        currentHeight = '<%= @current_height.to_i %>';
         console.log(currentHeight)
         conditions = [];
         sex = '<%= @patient.gender.downcase  rescue "" %>'
@@ -275,7 +275,7 @@
         $('bmi').value = currentBmi;
         var col = "<i>"
 
-        if ($('temperature').value.length > 0)
+        if ($('temperature'))
             conditions.push("Temperature: " + $('temperature').value);
 
 
@@ -454,49 +454,52 @@
 
 </script>
 
-<form method='post' action='/encounters/create' id="vitals">
-  <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+<form method='post' action='/encounters/create/vitals' id="vitals">
+
   <input type='hidden' name='encounter_type' value='VITALS' />
   <input type='hidden' name='encounter[encounter_type_name]' value='VITALS' />
   <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
   <input type='hidden' name='user_id' value='<%= @user.id %>' />
 
   <input type='hidden' name="concept[bmi]" id="bmi" />
-  <input type='hidden' name="concept[cardiovascular system diagnosis]" id="cva" />
-  <input type='hidden' name="concept[peak flow predicted]" id="estimated" />
+
   <%= hidden_field_tag "bmi_value", true %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
 
 
-  <input type='text' id='temperature'
-         name='concept[Temperature]'
-         helpText='Temperature '
-         field_type='number'
-         pos='9'
-         allowFreeText = 'true'
-         condition = '<%= ask_temperature %>'
-         min = 35
-         max = 41
-         units = 'Degrees Celcius'  tt_onLoad="showCategory('Vitals')"
-         tt_pageStyleClass = "Numeric NumbersWithUnknownAndDecimal"
-  />
-
-
-
-  <% if @patient_bean.age < 18 || @current_height == 0 %>
-      <input type='text' id='height'
-             name='concept[Height (cm)]'
-             helpText='Height (cm)'
-             field_type='number'
-             tt_pageStyleClass = "Numeric NumbersWithUnknown"
-             min = 50
-             max = 180 tt_onLoad=""
-      />
+  <% if ask_temperature %>
+      <label for="temperature">Temperature (C)</label>
+      <%= touch_text_field_tag "TEMPERATURE", @patient, nil,
+                               {	:id => "temperature",
+                                    :field_type => "number",
+                                    :allowFreeText => 'true',
+                                    :min => 20,
+                                    :max => 45,
+                                    :units => 'Celcuis',
+                                    :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+                                    :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+                                    :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+                                    :helpText => "Temperature (C)" } %>
   <% end %>
 
+  <% if @patient_bean.age < 18 || @current_height == 0 %>
+      <%= touch_numeric_tag "HEIGHT (CM)", @patient, nil,
+                            {	:id => "height",
+                                 :field_type => "number",
+                                 :tt_onLoad => "$('clearButton').style.display = 'inline';",
+                                 :min => number_with_precision(@min_height, :precision => 1),
+                                 :max => number_with_precision(@max_height, :precision => 1),
+                                 :absoluteMin => 10,
+                                 :absoluteMax => 228,
+                                 :units => 'cm',
+                                 :validationRule => "^([0-9]+)|Unknown$",
+                                 :validationMessage => "You must enter numbers only (for example 157)",
+                                 :tt_pageStyleClass => "Numeric NumbersOnly",
+                                 :helpText => "Height (cm)" } %>
+  <% end %>
 
   <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
                         {	:id => "weight",
-                             :name => "concept[weight (kg)]",
                              :field_type => "number",
                              :tt_onLoad => "$('clearButton').style.display = 'inline';",
                              :min => number_with_precision(@min_weight, :precision => 1),
@@ -510,33 +513,39 @@
                              :helpText => "Weight (Kg)" } %>
 
 
-  <input type='text' id='systolic_blood_pressure'
-         name='concept[Systolic blood pressure]'
-         helpText='Systolic blood pressure'
-         field_type='number'
-         pos='4'  tt_onLoad=""
-         tt_pageStyleClass = "NumbersWithUnknown"
-         tt_onLoad = "timedEvent = setTimeout('calculateBP(1)', 100);;"
-         tt_onUnLoad = "clearTimeout(timedEvent);"
-         condition = 'captureBP()'
-         absoluteMin = 0
-         max = 250
-  />
-
-  <input type='text' id='diastolic_blood_pressure'
-         name='concept[Diastolic blood pressure]'
-         helpText='Diastolic blood pressure '
-         field_type='number'
-         pos='5'
-         tt_pageStyleClass = "NumbersWithUnknown"
-         tt_onLoad = "timedEvent = setTimeout('calculateBP(2)', 100);;"
-         tt_onUnLoad = "clearTimeout(timedEvent);"
-         condition = 'captureBP()'
-         absoluteMin = 0
-         max = 180
-  />
+  <%= touch_text_field_tag "SYSTOLIC BLOOD PRESSURE", @patient, nil,
+                           {	:id => "systolic_blood_pressure",
+                                :field_type => "number",
+                                :helpText => "Systolic blood pressure (?/Y)",
+                                :absoluteMin => 80,
+                                :condition => "captureBP()",
+                                :tt_onLoad => "timedEvent = setTimeout('calculateBP(1)', 100);",
+                                :tt_onUnLoad => "clearTimeout(timedEvent);",
+                                :absoluteMax => 180,
+                                :validationRule => "^([0-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only (for example 157)",
+                                :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
 
 
+  <%= touch_text_field_tag "DIASTOLIC BLOOD PRESSURE", @patient, nil,
+                           {	:id => "diastolic_blood_pressure",
+                                :field_type => "number",
+                                :helpText => "Diastolic blood pressure (X/?)",
+                                :absoluteMin => 50,
+                                :tt_onLoad => "$('clearButton').style.display = 'inline'; timedEvent = setTimeout('calculateBP(2)', 100)",
+                                :tt_onUnLoad => "clearTimeout(timedEvent);",
+                                :condition => "captureBP()",
+                                :absoluteMax => 110,
+                                :validationRule => "^([0-9]+)|Unknown$",
+                                :validationMessage => "You must enter numbers only (for example 157)",
+                                :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
+
+
+  <% if htn_activated %>
+      <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+      <input type='hidden' name="concept[cardiovascular system diagnosis]" id="cva" />
+      <input type='hidden' name="concept[peak flow predicted]" id="estimated" />
+  <% end %>
   <label for='summary'>Summary</label>
   <%= text_field_tag :summary, nil, {
           :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';",

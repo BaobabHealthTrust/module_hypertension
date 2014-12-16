@@ -12,7 +12,7 @@ class EncountersController < ApplicationController
     #raise @retrospective.to_yaml
     Core::Location.current = Core::Location.find(params[:location_id] || session[:location_id]) rescue nil
 
-    patient = Core::Patient.find(params[:patient_id]) rescue nil
+    patient = Core::Patient.find(params[:encounter][:patient_id]) rescue nil
 
     if !patient.nil?
 			
