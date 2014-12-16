@@ -65,8 +65,10 @@ class HtnEncounterController < ApplicationController
 
   if params[:filter] and !params[:filter][:provider].blank?
    user_person_id = User.find_by_username(params[:filter][:provider]).person_id
+
   else
    user_person_id = User.find_by_user_id(params['encounter']['provider_id']).person_id
+
   end
   encounter.provider_id = user_person_id
   encounter.save
@@ -225,21 +227,11 @@ class HtnEncounterController < ApplicationController
 
  end
 
- def confirmatory_bp_check
+ def bp_management
   @patient = Core::Patient.find(params[:patient_id])
-=begin
-  if (@patient.bp_normal)
-     if (@patient.on_hypertensive_medicine)
-         bp_drug_management
-     else
-         #return to normal flow
-     end
-  else
-
-=end
  end
-
+  
  def bp_drug_management
-
+  @patient = Core::Patient.find(params[:patient_id])
  end
 end
