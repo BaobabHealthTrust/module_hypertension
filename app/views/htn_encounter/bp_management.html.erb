@@ -20,16 +20,46 @@
 </style>
 <script type="text/javascript">
   <!--
-    function select(option)
+    function selected(option)
     {
-        
+        options = document.getElementsByClassName("option")
+
+        for(i = 0; i < options.length; i ++)
+        {
+           options[i].style.backgroundColor = "white";
+           options[i].setAttribute("selected", false)
+        }
+
+        option.style.backgroundColor = "skyblue";
+        option.setAttribute("selected", true);
     }
+
+    function nextPage()
+    {
+        options = document.getElementsByClassName("option")
+
+        for(i = 0; i < options.length; i ++)
+        {
+            if (options[i].getAttribute("selected") == true)
+            {
+
+            }
+
+        }
+
+        showMessage("Please select ")
+    }
+
   //-->
 </script>
 <div class="table" style="width: 100%;">
   <div class="row"  style="">
     <div class="cell">
-      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;padding: 10px;height: 43vh;overflow:auto;">
+      <div style="width: 96vw;margin-bottom: 5px;margin-top: 5px; padding: 10px;font-size: 130%; font-weight: bold;">
+        BP Management Screen
+      </div>
+      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 2px; margin-left: auto;margin-right: auto;padding: 10px;height: 43vh;overflow:auto;">
+        <span style="font-weight: bold; font-size: 110%;">BP Trail</span>
         <table style="width: 100%; margin-left: auto;margin-right: auto;">
           <thead>
           <tr>
@@ -67,15 +97,14 @@
           <div class="table" style="width: 100%;">
             <div class="row">
               <div class="cell"><div class="option" onclick="selected(this)">Lifestyle Advice given</div></div>
-              <div class="cell"><div class="option">Not yet stable on ART</div></div>
+              <div class="cell"><div class="option" onclick="selected(this)">Not yet stable on ART</div></div>
             </div>
             <div class="row">
-              <div class="cell"><div class="option">Patient Declining BP drugs</div></div>
-              <div class="cell"><div class="option">Did not take prescribed BP drugs today</div></div>
+              <div class="cell"><div class="option" onclick="selected(this)">Patient Declining BP drugs</div></div>
+              <div class="cell"><div class="option" onclick="selected(this)">Did not take prescribed BP drugs today</div></div>
             </div>
             <div class="row">
-              <div class="cell"><div class="option">Pregnant</div></div>
-              <div class="cell"><div class="option">Review BP Drugs</div></div>
+              <div class="cell"><div class="option" onclick="selected(this)">Pregnant</div></div>
             </div>
           </div>
 
@@ -85,6 +114,7 @@
 </div>
 
 <div id="buttons" class="buttonsDiv">
-  <button id="nextButton" class="button green navButton" onmousedown="gotoNextPage()"><span>Next</span></button>
+  <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Next</span></button>
+  <button id="nextButton" class="button blue navButton" onmousedown="window.location='/htn_encounter/bp_drug_management?patient_id=<%= @patient.id%>'"><span>Review BP Drugs</span></button>
 </div>
   
