@@ -1,6 +1,7 @@
+<script language="javascript" type="text/javascript" src="/javascripts/jquery.js"></script>
 <style>
   div.option {
-      font-size: 1.5em;
+      font-size: 1.9em;
       padding-left: 10px;
       padding-top: 5px;
   }
@@ -28,10 +29,13 @@
         {
            options[i].style.backgroundColor = "white";
            options[i].setAttribute("selected", false)
+           options[i].children[0].firstChild.setAttribute("src", "/images/unticked.jpg")
         }
 
-        option.style.backgroundColor = "skyblue";
-        option.setAttribute("selected", true);
+//        option.style.backgroundColor = "skyblue";
+        var state = option.getAttribute('selected');
+        option.setAttribute("selected",(state == "true" ? false : true));
+        option.children[0].firstChild.setAttribute("src", (state == "true" ? "/images/unticked.jpg" : "/images/ticked.jpg"))
     }
 
     function nextPage()
@@ -40,16 +44,83 @@
 
         for(i = 0; i < options.length; i ++)
         {
-            if (options[i].getAttribute("selected") == true)
+            if (options[i].getAttribute("selected") == "true")
             {
-
+                return createEncounter(options[i].children[1].innerHTML)
             }
 
         }
 
-        showMessage("Please select ")
+        showMessage("Please select one action");
     }
 
+    function createEncounter(chosenPlan)
+    {
+        var dataHash = {"encounter": { "provider" : , "encounter_type_name"} , "observations" : [{"entity_id":"253","position":1}, {"entity_id":"823","position":2}]}
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/htn_encounter/create",
+            dataType: 'json',
+            contentType: 'application/json',
+            data : JSON.stringify(dataHash),
+            success: function(msg){
+                if (msg == "Record Saved Successfully")
+                {
+                    window.location =  "/patients/show/<%= @patient.patient_id %>"
+                }
+                else
+                {
+                    showMessage("Failed to save record")
+                }
+
+            },
+            error: function(){
+                showMessage("Could not create record", "Unsuccessful")
+            }
+
+        });
+        /*
+        myForm = document.createElement("form");
+        myForm.action = "/htn_encounter/create"
+
+        encounter = document.createElement("input")
+        encounter.name = "encounter[encounter_type_name]"
+        encounter.value = "HYPERTENSION MANAGEMENT"
+        myForm.appendChild(encounter);
+
+        patient = document.createElement("input")
+        patient.name = "encounter[patient_id]"
+        patient.value = <%= @patient.id %>
+        myForm.appendChild(patient)
+
+        provider = document.createElement("input")
+        provider.name = "encounter[provider_id]"
+        provider.value = <%= User.current.user_id %>
+        myForm.appendChild(provider)
+
+        concept = document.createElement("input");
+        concept.name = "encounter[observation][concept_name]";
+        concept.value = "Plan";
+
+        patient_id = document.createElement("input");
+        patient_id.name = "encounter[observation][patient_id]";
+        patient_id.value = <%= @patient.id %>;
+        myForm.appendChild(patient_id)
+
+        text = document.createElement("input");
+        text.name = "encounter[observation][value_text]";
+        text.value = chosenPlan;
+        myForm.appendChild(text)
+
+        obs_date = document.createElement("input");
+        obs_date.name = "encounter[observation][obs_datetime]";
+        obs_date.value =' <%= DateTime.now() %>';
+        myForm.appendChild(obs_date)
+
+        document.body.appendChild(myForm);
+        myForm.submit()*/
+    }
   //-->
 </script>
 <div class="table" style="width: 100%;">
@@ -58,30 +129,32 @@
       <div style="width: 96vw;margin-bottom: 5px;margin-top: 5px; padding: 10px;font-size: 130%; font-weight: bold;">
         BP Management Screen
       </div>
-      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 2px; margin-left: auto;margin-right: auto;padding: 10px;height: 43vh;overflow:auto;">
-        <span style="font-weight: bold; font-size: 110%;">BP Trail</span>
-        <table style="width: 100%; margin-left: auto;margin-right: auto;">
-          <thead>
-          <tr>
-            <th>Date</th>
-            <th>Systolic</th>
-            <th>Diastolic</th>
-            <th>BP Drugs</th>
-            <th>Plan</th>
-          </tr>
-          </thead>
-          <tbody>
-          <% (0..5).each do  |x|  %>
-              <tr>
-                <td><%= Date.today %></td>
-                <td> 175 </td>
-                <td> 78 </td>
-                <td> HCZ </td>
-                <td> Continue </td>
-              </tr>
-          <% end %>
-          </tbody>
-        </table>
+      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 2px; margin-left: auto;margin-right: auto;padding: 10px;">
+        <div><span style="font-weight: bold; font-size: 110%;">BP Trail</span></div>
+        <div style="height: 40vh;overflow: auto;">
+          <table style="width: 100%; margin-left: auto;margin-right: auto;">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Systolic</th>
+              <th>Diastolic</th>
+              <th>BP Drugs</th>
+              <th>Plan</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% (0..15).each do  |x|  %>
+                <tr>
+                  <td><%= Date.today %></td>
+                  <td> 175 </td>
+                  <td> 78 </td>
+                  <td> HCZ </td>
+                  <td> Continue </td>
+                </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
@@ -96,25 +169,43 @@
 
           <div class="table" style="width: 100%;">
             <div class="row">
-              <div class="cell"><div class="option" onclick="selected(this)">Lifestyle Advice given</div></div>
-              <div class="cell"><div class="option" onclick="selected(this)">Not yet stable on ART</div></div>
+              <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
+                <div style="display: table-cell; vertical-align: middle; "><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Lifestyle Advice given</div>
+              </div>
+              </div>
+              <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Not yet stable on ART</div>
+              </div>
+              </div>
+              <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Patient Declining BP drugs</div>
+              </div>
+              </div>
             </div>
             <div class="row">
-              <div class="cell"><div class="option" onclick="selected(this)">Patient Declining BP drugs</div></div>
-              <div class="cell"><div class="option" onclick="selected(this)">Did not take prescribed BP drugs today</div></div>
-            </div>
-            <div class="row">
-              <div class="cell"><div class="option" onclick="selected(this)">Pregnant</div></div>
+              <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Did not take prescribed BP drugs today</div>
+              </div>
+              </div>
+              <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Pregnant</div>
+              </div>
+              </div>
             </div>
           </div>
 
       </div>
-    </div>
+     </div>
   </div>
 </div>
 
 <div id="buttons" class="buttonsDiv">
-  <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Next</span></button>
+  <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
   <button id="nextButton" class="button blue navButton" onmousedown="window.location='/htn_encounter/bp_drug_management?patient_id=<%= @patient.id%>'"><span>Review BP Drugs</span></button>
 </div>
   
