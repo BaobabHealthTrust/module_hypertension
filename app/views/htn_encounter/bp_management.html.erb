@@ -56,7 +56,11 @@
 
     function createEncounter(chosenPlan)
     {
-        var dataHash = {"encounter": { "provider" : , "encounter_type_name"} , "observations" : [{"entity_id":"253","position":1}, {"entity_id":"823","position":2}]}
+        var dataHash = {"encounter": { "provider_id" : <%= User.current.user_id %>,
+            "encounter_type_name" : "HYPERTENSION MANAGEMENT","patient_id" :<%= @patient.patient_id %> ,
+            "encounter_datetime": '<%= DateTime.now() %>'} ,
+            "observations" : [{"patient_id":"24", "concept_name":"PLAN", "value_text":chosenPlan,
+            "obs_datetime":'<%= DateTime.now() %>', "value_coded_or_text":""}], "return" : true}
 
         jQuery.ajax({
             type: "POST",
@@ -64,16 +68,8 @@
             dataType: 'json',
             contentType: 'application/json',
             data : JSON.stringify(dataHash),
-            success: function(msg){
-                if (msg == "Record Saved Successfully")
-                {
+            success: function(){
                     window.location =  "/patients/show/<%= @patient.patient_id %>"
-                }
-                else
-                {
-                    showMessage("Failed to save record")
-                }
-
             },
             error: function(){
                 showMessage("Could not create record", "Unsuccessful")
@@ -143,7 +139,7 @@
             </tr>
             </thead>
             <tbody>
-            <% (0..15).each do  |x|  %>
+            <% (@bp_trail || []).each do  |record|  %>
                 <tr>
                   <td><%= Date.today %></td>
                   <td> 175 </td>
