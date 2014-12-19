@@ -264,7 +264,7 @@ class HtnEncounterController < ApplicationController
 
  def bp_management
   @patient = Core::Patient.find(params[:patient_id])
-  @bp_trail = @patient.bp_management_trail
+  @bp_trail =  @patient.bp_management_trail()
  end
 
  def bp_drug_management

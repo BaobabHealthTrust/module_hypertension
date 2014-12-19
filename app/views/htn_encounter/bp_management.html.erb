@@ -18,7 +18,55 @@
   }
   tr:nth-child(even) {background: lightskyblue}
   tr:nth-child(odd) {background: #ffffff}
+   #popup_box {
+       display:none;
+       z-index:1001;
+       left:300px;
+       top:100px;
+       text-align:center;
+       font-size:28;
+       color: black;
+       border: 2px solid #9999FF;
+       border-radius: 15px 15px 15px 15px;
+       border-style: outset;
+       height: 160px;
+       padding: 5px;
+       position: absolute;
+       top: 199px;
+       width: 450px;
+       -moz-user-select:none;
+   }
+
+  #popup_box span{
+      font-size:35px;
+  }
+
+  #popup_box a{
+      background-color: silver;
+      border-bottom: 1px outset black;
+      border-style: outset;
+      padding: 10px 25px 10px 25px;
+      border-radius:5px;
+      font-size:29;
+      cursor: pointer;
+
+  }
+
+  #cover{
+      display: none;
+      position: absolute;
+      background-color: black;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 1000;
+      opacity: 0.5;
+
+  }
 </style>
+
+
 <script type="text/javascript">
   <!--
     function selected(option)
@@ -29,15 +77,23 @@
         {
            options[i].style.backgroundColor = "white";
            options[i].setAttribute("selected", false)
-           options[i].children[0].firstChild.setAttribute("src", "/images/unticked.jpg")
+           options[i].children[0].firstChild.setAttribute("src", "/touchscreentoolkit/lib/images/unchecked.png")
         }
 
-//        option.style.backgroundColor = "skyblue";
         var state = option.getAttribute('selected');
         option.setAttribute("selected",(state == "true" ? false : true));
-        option.children[0].firstChild.setAttribute("src", (state == "true" ? "/images/unticked.jpg" : "/images/ticked.jpg"))
+        option.children[0].firstChild.setAttribute("src", (state == "true" ? "/touchscreentoolkit/lib/images/unchecked.png" : "/touchscreentoolkit/lib/images/checked.png"))
     }
 
+    function hideMessageBox()
+    {
+        document.getElementById('popup_box').style.display = 'none';
+        document.getElementById('cover').style.display = 'none';
+    }
+
+    function goHome () {
+        window.location =  "/patients/show/<%= @patient.patient_id %>";
+    }
     function nextPage()
     {
         options = document.getElementsByClassName("option")
@@ -51,7 +107,18 @@
 
         }
 
-        showMessage("Please select one action");
+        document.getElementById('cover').style.display = 'inline';
+        document.getElementById('cover').style.height = 'inline'
+
+        msgbox = document.getElementById('popup_box');
+        msgbox.innerHTML = "<span>No action was selected. Do you still want to continue?</span></p><button onmousedown='goHome()' id='yes'><span>Yes</span></button>" +
+                "&nbsp;&nbsp;&nbsp;<button id='no' onmousedown='hideMessageBox()' ><span>No</span></button>"
+
+        msgbox.style.background = "tomato";
+        msgbox.style.height = "150";
+        javascript:window.scrollTo(0,0);
+        msgbox.style.display = 'inline';
+
     }
 
     function createEncounter(chosenPlan)
@@ -141,11 +208,11 @@
             <tbody>
             <% (@bp_trail || []).each do  |record|  %>
                 <tr>
-                  <td><%= Date.today %></td>
-                  <td> 175 </td>
-                  <td> 78 </td>
-                  <td> HCZ </td>
-                  <td> Continue </td>
+                  <td style="text-align: center"><%= record['date'] %></td>
+                  <td style="text-align: center"><%= record['systolic'] %></td>
+                  <td style="text-align: center"><%= record['diastolic'] %></td>
+                  <td style="text-align: center"><%= record['drugs'] %></td>
+                  <td style="padding-left: 10px;"><%= record['plan'] %></td>
                 </tr>
             <% end %>
             </tbody>
@@ -166,29 +233,29 @@
           <div class="table" style="width: 100%;">
             <div class="row">
               <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle; "><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                 <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Lifestyle Advice given</div>
               </div>
               </div>
               <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                 <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Not yet stable on ART</div>
               </div>
               </div>
               <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                 <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Patient Declining BP drugs</div>
               </div>
               </div>
             </div>
             <div class="row">
               <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                 <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Did not take prescribed BP drugs today</div>
               </div>
               </div>
               <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/images/unticked.jpg"></div>
+                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                 <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Pregnant</div>
               </div>
               </div>
@@ -204,4 +271,10 @@
   <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
   <button id="nextButton" class="button blue navButton" onmousedown="window.location='/htn_encounter/bp_drug_management?patient_id=<%= @patient.id%>'"><span>Review BP Drugs</span></button>
 </div>
-  
+<div id="cover" >
+
+</div>
+
+<div id="popup_box" >
+
+</div>
