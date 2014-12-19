@@ -270,4 +270,49 @@ class HtnEncounterController < ApplicationController
  def bp_drug_management
   @patient = Core::Patient.find(params[:patient_id])
  end
+
+ def update_remaining_drugs
+  @patient = Core::Patient.find(params[:patient_id])
+
+  encounter_type = EncounterType.find_by_name("HYPERTENSION MANAGEMENT").id
+  encounter = @patient.encounters.last(:conditions => ["encounter_type = ? AND DATE(encounter_datetime) = ?",
+  encounter_type, (session[:datetime].to_date rescue Date.today)])
+
+  if !params[:pills].blank?
+    if encounter.blank?
+      encounter = Encounter.create(
+          :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
+          :encounter_type => encounter_type,
+          :creator => User.current.id,
+          :provider_id => User.current.id,
+          :location_id => @current_location.id,
+          :patient_id => @patient.id
+      )
+    end
+
+    concept_id = ConceptName.find_by_name("Amount of drug remaining at home").concept_id
+
+    drug_id = Drug.find_by_name(params[:drug_name]).id
+
+    obs = Observation.last(:conditions => ["concept_id = ? AND encounter_id = ? AND value_drug = ?",
+                                           concept_id, encounter.id, drug_id])
+    if obs.blank?
+      Observation.create(
+           :obs_datetime => encounter.encounter_datetime,
+           :encounter_id => encounter.id,
+           :person_id => @patient.id,
+           :location_id => @current_location,
+           :concept_id => concept_id,
+           :creator => User.current.id,
+           :value_numeric => params[:pills],
+           :value_drug => drug_id
+       )
+    else
+      obs.update_attributes(:value_numeric => params[:pills])
+    end
+     render :text => "ok"
+    else
+      #return a no template error
+    end
+ end
 end
