@@ -315,4 +315,24 @@ class HtnEncounterController < ApplicationController
       #return a no template error
     end
  end
+
+  def change_drugs
+    @patient = Core::Patient.find(params[:patient_id])
+  end
+
+  def auto_prescription
+    @patient = Core::Patient.find(params[:patient_id])
+    @drugs = []
+    @drugs = params[:drugs].split("$$") if !params[:drugs].blank?
+
+    encounter  = MedicationService.current_treatment_encounter(@patient)
+
+    pills = (@next_appointment - (session[:datetime].to_date rescue Date.today)).days
+    start_date = session[:datetime].to_date rescue nil
+    start_date = Time.now() if start_date.blank?
+    auto_expire_date = start_date + duration
+    DrugOrder.write_order(encounter, @patient, nil, drug, start_date, auto_expire_date, nil,
+                          nil, nil)
+    redirect_to "/htn_encounter/bp_management?patient_id=#{@patient.id}"
+  end
 end

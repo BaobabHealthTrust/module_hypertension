@@ -537,9 +537,16 @@
                 <tr>
                 <td class = "td-remaining td-title"><span>Pills remaining</span></td>
                 <% data_keys.each do |key|%>
-                    <td class="td-remaining td-value"><input id = "<%= key%>" onclick = "showNumber('<%= key%>', 0, 500)" class="butt" value = "<%= @data[key]["current"] ?
-                                                                               (@data[key]["pills_remaining"].blank? ? "?" : @data[key]["pills_remaining"]) :
-                                                                               "&nbsp;"%>"></input></td>
+                    <td class="td-remaining td-value">
+                      <% if @data[key]["current"]%>
+                          <input id = "<%= key%>" onclick = "showNumber('<%= key%>', 0, 500)" class="butt" value = "<%= @data[key]["current"] ?
+                                                                                                                                (@data[key]["pills_remaining"].blank? ? "?" : @data[key]["pills_remaining"]) :
+                                                                                                                                "&nbsp;"%>"></input>
+
+                      <% else %>
+                        &nbsp;
+                      <% end %>
+                    </td>
                 <%end%>
                 </tr>
             </table>
@@ -548,7 +555,7 @@
           <button id="continueButton" class="button green navButton"
                   onmousedown="window.location='/htn_encounter/bp_management?patient_id=<%= @patient.id%>'"><span>Continue current drugs</span></button>
           <button id="nextButton" class="button blue navButton"
-                  onmousedown=""><span>Change BP drugs</span></button>
+                  onmousedown="window.location = '/htn_encounter/change_drugs?patient_id=<%= @patient.id%>'"><span>Change BP drugs</span></button>
         </div>
     </body>
 </html>
