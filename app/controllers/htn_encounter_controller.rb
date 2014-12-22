@@ -323,16 +323,25 @@ class HtnEncounterController < ApplicationController
   def auto_prescription
     @patient = Core::Patient.find(params[:patient_id])
     @drugs = []
-    @drugs = params[:drugs].split("$$") if !params[:drugs].blank?
 
-    encounter  = MedicationService.current_treatment_encounter(@patient)
+    if !params[:drugs].blank?
+      @drugs = params[:drugs].split("$$")
 
-    pills = (@next_appointment - (session[:datetime].to_date rescue Date.today)).days
-    start_date = session[:datetime].to_date rescue nil
-    start_date = Time.now() if start_date.blank?
-    auto_expire_date = start_date + duration
-    DrugOrder.write_order(encounter, @patient, nil, drug, start_date, auto_expire_date, nil,
-                          nil, nil)
-    redirect_to "/htn_encounter/bp_management?patient_id=#{@patient.id}"
+      type = EncounterType.find_by_name("TREATMENT")
+      encounter = @patient.encounters.current.find_by_encounter_type(type.id)
+      encounter ||= @patient.encounters.create(:encounter_type => type.id, :provider_id => User.current.person_id)
+
+      pills = 30
+      start_date = session[:datetime].to_date rescue nil
+      start_date = Time.now() if start_date.blank?
+      auto_expire_date = start_date + 30.days
+      @drugs.each do |drug|
+        drg = Drug.find_by_name(drug)
+        DrugOrder.write_order(encounter, @patient, nil, drg, start_date, auto_expire_date, "",
+                          "OD", true)
+      end
+    end
+
+    render :text => "ok"
   end
 end
