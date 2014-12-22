@@ -81,11 +81,13 @@
     var currentWeightPercentile;
     var displayText;
     var medianWeightHeight;
+    var bpOverRide;
 
     <%
     dateToday = session[:datetime].to_date rescue Date.today
     %>
     age = "<%=  @patient.person.age(dateToday) rescue 99999%>"
+    bpOverRide = false;
 
     function $(e) {
         return document.getElementById(e);
@@ -275,7 +277,7 @@
 <form action="/htn_encounter/create/vitals">
   <%= hidden_field_tag "encounter[encounter_type_name]", "VITALS" %>
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
-  <%= hidden_field_tag "encounter[encounter_datetime]", (@restrospective ? session[:datetime] :  DateTime.now()) %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", dateToday %>
   <%= hidden_field_tag "encounter[provider_id]", User.current.user_id %>
 
   <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
@@ -366,6 +368,13 @@
 
   <% if htn_activated %>
       <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+  <% end %>
+
+  <% if @retrospective %>
+      <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
+        <%= text_field "filter" , 'provider', :helpText => 'Staff who provided the information (Provider)', :ajaxURL => '/user/username?username=' %></p>
+  <% else %>
+      <%= hidden_field_tag "filter[provider]", nil %>
   <% end %>
 
   <%= submit_tag "Finish" %>

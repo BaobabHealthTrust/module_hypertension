@@ -11,13 +11,17 @@
       font-size: 1.1em;
       padding: 5px;
   }
+  td {
+      border-bottom:1pt solid black;
+  }
+  tr.highBP{
+      background-color: #FFD000;
+  }
   div.heading{
       background-color: lightgrey;
       font-size: 1.5em;
       padding: 10px;
   }
-  tr:nth-child(even) {background: lightskyblue}
-  tr:nth-child(odd) {background: #ffffff}
    #popup_box {
        display:none;
        z-index:1001;
@@ -85,15 +89,6 @@
         option.children[0].firstChild.setAttribute("src", (state == "true" ? "/touchscreentoolkit/lib/images/unchecked.png" : "/touchscreentoolkit/lib/images/checked.png"))
     }
 
-    function hideMessageBox()
-    {
-        document.getElementById('popup_box').style.display = 'none';
-        document.getElementById('cover').style.display = 'none';
-    }
-
-    function goHome () {
-        window.location =  "/patients/show/<%= @patient.patient_id %>";
-    }
     function nextPage()
     {
         options = document.getElementsByClassName("option")
@@ -106,19 +101,7 @@
             }
 
         }
-
-        document.getElementById('cover').style.display = 'inline';
-        document.getElementById('cover').style.height = 'inline'
-
-        msgbox = document.getElementById('popup_box');
-        msgbox.innerHTML = "<span>No action was selected. Do you still want to continue?</span></p><button onmousedown='goHome()' id='yes'><span>Yes</span></button>" +
-                "&nbsp;&nbsp;&nbsp;<button id='no' onmousedown='hideMessageBox()' ><span>No</span></button>"
-
-        msgbox.style.background = "tomato";
-        msgbox.style.height = "150";
-        javascript:window.scrollTo(0,0);
-        msgbox.style.display = 'inline';
-
+        showMessage("Please select one action to proceed");
     }
 
     function createEncounter(chosenPlan)
@@ -143,46 +126,6 @@
             }
 
         });
-        /*
-        myForm = document.createElement("form");
-        myForm.action = "/htn_encounter/create"
-
-        encounter = document.createElement("input")
-        encounter.name = "encounter[encounter_type_name]"
-        encounter.value = "HYPERTENSION MANAGEMENT"
-        myForm.appendChild(encounter);
-
-        patient = document.createElement("input")
-        patient.name = "encounter[patient_id]"
-        patient.value = <%= @patient.id %>
-        myForm.appendChild(patient)
-
-        provider = document.createElement("input")
-        provider.name = "encounter[provider_id]"
-        provider.value = <%= User.current.user_id %>
-        myForm.appendChild(provider)
-
-        concept = document.createElement("input");
-        concept.name = "encounter[observation][concept_name]";
-        concept.value = "Plan";
-
-        patient_id = document.createElement("input");
-        patient_id.name = "encounter[observation][patient_id]";
-        patient_id.value = <%= @patient.id %>;
-        myForm.appendChild(patient_id)
-
-        text = document.createElement("input");
-        text.name = "encounter[observation][value_text]";
-        text.value = chosenPlan;
-        myForm.appendChild(text)
-
-        obs_date = document.createElement("input");
-        obs_date.name = "encounter[observation][obs_datetime]";
-        obs_date.value =' <%= DateTime.now() %>';
-        myForm.appendChild(obs_date)
-
-        document.body.appendChild(myForm);
-        myForm.submit()*/
     }
   //-->
 </script>
@@ -198,16 +141,16 @@
           <table style="width: 100%; margin-left: auto;margin-right: auto;">
             <thead>
             <tr>
-              <th>Date</th>
-              <th>Systolic</th>
-              <th>Diastolic</th>
+              <th width="10%">Date</th>
+              <th width="10%">Systolic</th>
+              <th width="10%">Diastolic</th>
               <th>BP Drugs</th>
-              <th>Plan</th>
+              <th width="20%">Plan</th>
             </tr>
             </thead>
             <tbody>
             <% (@bp_trail || []).each do  |record|  %>
-                <tr>
+                <tr class=<%= (record['systolic'].to_i >= 140 || record['diastolic'].to_i >= 90) ? 'highBP' : ''%> >
                   <td style="text-align: center"><%= record['date'] %></td>
                   <td style="text-align: center"><%= record['systolic'] %></td>
                   <td style="text-align: center"><%= record['diastolic'] %></td>
@@ -231,37 +174,51 @@
         </div>
 
           <div class="table" style="width: 100%;">
-            <div class="row">
-              <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Lifestyle Advice given</div>
-              </div>
-              </div>
-              <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Not yet stable on ART</div>
-              </div>
-              </div>
-              <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Patient Declining BP drugs</div>
-              </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Did not take prescribed BP drugs today</div>
-              </div>
-              </div>
-              <div class="cell"><div class="option" selected=false onclick="selected(this)">
-                <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Pregnant</div>
-              </div>
-              </div>
-            </div>
+            <% if @patient.on_hypertensive_medicine() %>
+                <div class="row">
+                  <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Did not take prescribed BP drugs today</div>
+                  </div>
+                  </div>
+                  <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Continue Drugs</div>
+                  </div>
+                  </div>
+                  <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Review Drugs</div>
+                  </div>
+                  </div>
+                </div>
+            <% else %>
+                <div class="row">
+                  <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Lifestyle Advice given</div>
+                  </div>
+                  </div>
+                  <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Not yet stable on ART</div>
+                  </div>
+                  </div>
+                  <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Patient Declining BP drugs</div>
+                  </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Start anti-hypertensives</div>
+                  </div>
+                  </div>
+                </div>
+            <% end %>
           </div>
-
       </div>
      </div>
   </div>
@@ -269,12 +226,4 @@
 
 <div id="buttons" class="buttonsDiv">
   <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
-  <button id="nextButton" class="button blue navButton" onmousedown="window.location='/htn_encounter/bp_drug_management?patient_id=<%= @patient.id%>'"><span>Review BP Drugs</span></button>
-</div>
-<div id="cover" >
-
-</div>
-
-<div id="popup_box" >
-
 </div>
