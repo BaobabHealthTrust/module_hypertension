@@ -102,7 +102,13 @@ class HtnEncounterController < ApplicationController
       redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
     end
   end
-  redirect_to next_task(Patient.find(params['encounter']['patient_id']))
+
+  if !params[:return].blank?
+   render :text => true and return
+  else
+   redirect_to next_task(Patient.find(params['encounter']['patient_id']))
+  end
+
  end
 
   def create_obs(encounter , params)
@@ -258,6 +264,7 @@ class HtnEncounterController < ApplicationController
 
  def bp_management
   @patient = Core::Patient.find(params[:patient_id])
+  @bp_trail =  @patient.bp_management_trail()
  end
 
  def bp_drug_management

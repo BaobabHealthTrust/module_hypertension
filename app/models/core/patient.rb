@@ -122,5 +122,30 @@ module Core
    def on_hypertensive_medicine()
 
    end
+
+   def bp_management_trail(date = Date.today)
+    visits = []
+
+    sbp_concept = Core::Concept.find_by_name('Systolic blood pressure').id
+    dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
+    plan_concept = Core::Concept.find_by_name('Plan').id
+
+    records = Core::Observation.find_by_sql("SELECT  DISTINCT o.encounter_id,o.person_id,o.obs_datetime,
+                                       (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
+                                       AND concept_id = #{sbp_concept} AND person_id = o.person_id LIMIT 1) AS SBP,
+                                       (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
+                                       AND concept_id = #{dbp_concept} AND person_id = o.person_id LIMIT 1) AS DBP,
+                                       (SELECT value_text FROM obs WHERE concept_id = #{plan_concept} AND person_id = o.person_id
+                                       AND obs_datetime BETWEEN DATE_FORMAT(obs_datetime, '%Y-%m-%d 00:00:00') AND
+                                       DATE_FORMAT(obs_datetime, '%Y-%m-%d 23:59:59') LIMIT 1) AS plan
+                                       FROM obs as o WHERE o.person_id = #{self.id} AND obs_datetime <=
+                                       '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}' HAVING SBP IS NOT NULL
+                                       AND DBP IS NOT NULL ORDER BY o.obs_datetime DESC LIMIT 12").each do |record|
+     visits << {"date" => record.obs_datetime.strftime("%d-%b-%Y"), "systolic" => record["SBP"],
+                "diastolic" => record["DBP"], "plan" => (record["plan"].blank? ? "" : record["plan"]), "drugs" => "None"}
+    end
+
+    return visits
+   end
   end
 end
