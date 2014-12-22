@@ -249,6 +249,8 @@
                 console.log("Updated prescriptions for drugs:  " + result.join(" & "))
             }
         })
+
+        window.location = "/htn_encounter/bp_management?patient_id=<%= @patient.id%>"
     }
 
 </script>
