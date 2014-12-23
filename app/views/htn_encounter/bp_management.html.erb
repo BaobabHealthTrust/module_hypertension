@@ -97,7 +97,20 @@
         {
             if (options[i].getAttribute("selected") == "true")
             {
-                return createEncounter(options[i].children[1].innerHTML)
+                switch (options[i].children[1].innerHTML){
+                    case 'Start anti-hypertensives' :
+                        window.location = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                    case 'Return to annual screening' :
+
+                    case 'Review Drugs':
+                        window.location = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                    case 'Continue Drugs':
+                        window.location = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                    default :
+                        return createEncounter(options[i].children[1].innerHTML);
+                }
+
+
             }
 
         }
@@ -193,7 +206,7 @@
                   </div>
                 </div>
             <% else %>
-                <div class="row">
+               <div class="row">
                   <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                     <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Lifestyle Advice given</div>
@@ -211,19 +224,24 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
+                  <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Start anti-hypertensives</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Return to annual screening</div>
                   </div>
+                    </div>
+                  <div class="cell"><div class="option" selected=false onclick="selected(this)">
+                    <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Start anti-hypertensives</div>
                   </div>
                 </div>
+               </div>
             <% end %>
           </div>
       </div>
      </div>
   </div>
-</div>
 
+</div>
 <div id="buttons" class="buttonsDiv">
   <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
 </div>
