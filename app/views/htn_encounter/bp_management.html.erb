@@ -92,29 +92,37 @@
     function nextPage()
     {
         options = document.getElementsByClassName("option")
-
+        var checked = false;
         for(i = 0; i < options.length; i ++)
         {
             if (options[i].getAttribute("selected") == "true")
+
             {
+                checked = true;
+                console.log(options[i].children[1].innerHTML)
                 switch (options[i].children[1].innerHTML){
                     case 'Start anti-hypertensives' :
                         window.location = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        break;
                     case 'Return to annual screening' :
 
+                        break;
                     case 'Review Drugs':
                         window.location = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        break;
                     case 'Continue Drugs':
-                        window.location = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        window.location = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>";
+                        break;
                     default :
                         return createEncounter(options[i].children[1].innerHTML);
                 }
 
-
+                break;
             }
 
         }
-        showMessage("Please select one action to proceed");
+        if (checked == false)
+            showMessage("Please select one action to proceed");
     }
 
     function createEncounter(chosenPlan)
