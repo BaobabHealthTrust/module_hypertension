@@ -173,7 +173,7 @@ module Core
                   ]).map(&:value_drug)
      result = result.collect{|drug_id| Drug.find(drug_id).name}
    end
-    
+
    def enrolled_on_program( program_id, date = DateTime.now, create = false)
     program = Core::PatientProgram.find(:last,:conditions => ["patient_id = ? AND
                                                program_id = ? AND date_enrolled <= ?",self.id,program_id,

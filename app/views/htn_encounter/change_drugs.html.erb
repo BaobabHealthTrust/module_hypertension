@@ -291,14 +291,32 @@
                 result.push(checks[i].id)
             }
         }
-        jQuery.ajax({
-            url: "/htn_encounter/auto_prescription?patient_id=<%= @patient.id%>&drugs=" + result.join("$$"),
-            success: function(){
-                console.log("Updated prescriptions for drugs:  " + result.join(" & "))
-            }
-        })
 
-        window.location = "/htn_encounter/bp_management?patient_id=<%= @patient.id%>"
+        if (result.length > 0){
+
+            var form = document.createElement("form")
+            form.action = "/encounters/treatment?patient_id=<%= @patient.id%>"
+            document.body.appendChild(form);
+
+            for (var i = 0; i < result.length; i ++){
+                var input = document.createElement("input");
+                input.setAttribute("type", "hidden");
+                input.setAttribute("name", "auto_rx[]");
+                input.setAttribute("value", result[i]);
+                form.appendChild(input)
+            }
+
+            form.submit();
+        }
+
+        //jQuery.ajax({
+          //  url: "/htn_encounter/auto_prescription?patient_id=<%= @patient.id%>&drugs=" + result.join("$$"),
+            //success: function(){
+              //  console.log("Updated prescriptions for drugs:  " + result.join(" & "))
+           // }
+        //})
+
+       // window.location = "/htn_encounter/bp_management?patient_id=<%= @patient.id%>"
     }
 
 </script>
