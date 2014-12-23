@@ -177,40 +177,81 @@
     .unchecked{
         background: url("/touchscreentoolkit/lib/images/unticked")
     }
+
 </style>
-<%
-   @data = {"HCZ 25mg" => {"current" => true, "new" => ''},
-            "Amlodipine (5mg tablet)" => {"current" => false, "new" => '54'},
-            "Amlodipine (10mg tablet)" => {"current" => false, "new" => '54'},
-            "Enalapril (5mg tablet)" => {"current" => true, "new" => '18'},
-            "Enalapril (10mg tablet)" => {"current" => true, "new" => '18'},
-            "Atenolol (50mg tablet)" => {"current" => true, "new" => '18'},
-            "Atenolol (100mg tablet)" => {"current" => true, "new" => '18'}
-   }
-   data_keys =  @data.keys.sort
+<%   @data = {"HCZ" => {"25mg" => "HCT (25mg tablet)"},
+              "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet) ", "10mg" => "Amlodipine (10mg tablet)"},
+              "Enalapril" => {"5mg" => "Enalapril (5mg tablet)", "10mg" => "Enalapril (10mg tablet)"},
+              "Atenolol" => {"50mg" => "Atenolol (50mg tablet)", "100mg" => "Atenolol (100mg tablet)"}
+              }
+     data_keys =  ["HCZ", "Enalapril", "Amlodipine", "Atenolol"]
 %>
 </head>
 <body>
 <div class="holder">
   <table id = "main-table">
-    <caption>Change BP drugs<caption>
+    <caption>Prescribe BP drugs<caption>
       <tr>
         <th>&nbsp;</th>
         <% data_keys.each do |key|%>
-            <th><%= key%></th>
+            <th><%= key%>
+              <table style="width: 100%;"><tr>
+                <%
+                   keys = @data[key].keys.sort.reverse
+                   keys.each do |ky|
+                     name = @data[key][ky].strip
+                     cols = @data[key].keys.length
+                %>
+                    <td style="width: <%= 100/cols%>%; border: 1px dotted lightgray;border-radius: 3px;">
+                      <span><%= ky%></span>
+                    </td>
+                <%
+                   end
+                %>
+              </tr></table></th>
         <%end%>
-        <tr>
+        </tr>
         <tr>
           <td class = "td-current td-title"><span>Current</span></td>
           <% data_keys.each do |key|%>
-              <td class="td-current td-value"><span><%= @data[key]["current"] ? "X" : "&nbsp;"%></span></td>
+              <td class="td-current td-value"> <table style="width: 100%;"><tr>
+                <%
+                   keys = @data[key].keys.sort.reverse
+                   keys.each do |ky|
+                     name = @data[key][ky].strip
+                     cols = @data[key].keys.length
+                %>
+                    <td style="width: <%= 100/cols%>%;">
+                          <span><%= @current_drugs[name].blank? ? "&nbsp" : "<img  width='45' height='35' class='tick'>&nbsp;</img>"%></span>
+                    </td>
+                <%
+                   end
+                %>
+              </tr></table></td>
           <%end%>
         </tr>
         <tr>
           <td class = "td-remaining td-title"><span>New</span></td>
           <% data_keys.each do |key|%>
               <td class="td-remaining td-value">
-                    <img width="65" height="50" id = "<%= key%>"
+
+                <table style="width: 100%;"><tr>
+                  <%
+                     keys = @data[key].keys.sort.reverse
+                     keys.each do |ky|
+                       name = @data[key][ky].strip
+                       cols = @data[key].keys.length
+
+                  %>
+                          <td style="width: 50%">
+                    <img class="choice" width="65" height="50" id = "<%= key%>"
+
+                          </td>
+
+                  <%
+                     end
+                  %>
+                </tr></table>
               </td>
           <%end%>
         </tr>
@@ -218,11 +259,18 @@
 </div>
 <div id="buttons" class="buttonsDiv">
   <button id="continueButton" class="button green navButton"
-          onclick="nextDestinations()"><span>Continue current drugs</span></button>
+          onclick="nextDestinations()"><span>Continue</span></button>
 </div>
 </body>
 <script>
-    var checks = document.getElementsByTagName("img")
+    var checks = document.getElementsByClassName("choice")
+    var ticks = document.getElementsByClassName("tick")
+    var imgTick = 'data:image/png;base64,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';
+
+
+    for (var i = 0; i < ticks.length; i ++){
+        ticks[i].src = imgTick;
+    }
 
     for (var k in checks){
         checks[k].src = "/touchscreentoolkit/lib/images/unticked.jpg";
@@ -243,14 +291,32 @@
                 result.push(checks[i].id)
             }
         }
-        jQuery.ajax({
-            url: "/htn_encounter/auto_prescription?patient_id=<%= @patient.id%>&drugs=" + result.join("$$"),
-            success: function(){
-                console.log("Updated prescriptions for drugs:  " + result.join(" & "))
-            }
-        })
 
-        window.location = "/htn_encounter/bp_management?patient_id=<%= @patient.id%>"
+        if (result.length > 0){
+
+            var form = document.createElement("form")
+            form.action = "/encounters/treatment?patient_id=<%= @patient.id%>"
+            document.body.appendChild(form);
+
+            for (var i = 0; i < result.length; i ++){
+                var input = document.createElement("input");
+                input.setAttribute("type", "hidden");
+                input.setAttribute("name", "auto_rx[]");
+                input.setAttribute("value", result[i]);
+                form.appendChild(input)
+            }
+
+            form.submit();
+        }
+
+        //jQuery.ajax({
+          //  url: "/htn_encounter/auto_prescription?patient_id=<%= @patient.id%>&drugs=" + result.join("$$"),
+            //success: function(){
+              //  console.log("Updated prescriptions for drugs:  " + result.join(" & "))
+           // }
+        //})
+
+       // window.location = "/htn_encounter/bp_management?patient_id=<%= @patient.id%>"
     }
 
 </script>

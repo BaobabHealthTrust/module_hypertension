@@ -272,6 +272,11 @@ class HtnEncounterController < ApplicationController
 
  def bp_drug_management
   @patient = Core::Patient.find(params[:patient_id])
+  session_date = session[:datetime].to_date rescue Date.today
+  @current_drugs = {}
+  @patient.current_bp_drugs(session_date).each {|drg|
+    @current_drugs[drg] = true
+  }
  end
 
  def update_remaining_drugs
@@ -321,6 +326,11 @@ class HtnEncounterController < ApplicationController
 
   def change_drugs
     @patient = Core::Patient.find(params[:patient_id])
+    session_date = session[:datetime].to_date rescue Date.today
+    @current_drugs = {}
+    @patient.current_bp_drugs(session_date).each {|drg|
+      @current_drugs[drg] = true
+    }
   end
 
   def auto_prescription
