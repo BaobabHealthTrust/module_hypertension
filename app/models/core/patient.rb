@@ -96,7 +96,7 @@ module Core
     threshold = CoreService.get_global_property_value("htn.screening.age.threshold").to_i
 
     if self.age(date) >= threshold
-        return true
+     return true
     end
     return false
    end
