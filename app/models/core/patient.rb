@@ -152,10 +152,16 @@ module Core
     program = Core::PatientProgram.find(:last,:conditions => ["patient_id = ? AND
                                                program_id = ? AND date_enrolled <= ?",self.id,program_id,
                                                date.strftime("%Y-%m-%d 23:59:59")])
-    
+
     if program.blank? and create
-     program = Core::PatientProgram.create({:program_id => program_id, :date_enrolled => date,
-                                           :patient_id => self.id})
+     ActiveRecord::Base.transaction do
+      program = Core::PatientProgram.create({:program_id => program_id, :date_enrolled => date,
+                                             :patient_id => self.id})
+      alive_state = Core::ProgramWorkflowState.find(:first, :conditions => ["program_workflow_id = ? AND concept_id = ?",
+                                                                            Core::ProgramWorkflow.find(:first, :conditions => ["program_id = ?", program_id]).id,
+                                                                            Core::Concept.find_by_name("Alive").id]).id
+      Core::PatientState.create(:patient_program_id => program.id, :start_date => date,:state => alive_state )
+     end
     end
 
     program
