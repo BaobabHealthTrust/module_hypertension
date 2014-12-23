@@ -120,7 +120,7 @@ module Core
    end
 
    def on_hypertensive_medicine()
-     
+
    end
 
    def bp_management_trail(date = Date.today)
@@ -172,6 +172,19 @@ module Core
                                                 self.id, concept_id, prev_date.to_date, result
                   ]).map(&:value_drug)
      result = result.collect{|drug_id| Drug.find(drug_id).name}
+   end
+    
+   def enrolled_on_program( program_id, date = DateTime.now, create = false)
+    program = Core::PatientProgram.find(:last,:conditions => ["patient_id = ? AND
+                                               program_id = ? AND date_enrolled <= ?",self.id,program_id,
+                                               date.strftime("%Y-%m-%d 23:59:59")])
+    
+    if program.blank? and create
+     program = Core::PatientProgram.create({:program_id => program_id, :date_enrolled => date,
+                                           :patient_id => self.id})
+    end
+
+    program
    end
   end
 end

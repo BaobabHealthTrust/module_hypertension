@@ -264,8 +264,10 @@ class HtnEncounterController < ApplicationController
  end
 
  def bp_management
+  date = session[:datetime].to_date rescue Date.today
   @patient = Core::Patient.find(params[:patient_id])
-  @bp_trail =  @patient.bp_management_trail()
+  @patient_program = @patient.enrolled_on_program(Core::Program.find_by_name("Hypertension program").id,date, true)
+  @bp_trail =  @patient.bp_management_trail(date)
  end
 
  def bp_drug_management
