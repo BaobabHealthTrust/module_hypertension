@@ -92,11 +92,14 @@
     function nextPage()
     {
         options = document.getElementsByClassName("option")
-
+        var checked = false;
         for(i = 0; i < options.length; i ++)
         {
             if (options[i].getAttribute("selected") == "true")
+
             {
+                checked = true;
+                console.log(options[i].children[1].innerHTML)
                 switch (options[i].children[1].innerHTML){
                     case 'Start anti-hypertensives' :
                         path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
@@ -111,12 +114,15 @@
                         path = "/patients/show/<%= @patient.patient_id %>"
                         break;
                 }
+
                 return createEncounter(options[i].children[1].innerHTML, path);
 
+                break;
             }
 
         }
-        showMessage("Please select one action to proceed");
+        if (checked == false)
+            showMessage("Please select one action to proceed");
     }
 
     function createEncounter(chosenPlan, path)

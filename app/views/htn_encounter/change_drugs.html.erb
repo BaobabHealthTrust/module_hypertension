@@ -295,8 +295,14 @@
         if (result.length > 0){
 
             var form = document.createElement("form")
-            form.action = "/encounters/treatment?patient_id=<%= @patient.id%>"
+            form.action = "/regimens/new?patient_id=<%= @patient.id%>"
             document.body.appendChild(form);
+
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "patient_id");
+            input.setAttribute("value", "<%= @patient.id%>");
+            form.appendChild(input)
 
             for (var i = 0; i < result.length; i ++){
                 var input = document.createElement("input");
