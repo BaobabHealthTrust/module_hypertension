@@ -102,20 +102,20 @@
                 console.log(options[i].children[1].innerHTML)
                 switch (options[i].children[1].innerHTML){
                     case 'Start anti-hypertensives' :
-                        window.location = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
-                        break;
-                    case 'Return to annual screening' :
-
+                        path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
                         break;
                     case 'Review Drugs':
-                        window.location = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
                         break;
                     case 'Continue Drugs':
-                        window.location = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>";
+                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
                         break;
                     default :
-                        return createEncounter(options[i].children[1].innerHTML);
+                        path = "/patients/show/<%= @patient.patient_id %>"
+                        break;
                 }
+
+                return createEncounter(options[i].children[1].innerHTML, path);
 
                 break;
             }
@@ -125,7 +125,7 @@
             showMessage("Please select one action to proceed");
     }
 
-    function createEncounter(chosenPlan)
+    function createEncounter(chosenPlan, path)
     {
         var dataHash = {"encounter": { "provider_id" : <%= User.current.user_id %>,
             "encounter_type_name" : "HYPERTENSION MANAGEMENT","patient_id" :<%= @patient.patient_id %> ,
@@ -140,7 +140,7 @@
             contentType: 'application/json',
             data : JSON.stringify(dataHash),
             success: function(){
-                    window.location =  "/patients/show/<%= @patient.patient_id %>"
+                    window.location =  path
             },
             error: function(){
                 showMessage("Could not create record", "Unsuccessful")
