@@ -25,8 +25,7 @@ class HtnEncounterController < ApplicationController
   end
 
   def bp_alert
-    @patient = Patient.find(params[:patient_id])
-    @patient_bean = PatientService.get_patient(@patient.person)
+    @patient = Core::Patient.find(params[:patient_id])
     @bp = @patient.current_bp()
   end
 
