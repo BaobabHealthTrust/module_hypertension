@@ -96,9 +96,50 @@ module Core
     threshold = CoreService.get_global_property_value("htn.screening.age.threshold").to_i
 
     if self.age(date) >= threshold
-     return true
+
+     htn_program = Core::Program.find_by_name("HYPERTENSION PROGRAM")
+
+     patient_program = enrolled_on_program(htn_program.id,date,false)
+
+     if patient_program.blank?
+      #When patient has no HTN program
+      last_check = last_bp_readings(date)
+
+      if last_check.blank?
+       return true #patient has never had their BP checked
+      elsif ((last_check['SBP'].to_i >= 140 || last_check['DBP'].to_i >= 90))
+       return true #patient had high BP readings at last visit
+      elsif((date.to_date - last_check.max_date.to_date).to_i >= 365 )
+       return true # 1 Year has passed since last check
+      else
+       return false
+      end
+     else
+      #Get plan
+      plan_concept = Core::Concept.find_by_name('Plan').id
+      plan = Core::Observation.find(:last,:conditions => ["person_id = ? AND concept_id = ?
+                                               AND obs_datetime <= ?",self.id,plan_concept,
+                                               date.to_date.strftime('%Y-%m-%d 23:59:59')],
+                                              :order => "obs_datetime DESC")
+      if plan.blank?
+       return true
+      else
+       if plan.value_text.match(/ANNUAL/i)
+        if ((date.to_date - plan.obs_datetime.to_date).to_i >= 365 )
+         return true #patient on annual screening and time has elapsed
+        else
+         return false #patient was screen but a year has not passed
+        end
+       else
+        return true #patient requires active screening
+       end
+      end
+
+     end
+    else
+     return false
     end
-    return false
+
    end
 
    def bp_normal()
@@ -191,6 +232,21 @@ module Core
     end
 
     program
+   end
+
+   def last_bp_readings(date)
+    sbp_concept = Core::Concept.find_by_name('Systolic blood pressure').id
+    dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
+
+    return Core::Observation.find_by_sql("SELECT o.person_id, (SELECT MAX(obs_datetime) FROM obs
+                                         WHERE person_id = o.person_id AND voided = 0 AND
+                                         obs_datetime <= '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}' AND
+                                         concept_id in (#{dbp_concept},#{sbp_concept})) AS max_date,
+                                         (SELECT COALESCE(value_numeric,0) FROM obs WHERE obs_datetime = max_date
+                                         AND concept_id = #{sbp_concept} AND person_id = o.person_id LIMIT 1) AS SBP,
+                                         (SELECT COALESCE(value_numeric,0) FROM obs WHERE obs_datetime = max_date
+                                         AND concept_id = #{dbp_concept} AND person_id = o.person_id LIMIT 1) AS DBP
+                                         FROM obs as o WHERE o.person_id =#{self.id} HAVING max_date IS NOT NULL").first rescue nil
    end
   end
 end
