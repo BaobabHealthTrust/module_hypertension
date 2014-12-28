@@ -176,7 +176,7 @@
                   <td style="text-align: center"><%= record['date'] %></td>
                   <td style="text-align: center"><%= record['systolic'] %></td>
                   <td style="text-align: center"><%= record['diastolic'] %></td>
-                  <td style="text-align: center"><%= record['drugs'] %></td>
+                  <td style="text-align: center"><%= @patient.current_bp_drugs(record['date'].to_date).join(", ") %></td>
                   <td style="padding-left: 10px;"><%= record['plan'] %></td>
                 </tr>
             <% end %>
@@ -196,7 +196,9 @@
         </div>
 
           <div class="table" style="width: 100%;">
-            <% if @patient.on_hypertensive_medicine() %>
+            <%
+               session_date = session[:datetime].to_date rescue Date.today
+               if !@patient.current_bp_drugs(session_date).blank? %>
                 <div class="row">
                   <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>

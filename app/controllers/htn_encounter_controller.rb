@@ -25,9 +25,11 @@ class HtnEncounterController < ApplicationController
   end
 
   def bp_alert
-    @patient = Patient.find(params[:patient_id])
+
+    @patient = Core::Patient.find(params[:patient_id])
     @patient_bean = PatientService.get_patient(@patient.person)
     @bp = @patient.current_bp((session[:datetime] || Time.now()))
+
   end
 
   def vitals_confirmation

@@ -234,6 +234,18 @@ module Core
     program
    end
 
+
+    def current_bp(date = Date.today)
+      encounter_id = self.encounters.last(:conditions => ["encounter_type = ? AND DATE(encounter_datetime) = ?",
+                                                          Core::EncounterType.find_by_name("VITALS").id, date.to_date]).id rescue nil
+
+      [(Core::Observation.last(:conditions => ["encounter_id = ? AND concept_id = ?", encounter_id,
+                                         Core::ConceptName.find_by_name("SYSTOLIC BLOOD PRESSURE").concept_id]).answer_string.to_i rescue nil),
+       (Core::Observation.last(:conditions => ["encounter_id = ? AND concept_id = ?", encounter_id,
+                                         Core::ConceptName.find_by_name("DIASTOLIC BLOOD PRESSURE").concept_id]).answer_string.to_i rescue nil)
+      ]
+    end
+
    def last_bp_readings(date)
     sbp_concept = Core::Concept.find_by_name('Systolic blood pressure').id
     dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
@@ -248,5 +260,6 @@ module Core
                                          AND concept_id = #{dbp_concept} AND person_id = o.person_id LIMIT 1) AS DBP
                                          FROM obs as o WHERE o.person_id =#{self.id} HAVING max_date IS NOT NULL").first rescue nil
    end
+
   end
 end
