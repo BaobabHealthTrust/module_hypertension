@@ -99,7 +99,6 @@
 
             {
                 checked = true;
-                console.log(options[i].children[1].innerHTML)
                 switch (options[i].children[1].innerHTML){
                     case 'Start anti-hypertensives' :
                         path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
@@ -111,11 +110,11 @@
                         path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
                         break;
                     default :
-                        path = "/patients/show/<%= @patient.patient_id %>"
+                        path = "<%= next_task(@patient)%>"
                         break;
                 }
 
-                return createEncounter(options[i].children[1].innerHTML, path);
+                return createEncounter(options[i].children[1].innerHTML, path, options[i].children[1].getAttribute("state"));
 
                 break;
             }
@@ -125,13 +124,15 @@
             showMessage("Please select one action to proceed");
     }
 
-    function createEncounter(chosenPlan, path)
+    function createEncounter(chosenPlan, path, state)
     {
+
         var dataHash = {"encounter": { "provider_id" : <%= User.current.user_id %>,
             "encounter_type_name" : "HYPERTENSION MANAGEMENT","patient_id" :<%= @patient.patient_id %> ,
-            "encounter_datetime": '<%= DateTime.now() %>'} ,
-            "observations" : [{"patient_id":"24", "concept_name":"PLAN", "value_text":chosenPlan,
-            "obs_datetime":'<%= DateTime.now() %>', "value_coded_or_text":""}], "return" : true}
+            "encounter_datetime": '<%= session[:datetime].to_date rescue DateTime.now() %>'} ,
+            "observations" : [{"patient_id":<%= @patient.patient_id %>, "concept_name":"PLAN", "value_text":chosenPlan,
+            "obs_datetime":'<%= session[:datetime].to_date rescue DateTime.now() %>', "value_coded_or_text":""}],
+            "return" : true, "state": state}
 
         jQuery.ajax({
             type: "POST",
@@ -171,7 +172,7 @@
             </thead>
             <tbody>
             <% (@bp_trail || []).each do  |record|  %>
-                <tr class=<%= (record['systolic'].to_i >= 140 || record['diastolic'].to_i >= 90) ? 'highBP' : ''%> >
+                <tr class=<%= (record['systolic'].to_i > 140 || record['diastolic'].to_i > 90) ? 'highBP' : ''%> >
                   <td style="text-align: center"><%= record['date'] %></td>
                   <td style="text-align: center"><%= record['systolic'] %></td>
                   <td style="text-align: center"><%= record['diastolic'] %></td>
@@ -201,17 +202,17 @@
                 <div class="row">
                   <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Did not take prescribed BP drugs today</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; " state="On Treatment">Did not take prescribed BP drugs today</div>
                   </div>
                   </div>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Continue Drugs</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; " state="On Treatment">Continue Drugs</div>
                   </div>
                   </div>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Review Drugs</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;" state="On Treatment">Review Drugs</div>
                   </div>
                   </div>
                 </div>
@@ -219,29 +220,29 @@
                <div class="row">
                   <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Lifestyle Advice given</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; " state="Lifestyle changes only">Lifestyle Advice given</div>
                   </div>
                   </div>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">Not yet stable on ART</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px; " state="Symptomatic but NOT in treatment">Not yet stable on ART</div>
                   </div>
                   </div>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Patient Declining BP drugs</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;" state="Symptomatic but NOT in treatment">Patient Declining BP drugs</div>
                   </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Return to annual screening</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;" state="Alive">Return to annual screening</div>
                   </div>
                     </div>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
-                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;">Start anti-hypertensives</div>
+                    <div style="display: table-cell; vertical-align: middle;padding-left: 5px;" state="On Treatment">Start anti-hypertensives</div>
                   </div>
                 </div>
                </div>

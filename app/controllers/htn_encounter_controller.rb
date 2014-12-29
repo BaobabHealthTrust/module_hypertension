@@ -25,8 +25,11 @@ class HtnEncounterController < ApplicationController
   end
 
   def bp_alert
+
     @patient = Core::Patient.find(params[:patient_id])
-    @bp = @patient.current_bp()
+    @patient_bean = PatientService.get_patient(@patient.person)
+    @bp = @patient.current_bp((session[:datetime] || Time.now()))
+
   end
 
   def vitals_confirmation
@@ -97,10 +100,48 @@ class HtnEncounterController < ApplicationController
   create_obs(encounter, params)
 
   if encounter.name == "VITALS" && encounter.observations.length == 2
-    bp  = encounter.patient.current_bp
+    bp  = encounter.patient.current_bp(encounter.encounter_datetime)
     if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
       redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
     end
+  end
+
+  if !params[:state].blank?
+   htn_program = Core::Program.find_by_name("HYPERTENSION PROGRAM")
+   # get state id
+   state = Core::ProgramWorkflowState.find(:first, :conditions => ["program_workflow_id = ? AND concept_id = ?",
+                                                                    Core::ProgramWorkflow.find(:first, :conditions => ["program_id = ?", htn_program.id]).id,
+                                                                    Core::Concept.find_by_name(params[:state]).id]).id
+   unless state.blank?
+    patient_program = Core::PatientProgram.find(:first, :conditions => ["patient_id = ? AND program_id = ? AND date_enrolled <= ?",
+                                                                        encounter.patient_id,htn_program.id,params['encounter']['encounter_datetime'].to_date])
+
+    state_within_range = Core::PatientState.find(:first, :conditions => ["patient_program_id = ? AND state = ? AND start_date <= ? AND end_date >= ?",
+                         patient_program.id, state, params['encounter']['encounter_datetime'].to_date,params['encounter']['encounter_datetime'].to_date])
+
+    if state_within_range.blank?
+       last_state = Core::PatientState.find(:last,
+                                            :conditions => ["patient_program_id = ? AND start_date <= ? ",
+                                              patient_program.id, params['encounter']['encounter_datetime'].to_date],
+                                            :order => "start_date ASC")
+       if ! last_state.blank?
+        last_state.end_date = params['encounter']['encounter_datetime'].to_date
+        last_state.save
+       end
+
+       state_after = Core::PatientState.find(:last,
+                                             :conditions => ["patient_program_id = ? AND start_date >= ? ",
+                                                             patient_program.id, params['encounter']['encounter_datetime'].to_date],
+                                             :order => "start_date ASC")
+
+       new_state = Core::PatientState.new(:patient_program_id => patient_program.id,
+                                             :start_date => params['encounter']['encounter_datetime'].to_date,
+                                             :state => state )
+       new_state.end_date = state_after.start_date if !state_after.blank?
+       new_state.save
+    end
+
+   end
   end
 
   if !params[:return].blank?
