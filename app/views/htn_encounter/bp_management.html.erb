@@ -127,6 +127,11 @@
     function createEncounter(chosenPlan, path, state)
     {
 
+        if (state == "On Treatment")
+        {
+            state = null;
+        }
+
         var dataHash = {"encounter": { "provider_id" : <%= User.current.user_id %>,
             "encounter_type_name" : "HYPERTENSION MANAGEMENT","patient_id" :<%= @patient.patient_id %> ,
             "encounter_datetime": '<%= session[:datetime].to_date rescue DateTime.now() %>'} ,
@@ -176,7 +181,7 @@
                   <td style="text-align: center"><%= record['date'] %></td>
                   <td style="text-align: center"><%= record['systolic'] %></td>
                   <td style="text-align: center"><%= record['diastolic'] %></td>
-                  <td style="text-align: center"><%= @patient.current_bp_drugs(record['date'].to_date).join(", ") %></td>
+                  <td style="text-align: center"><%= @patient.current_bp_drugs(record['date'].to_date).join(", ") unless  record['date'].to_date == (session[:datetime].to_date rescue DateTime.now().to_date)%></td>
                   <td style="padding-left: 10px;"><%= record['plan'] %></td>
                 </tr>
             <% end %>

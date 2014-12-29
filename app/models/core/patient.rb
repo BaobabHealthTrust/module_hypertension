@@ -177,8 +177,8 @@ module Core
                                        (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
                                        AND concept_id = #{dbp_concept} AND person_id = o.person_id AND voided = 0 LIMIT 1) AS DBP,
                                        (SELECT value_text FROM obs WHERE concept_id = #{plan_concept} AND person_id = o.person_id
-                                       AND obs_datetime BETWEEN DATE_FORMAT(obs_datetime, '%Y-%m-%d 00:00:00') AND
-                                       DATE_FORMAT(obs_datetime, '%Y-%m-%d 23:59:59') AND voided = 0 LIMIT 1) AS plan
+                                       AND obs_datetime BETWEEN DATE_FORMAT(o.obs_datetime, '%Y-%m-%d 00:00:00') AND
+                                       DATE_FORMAT(o.obs_datetime, '%Y-%m-%d 23:59:59') AND voided = 0 LIMIT 1) AS plan
                                        FROM obs as o WHERE o.person_id = #{self.id} AND o.voided = 0 AND obs_datetime <=
                                        '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}' HAVING SBP IS NOT NULL
                                        AND DBP IS NOT NULL ORDER BY o.obs_datetime DESC").each do |record|
