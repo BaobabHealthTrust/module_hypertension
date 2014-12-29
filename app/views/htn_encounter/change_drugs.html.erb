@@ -222,7 +222,7 @@
                      cols = @data[key].keys.length
                 %>
                     <td style="width: <%= 100/cols%>%;">
-                          <span><%= @current_drugs[name].blank? ? "&nbsp" : "<img  width='45' height='35' class='tick'>&nbsp;</img>"%></span>
+                          <span><%= @current_drugs[name].blank? ? "&nbsp" : "<img width='45' height='35' class='tick'>&nbsp;</img>"%></span>
                     </td>
                 <%
                    end
@@ -244,7 +244,7 @@
 
                   %>
                           <td style="width: 50%">
-                    <img class="choice" width="65" height="50" id = "<%= name%>"
+                    <img class="choice <%= key%>" width="65" height="50" id = "<%= name%>"
 
                           </td>
 
@@ -260,6 +260,8 @@
 <div id="buttons" class="buttonsDiv">
   <button id="continueButton" class="button green navButton"
           onclick="nextDestinations()"><span>Continue</span></button>
+  <button id="cancelButton" class="button red navButton"
+          onclick="window.location='/htn_encounter/bp_management?patient_id=<%= @patient.id%>'"><span>Cancel</span></button>
 </div>
 </body>
 <script>
@@ -279,6 +281,13 @@
                 this.src = this.src.replace("unticked", "ticked")
             }else{
                 this.src = this.src.replace("ticked", "unticked")
+            }
+            var drugClass =  this.className.split(" ")[1];
+            var nodes = document.getElementsByClassName(drugClass)
+            for (var i = 0; i < nodes.length; i ++){
+                if (nodes[i].id != this.id){
+                   nodes[i].src = nodes[i].src.replace("unticked", "ticked").replace("ticked", "unticked")
+                }
             }
         }
     }
