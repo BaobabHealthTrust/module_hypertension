@@ -591,7 +591,9 @@
         </div>
         <div id="buttons" class="buttonsDiv">
           <button id="continueButton" class="button green navButton"
-                  onmousedown="window.location='<%= next_task(@patient)%>'"><span>Continue</span></button>
+                  onmousedown="buildParams()"><span>Continue</span></button>
+          <button id="continueButton" class="button green navButton"
+                  onmousedown="window.location='<%= next_task(@patient)%>'"><span>Continue without prescribing</span></button>
           <button id="nextButton" class="button blue navButton"
                   onmousedown="window.location = '/htn_encounter/change_drugs?patient_id=<%= @patient.id%>'"><span>Change BP drugs</span></button>
           <button id="cancelButton" class="button red navButton"
@@ -605,6 +607,33 @@
 
         for (var i = 0; i < ticks.length; i ++){
             ticks[i].src = imgTick;
+        }
+        function buildParams(){
+
+            var drugs = [];
+            <% @current_drugs.each do |drug, value|%>
+                drugs.push("<%= drug%>");
+            <% end %>
+
+            var form = document.createElement("form")
+            form.action = "/regimens/new?patient_id=<%= @patient.id%>"
+            document.body.appendChild(form);
+
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "patient_id");
+            input.setAttribute("value", "<%= @patient.id%>");
+            form.appendChild(input);
+
+            for (var i = 0; i < drugs.length; i ++){
+                var input = document.createElement("input");
+                input.setAttribute("type", "hidden");
+                input.setAttribute("name", "auto_rx[]");
+                input.setAttribute("value", drugs[i]);
+                form.appendChild(input)
+            }
+
+            form.submit();
         }
     </script>
 </html>
