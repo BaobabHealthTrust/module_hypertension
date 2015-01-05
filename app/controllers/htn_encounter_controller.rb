@@ -373,28 +373,48 @@ class HtnEncounterController < ApplicationController
     }
   end
 
-  def auto_prescription
+  def save_notes
     @patient = Core::Patient.find(params[:patient_id])
-    @drugs = []
+    drug_name = params[:drug_name]
+    drug = Drug.find_by_name(drug_name) rescue nil
+    notes = params[:notes]
+    session_date = session[:datetime].to_date rescue Date.today     
 
-    if !params[:drugs].blank?
-      @drugs = params[:drugs].split("$$")
+	if !drug.blank?
+	
+		encounter_type = EncounterType.find_by_name("HYPERTENSION MANAGEMENT").id
+		encounter = @patient.encounters.last(:conditions => ["encounter_type = ? AND DATE(encounter_datetime) = ?",
+		encounter_type, session_date])
+	
+		if encounter.blank?
+		  encounter = Encounter.create(
+			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
+			  :encounter_type => encounter_type,
+			  :creator => User.current.id,
+			  :provider_id => User.current.id,
+			  :location_id => @current_location.id,
+			  :patient_id => @patient.id
+		  )
+		end
 
-      type = EncounterType.find_by_name("TREATMENT")
-      encounter = @patient.encounters.current.find_by_encounter_type(type.id)
-      encounter ||= @patient.encounters.create(:encounter_type => type.id, :provider_id => User.current.person_id)
+		concept_id = ConceptName.find_by_name("Notes").concept_id
 
-      pills = 30
-      start_date = session[:datetime].to_date rescue nil
-      start_date = Time.now() if start_date.blank?
-      auto_expire_date = start_date + 30.days
-      @drugs.each do |drug|
-        drg = Drug.find_by_name(drug)
-        DrugOrder.write_order(encounter, @patient, nil, drg, start_date, auto_expire_date, "",
-                          "OD", true)
-      end
-    end
-
-    render :text => "ok"
+		drug_id = drug.id
+		
+		Observation.create(
+		   :obs_datetime => encounter.encounter_datetime,
+		   :encounter_id => encounter.id,
+		   :person_id => @patient.id,
+		   :location_id => @current_location,
+		   :concept_id => concept_id,
+		   :creator => User.current.id,
+		   :value_text => notes,
+		   :value_drug => drug_id
+		)     
+		  
+		render :text => "ok"
+	else
+    	render :text => "Failed"
+	end
   end
 end
