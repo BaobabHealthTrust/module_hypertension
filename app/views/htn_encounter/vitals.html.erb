@@ -245,7 +245,7 @@
 
     function captureBP()
     {
-        if ((<%= htn_activated %>) && (<%= @patient_eligible %> || bpOverRide))
+        if ((<%= htn_activated %> ) && (<%= @patient_eligible %> || bpOverRide))
         {
             return true
         }

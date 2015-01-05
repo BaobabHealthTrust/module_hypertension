@@ -397,4 +397,16 @@ class HtnEncounterController < ApplicationController
 
     render :text => "ok"
   end
+
+ def refer_to_clinician
+  refer_concept = Core::Concept.find_by_name("REFER TO ART CLINICIAN")
+  yes_concept = Core::ConceptName.find_by_name("YES")
+  obs = Core::Observation.last(:conditions => [" person_id = ? AND obs_datetime BETWEEN ? AND ? AND concept_id = ?",
+                                   params[:patient_id], params[:date].to_date.strftime('%Y-%m-%d 00:00:00'),
+                                   params[:date].to_date.strftime('%Y-%m-%d 23:59:59'), refer_concept.id] )
+  obs.value_coded = yes_concept.concept_id
+  obs.value_coded_name_id = yes_concept.concept_name_id
+  obs.save
+  redirect_to next_task(Core::Patient.find(params[:patient_id]))
+ end
 end

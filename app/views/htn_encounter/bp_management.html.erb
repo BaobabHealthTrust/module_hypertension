@@ -157,15 +157,21 @@
 
         });
     }
+
+    function referPatient()
+    {
+        window.location = "/htn_encounter/create?" +
+                "patient_id=<%= @patient.patient_id %>&date='<%= session[:datetime].to_date rescue DateTime.now() %>'"
+    }
   //-->
 </script>
 <div class="table" style="width: 100%;">
   <div class="row"  style="">
     <div class="cell">
-      <div style="width: 96vw;margin-bottom: 5px;margin-top: 5px; padding: 10px;font-size: 130%; font-weight: bold;">
-        BP Management Screen
+      <div style="width: 96vw;margin-bottom: 5px; padding: 10px;font-size: 130%; font-weight: bold;">
+        BP Management Screen (<%= session[:datetime].to_date.strftime('%d %B %Y') rescue DateTime.now().to_date.strftime('%d %B %Y') %>)
       </div>
-      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 2px; margin-left: auto;margin-right: auto;padding: 10px;">
+      <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 1px; margin-left: auto;margin-right: auto;padding: 10px;">
         <div><span style="font-weight: bold; font-size: 110%;">BP Trail</span></div>
         <div style="height: 40vh;overflow: auto;">
           <table style="width: 100%; margin-left: auto;margin-right: auto;">
@@ -175,7 +181,7 @@
               <th width="10%">Systolic</th>
               <th width="10%">Diastolic</th>
               <th>BP Drugs</th>
-              <th width="20%">Plan</th>
+              <th width="20%">Action / Note</th>
             </tr>
             </thead>
             <tbody>
@@ -184,7 +190,7 @@
                   <td style="text-align: center"><%= record['date'] %></td>
                   <td style="text-align: center"><%= record['systolic'] %></td>
                   <td style="text-align: center"><%= record['diastolic'] %></td>
-                  <td style="text-align: center"><%= @patient.current_bp_drugs(record['date'].to_date).join(", ") unless  record['date'].to_date == (session[:datetime].to_date rescue DateTime.now().to_date)%></td>
+                  <td style="text-align: center"><%= @patient.current_bp_drugs(record['date'].to_date - 1.days).join(", ") %></td>
                   <td style="padding-left: 10px;"><%= record['plan'] %></td>
                 </tr>
             <% end %>
@@ -198,7 +204,7 @@
 
   <div class="row" >
     <div class="cell" >
-      <div style="border:1px solid #000000; width: 97vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;height: 25vh;overflow:auto;">
+      <div style="border:1px solid #000000; width: 97vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;height: 23vh;overflow:auto;">
         <div class="heading">
           Select Action
         </div>
@@ -263,4 +269,9 @@
 </div>
 <div id="buttons" class="buttonsDiv">
   <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
+  <% roles = current_user_roles.join(',') rescue '' %>
+  <% if !(roles.match(/Clinician/i) or roles.match(/Doctor/i)) %>
+      <button id="referButton" class="button red navButton" style="float: left"
+              onmousedown="referPatient()"><span>Refer to Clinician</span></button>
+  <% end %>
 </div>
