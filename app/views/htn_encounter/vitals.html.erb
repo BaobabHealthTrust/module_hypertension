@@ -249,16 +249,16 @@
         {
             return true
         }
-    else{
-        return false
-    }
+        else{
+            return false
+        }
 
     }
 
     function toggleOverride()
     {
         bpOverRide = (!bpOverRide);
-        console.log(bpOverRide);
+        document.getElementById("captureBPBtn").innerHTML = (bpOverRide ? "<span>Don't Capture BP</span>" : "<span>Capture BP</span>");
     }
 
     function addButton() {
