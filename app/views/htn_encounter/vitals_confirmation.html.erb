@@ -198,7 +198,7 @@
                           :optional => "true"
                      } %>
   <% if !(current_user_roles.include?('Clinician') or current_user_roles.include?('Doctor'))  %>
-      <%= touch_yes_no_tag "REFER TO ART CLINICIAN", @patient, nil,
+      <%= touch_yes_no_tag "REFER PATIENT TO CLINICIAN", @patient, nil,
                            {:id => "refer_to_clinician",
                             :condition => "hasHighBp()",
                             :helpText => "Refer patient to clinician?" } %>
