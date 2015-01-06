@@ -371,6 +371,7 @@ class HtnEncounterController < ApplicationController
     @patient.current_bp_drugs(session_date).each {|drg|
       @current_drugs[drg] = true
     }
+    @notes = @patient.drug_notes(session_date)
   end
 
   def save_notes

@@ -192,17 +192,10 @@
 	}	
 </style>
 <%   @data = {"HCZ" => {"25mg" => "HCT (25mg tablet)"},
-              "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet) ", "10mg" => "Amlodipine (10mg tablet)"},
+              "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet)", "10mg" => "Amlodipine (10mg tablet)"},
               "Enalapril" => {"5mg" => "Enalapril (5mg tablet)", "10mg" => "Enalapril (10mg tablet)"},
               "Atenolol" => {"50mg" => "Atenolol (50mg tablet)", "100mg" => "Atenolol (100mg tablet)"}
-              }
-     @notes = {"HCZ" => {"22-12-2014" => ["HCT (25mg tablet)"]},
-              "Amlodipine" => {"22-12-2014" => ["feffblet)", "Secind note observed", "Joy comes in the morning"],
-              					"25-12-2014" => ["second visit", "Allergic to sulphur"],
-              				  "23-12-2014" => ["second visit", "Allergic to sulphur"]},
-              "Enalapril" => {"22-12-2014" => ["HCT (Enalaet)"]},
-              "Atenolol" => {"22-12-2014" => ["HCT (25mg tablet)"]}
-              }
+              }     
      data_keys =  ["HCZ", "Enalapril", "Amlodipine", "Atenolol"]
 %>
 </head>
@@ -324,6 +317,7 @@
   </table>
 </div>
 
+<% if !@notes.blank?%>
 <div class="notes-scroll holder" style="padding-top:0px !important;">
 	<table id="table-notes" >
 		<caption style="font-size: 1.2em;">Notes</caption>
@@ -339,7 +333,7 @@
 		<%data_keys.each do |drg|%>
 			<td id = "<%= drg%>" style="padding-top: 2px !important;" valign="top">
 				<table class="table-inner-notes" id="notes-<%= drg%>">
-						<tr id = "<%= drg%>_today" class="date-tr today-tr" style="display: none;"><td class="date-td today-td">Today</td></tr>
+						<tr id = "<%= drg%>_today" class="date-tr today-tr" style="display: none;"><td class="date-td today-td">Now</td></tr>
 						<%
 						@dates = @notes[drg].keys.sort.reverse rescue []
 						(@dates || []).each do |date|
@@ -358,6 +352,7 @@
 		</tr>
 	</table>
 <div>
+<% end %>
 
 <div id="buttons" class="buttonsDiv">
   <button id="continueButton" class="button green navButton"
@@ -505,7 +500,7 @@
             form.appendChild(input)
         }
 
-        //form.submit();
+        form.submit();
     }
     
 function showFixedKeyboard(ctrl, container, disabled, numbers, caps){

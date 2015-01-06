@@ -260,6 +260,43 @@ module Core
                                          AND concept_id = #{dbp_concept} AND person_id = o.person_id LIMIT 1) AS DBP
                                          FROM obs as o WHERE o.person_id =#{self.id} HAVING max_date IS NOT NULL").first rescue nil
    end
-
+   
+   def drug_notes(date = Date.today)
+	notes_concept = sbp_concept = Core::Concept.find_by_name('Notes').id
+	drug_ids = ["HCT (25mg tablet)", "Amlodipine (5mg tablet)", "Amlodipine (10mg tablet)",
+				 "Enalapril (5mg tablet)", "Enalapril (10mg tablet)", 
+				 "Atenolol (50mg tablet)", "Atenolol (100mg tablet)"].collect{|name| Drug.find_by_name(name).id}
+	data = Core::Observation.find_by_sql(["SELECT value_text, value_drug, obs_datetime FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id
+				WHERE encounter.encounter_type = (SELECT encounter_type_id FROM encounter_type WHERE name = 'HYPERTENSION MANAGEMENT' LIMIT 1)
+				AND encounter.patient_id = ? 
+				AND DATE(encounter.encounter_datetime) <= ? 
+				AND obs.concept_id = ?
+				AND obs.value_drug IN (?)
+				AND encounter.voided = 0
+			", self.id, date.to_date, notes_concept, drug_ids])
+	result = {}
+	map = {
+		"HCT (25mg tablet)" => "HCZ",
+		"Amlodipine (5mg tablet)" => "Amlodipine", 
+		"Amlodipine (10mg tablet)" => "Amlodipine",
+		"Enalapril (5mg tablet)" => "Enalapril", 
+		"Enalapril (10mg tablet)" => "Enalapril", 
+		"Atenolol (50mg tablet)" => "Atenolol", 
+		"Atenolol (100mg tablet)" => "Atenolol"
+	  }
+	data.each do |obj|
+		drug_name = Drug.find(obj.value_drug).name rescue nil
+		name = map[drug_name]
+		next if drug_name.blank? || name.blank?
+		
+		notes = obj.value_text
+		date = obj.obs_datetime.to_date
+		
+		result[name] = {} if result[name].blank?
+		result[name][date] = [] if result[name][date].blank?	
+		result[name][date] << notes	
+	end	
+	return result	
+   end
   end
 end
