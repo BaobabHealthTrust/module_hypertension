@@ -267,9 +267,25 @@
             var bp = document.createElement("button");
             bp.innerHTML = "<span>Capture BP</span>";
             bp.setAttribute("onClick", "toggleOverride()");
+            bp.setAttribute("id", "captureBPBtn")
             document.getElementById("buttons").appendChild(bp);
         }
 
+    }
+
+    function hideButton()
+    {
+        if ((<%= htn_activated %>) && (<%= !@patient_eligible %>))
+        {
+            document.getElementById("captureBPBtn").style.display = 'none'
+        }
+    }
+    function displayButton()
+    {
+        if ((<%= htn_activated %>) && (<%= !@patient_eligible %>))
+        {
+            document.getElementById("captureBPBtn").style.display = 'block'
+        }
     }
     setTimeout("addButton()", 300)
 </script>
@@ -311,8 +327,8 @@
                                  :helpText => "Height (cm)" } %>
   <% end %>
   <%= text_field_tag :showSummary, nil,
-                     {	:tt_onLoad => "growthIndicators();  $('clearButton').style.display = 'none';  ",
-                          :tt_onUnLoad => " $('clearButton').style.display = 'block';",
+                     {	  :tt_onLoad => "growthIndicators();  __$('clearButton').style.display = 'none';displayButton()",
+                          :tt_onUnLoad => " __$('clearButton').style.display = 'block';hideButton()",
                           :helpText => "Weight Summary",
                           :optional => "true"
                      } %>
@@ -353,7 +369,7 @@
                              :tt_pageStyleClass => "KeyboardNumeric NumbersOnlyWithDecimal" } %>
 
   <%= text_field_tag :summary, nil,
-                     {	:tt_onLoad => "showSummary();",
+                     {	:tt_onLoad => "showSummary();hideButton()",
                           :helpText => "Summary",
                           :optional => "true"
                      } %>
