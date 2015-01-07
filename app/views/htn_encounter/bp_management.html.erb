@@ -135,7 +135,7 @@
             state = null;
         }
 
-        var dataHash = {"encounter": { "provider_id" : <%= User.current.person_id %>,
+        var dataHash = {"encounter": { "provider_id" : <%= User.current.user_id %>,
             "encounter_type_name" : "HYPERTENSION MANAGEMENT","patient_id" :<%= @patient.patient_id %> ,
             "encounter_datetime": '<%= session[:datetime].to_date rescue DateTime.now() %>'} ,
             "observations" : [{"patient_id":<%= @patient.patient_id %>, "concept_name":"PLAN", "value_text":chosenPlan,
@@ -173,7 +173,7 @@
       </div>
       <div style="border:1px solid #000000; width: 96vw;margin-bottom: 5px;margin-top: 1px; margin-left: auto;margin-right: auto;padding: 10px;">
         <div><span style="font-weight: bold; font-size: 110%;">BP Trail</span></div>
-        <div style="height: 40vh;overflow: auto;">
+        <div style="height: 45vh;overflow: auto;">
           <table style="width: 100%; margin-left: auto;margin-right: auto;">
             <thead>
             <tr>
