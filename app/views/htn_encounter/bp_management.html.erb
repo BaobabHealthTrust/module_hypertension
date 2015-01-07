@@ -135,7 +135,7 @@
             state = null;
         }
 
-        var dataHash = {"encounter": { "provider_id" : <%= User.current.user_id %>,
+        var dataHash = {"encounter": { "provider_id" : <%= User.current.person_id %>,
             "encounter_type_name" : "HYPERTENSION MANAGEMENT","patient_id" :<%= @patient.patient_id %> ,
             "encounter_datetime": '<%= session[:datetime].to_date rescue DateTime.now() %>'} ,
             "observations" : [{"patient_id":<%= @patient.patient_id %>, "concept_name":"PLAN", "value_text":chosenPlan,
