@@ -441,4 +441,27 @@ class HtnEncounterController < ApplicationController
     	render :text => "Failed"
 	end
   end
+
+ def refer_to_clinician
+  refer_concept = Core::Concept.find_by_name("REFER PATIENT TO CLINICIAN")
+  yes_concept = Core::ConceptName.find_by_name("YES")
+  obs = Core::Observation.last(:conditions => [" person_id = ? AND obs_datetime BETWEEN ? AND ? AND concept_id = ?",
+                                   params[:patient_id], params[:date].to_date.strftime('%Y-%m-%d 00:00:00'),
+                                   params[:date].to_date.strftime('%Y-%m-%d 23:59:59'), refer_concept.id] )
+  if obs.blank?
+   obs = Core::Observation.new()
+   obs.encounter_id = Core::Encounter.first(:conditions => ["patient_id = ? AND encounter_datetime BETWEEN ? AND ? AND encounter_type = ?",
+                                                            params[:patient_id],params[:date].to_date.strftime('%Y-%m-%d 00:00:00'),
+                                                            params[:date].to_date.strftime('%Y-%m-%d 23:59:59'),
+                                                            Core::EncounterType.find_by_name("Vitals").id]).id``
+   obs.person_id = params[:patient_id]
+   obs.concept_id = refer_concept.id
+   obs.obs_datetime = params[:date].to_date.strftime('%Y-%m-%d 00:00:00')
+   obs.creator = Core::User.current.user_id
+  end
+  obs.value_coded = yes_concept.concept_id
+  obs.value_coded_name_id = yes_concept.concept_name_id
+  obs.save
+  redirect_to "/patients/show/#{params[:patient_id]}>"
+ end
 end

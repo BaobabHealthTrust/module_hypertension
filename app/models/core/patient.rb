@@ -190,7 +190,7 @@ module Core
    end
 
    def current_bp_drugs(date = Date.today)
-      medication_concept       = ConceptName.find_by_name("HYPERTENSION DRUGS").concept_id
+      medication_concept = ConceptName.find_by_name("HYPERTENSION DRUGS").concept_id
       drug_concept_ids = ConceptSet.all(:conditions => ['concept_set = ?', medication_concept]).map(&:concept_id)
       drugs = Drug.all(:conditions => ["concept_id IN (?)", drug_concept_ids])
 
