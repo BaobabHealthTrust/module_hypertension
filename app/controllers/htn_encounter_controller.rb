@@ -92,8 +92,12 @@ class HtnEncounterController < ApplicationController
    user_person_id = User.find_by_username(params[:filter][:provider]).person_id
 
   else
-   user_person_id = User.find_by_user_id(params['encounter']['provider_id']).person_id
-
+  
+  	if !session[:datetime].blank? && !session[:htn_provider_id].blank?
+  		user_person_id = session[:htn_provider_id]
+  	else
+   		user_person_id = User.find_by_user_id(params['encounter']['provider_id']).person_id
+	end
   end
   encounter.provider_id = user_person_id
   encounter.save
@@ -300,14 +304,31 @@ class HtnEncounterController < ApplicationController
   @cholesterol_value = Observation.find(:all, :conditions => ['obs_group_id = ?', cholesterol_value]).first.value_numeric.to_i rescue 0
 
   @first_visit = false #is_first_hypertension_clinic_visit(@patient.id)
-
  end
 
  def bp_management
-  date = session[:datetime].to_date rescue Date.today
   @patient = Core::Patient.find(params[:patient_id])
+  
+  redirect_to "/htn_encounter/update_htn_provider?patient_id=#{@patient.id}" and return if 
+  	params[:skip_provider_check].blank? && !session[:datetime].blank?
+  
+  if session[:datetime].blank? && !session[:htn_provider_id]
+  	session.delete(:htn_provider_id)
+  end
+  
+  date = session[:datetime].to_date rescue Date.today
   @patient_program = @patient.enrolled_on_program(Core::Program.find_by_name("Hypertension program").id,date, true)
   @bp_trail =  @patient.bp_management_trail(date)
+ end
+ 
+ def update_htn_provider
+  @patient = Core::Patient.find(params[:patient_id])
+
+  if !params[:update_htn_provider].blank?
+	session_provider = User.find_by_username(params[:filter][:provider]) rescue nil
+	session[:htn_provider_id] = session_provider.person_id if !session_provider.blank?
+	redirect_to "/htn_encounter/bp_management?patient_id=#{@patient.id}&skip_provider_check=true"
+	end
  end
 
  def bp_drug_management
@@ -332,7 +353,8 @@ class HtnEncounterController < ApplicationController
           :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
           :encounter_type => encounter_type,
           :creator => User.current.id,
-          :provider_id => User.current.id,
+          :provider_id =>  ((session[:datetime].blank? || session[:htn_provider_id].blank?) ? 
+			  	User.current.person_id : session[:htn_provider_id]),
           :location_id => @current_location.id,
           :patient_id => @patient.id
       )
@@ -392,7 +414,8 @@ class HtnEncounterController < ApplicationController
 			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
 			  :encounter_type => encounter_type,
 			  :creator => User.current.id,
-			  :provider_id => User.current.id,
+			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ? 
+			  	User.current.person_id : session[:htn_provider_id]),
 			  :location_id => @current_location.id,
 			  :patient_id => @patient.id
 		  )
