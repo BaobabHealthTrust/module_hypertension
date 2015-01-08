@@ -359,20 +359,32 @@ class HtnEncounterController < ApplicationController
           :patient_id => @patient.id
       )
     end
+    
+    drug_id = Drug.find_by_name(params[:drug_name]).id    
+    concept_id = Concept.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id rescue -1     
+    order_id = Order.find(:first,
+                             :select => "orders.order_id",
+                             :joins => "INNER JOIN drug_order USING (order_id)",
+                             :conditions => ["orders.patient_id = ? AND drug_order.drug_inventory_id = ?
+										  AND orders.start_date < ?", encounter.patient_id,
+                                             drug_id, encounter.encounter_datetime.to_date],
+                             :order => "orders.start_date DESC").order_id rescue nil
+
 
     concept_id = Core::ConceptName.find_by_name("Amount of drug remaining at home").concept_id
 
     drug_id = Core::Drug.find_by_name(params[:drug_name]).id
 
-    obs = Core::Observation.last(:conditions => ["concept_id = ? AND encounter_id = ? AND value_drug = ?",
-                                           concept_id, encounter.id, drug_id])
+    obs = Observation.last(:conditions => ["person_id = ? AND concept_id = ? AND encounter_id = ? AND value_drug = ?",
+                                           @patient.id, concept_id, encounter.id, drug_id])
     if obs.blank?
-     Core::Observation.create(
+      obs = Observation.create(
            :obs_datetime => encounter.encounter_datetime,
            :encounter_id => encounter.id,
            :person_id => @patient.id,
            :location_id => @current_location,
            :concept_id => concept_id,
+           :order_id => order_id,
            :creator => User.current.id,
            :value_numeric => params[:pills],
            :value_drug => drug_id
@@ -380,11 +392,63 @@ class HtnEncounterController < ApplicationController
     else
       obs.update_attributes(:value_numeric => params[:pills])
     end
-     render :text => "ok"
+    
+    adherence_concept_id = Concept.find_by_name('WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER').concept_id rescue -1   
+    adherence = ActiveRecord::Base.connection.select_value(              
+      "SELECT adherence_cal(#{@patient.id}, #{drug_id}, '#{encounter.encounter_datetime.to_date}')"
+    ).to_i rescue 0
+    
+    adherence_to_show = 0
+    adherence_over_100 = 0
+    adherence_below_100 = 0
+    over_100_done = false
+    below_100_done = false
+
+    drug_adherence = adherence
+    if drug_adherence <= 100
+      adherence_below_100 = adherence.to_i if adherence_below_100 == 0
+      adherence_below_100 = adherence.to_i if drug_adherence <= adherence_below_100
+      below_100_done = true
+    else  
+      adherence_over_100 = adherence.to_i if adherence_over_100 == 0
+      adherence_over_100 = adherence.to_i if drug_adherence >= adherence_over_100
+      over_100_done = true
+    end  
+      
+    over_100 = 0
+    below_100 = 0
+    over_100 = adherence_over_100 - 100 if over_100_done
+    below_100 = 100 - adherence_below_100 if below_100_done
+
+    if over_100 >= below_100 and over_100_done
+      adherence = 100 - (adherence_over_100 - 100)
     else
-      #return a no template error
-    end
- end
+      adherence = adherence_below_100
+    end        
+    
+    obs = Observation.last(:conditions => ["person_id = ? AND concept_id = ? AND encounter_id = ? AND value_drug = ?",
+                                           @patient.id, adherence_concept_id, encounter.id, drug_id])
+    if obs.blank?
+      obs = Observation.create(
+           :obs_datetime => encounter.encounter_datetime,
+           :encounter_id => encounter.id,
+           :person_id => @patient.id,
+           :location_id => @current_location,
+           :concept_id => adherence_concept_id,
+           :order_id => order_id,
+           :creator => User.current.id,
+           :value_numeric => adherence,
+           :value_text => '',
+           :value_drug => drug_id
+       )
+    else
+      obs.update_attributes(:value_numeric => adherence)
+    end                      
+     render :text => "ok"
+   else
+    #return a no template error
+   end
+  end
 
   def change_drugs
     @patient = Core::Patient.find(params[:patient_id])
@@ -421,6 +485,7 @@ class HtnEncounterController < ApplicationController
 		  )
 		end
 
+
 		concept_id = Core::ConceptName.find_by_name("Notes").concept_id
 
 		drug_id = drug.id
@@ -435,7 +500,7 @@ class HtnEncounterController < ApplicationController
 		   :value_text => notes,
 		   :value_drug => drug_id
 		)     
-		  
+		adherence = 
 		render :text => "ok"
 	else
     	render :text => "Failed"
