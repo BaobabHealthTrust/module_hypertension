@@ -33,7 +33,7 @@ class HtnEncounterController < ApplicationController
   end
 
   def vitals_confirmation
-    @patient = Patient.find(params[:patient_id])
+    @patient = Core::Patient.find(params[:patient_id])
     @patient_bean = PatientService.get_patient(@patient.person)
     if session[:datetime]
       @retrospective = true
@@ -49,16 +49,16 @@ class HtnEncounterController < ApplicationController
   end
 
   def family_history
-   patient = Patient.find(params[:patient_id])
+   patient = Core::Patient.find(params[:patient_id])
    @patient = patient
   end
 
   def social_history
-   @patient = Patient.find(params[:patient_id])
+   @patient = Core::Patient.find(params[:patient_id])
   end
 
   def general_health
-   @patient = Patient.find(params[:patient_id])
+   @patient = Core::Patient.find(params[:patient_id])
 
    if @patient.get_general_health(session[:datetime])
     @existing_conditions = ["Heart disease", "Stroke", "TIA", "Diabetes", "Kidney Disease"]
@@ -83,20 +83,20 @@ class HtnEncounterController < ApplicationController
 
  def create
 
-  encounter = Encounter.new()
-  encounter.encounter_type = EncounterType.find_by_name(params["encounter"]["encounter_type_name"]).id
+  encounter = Core::Encounter.new()
+  encounter.encounter_type = Core::EncounterType.find_by_name(params["encounter"]["encounter_type_name"]).id
   encounter.patient_id = params['encounter']['patient_id']
   encounter.encounter_datetime = params['encounter']['encounter_datetime']
 
   if params[:filter] and !params[:filter][:provider].blank?
-   user_person_id = User.find_by_username(params[:filter][:provider]).person_id
+   user_person_id = Core::User.find_by_username(params[:filter][:provider]).person_id
 
   else
   
   	if !session[:datetime].blank? && !session[:htn_provider_id].blank?
   		user_person_id = session[:htn_provider_id]
   	else
-   		user_person_id = User.find_by_user_id(params['encounter']['provider_id']).person_id
+   		user_person_id = Core::User.find_by_user_id(params['encounter']['provider_id']).person_id
 	end
   end
   encounter.provider_id = user_person_id
@@ -343,31 +343,31 @@ class HtnEncounterController < ApplicationController
  def update_remaining_drugs
   @patient = Core::Patient.find(params[:patient_id])
 
-  encounter_type = EncounterType.find_by_name("HYPERTENSION MANAGEMENT").id
+  encounter_type = Core::EncounterType.find_by_name("HYPERTENSION MANAGEMENT").id
   encounter = @patient.encounters.last(:conditions => ["encounter_type = ? AND DATE(encounter_datetime) = ?",
   encounter_type, (session[:datetime].to_date rescue Date.today)])
 
   if !params[:pills].blank?
     if encounter.blank?
-      encounter = Encounter.create(
+      encounter = Core::Encounter.create(
           :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
           :encounter_type => encounter_type,
           :creator => User.current.id,
-          :provider_id =>  ((session[:datetime].blank? || session[:htn_provider_id].blank?) ? 
-			  	User.current.person_id : session[:htn_provider_id]),
+          :provider_id =>  ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
+            Core::User.current.person_id : session[:htn_provider_id]),
           :location_id => @current_location.id,
           :patient_id => @patient.id
       )
     end
 
-    concept_id = ConceptName.find_by_name("Amount of drug remaining at home").concept_id
+    concept_id = Core::ConceptName.find_by_name("Amount of drug remaining at home").concept_id
 
-    drug_id = Drug.find_by_name(params[:drug_name]).id
+    drug_id = Core::Drug.find_by_name(params[:drug_name]).id
 
-    obs = Observation.last(:conditions => ["concept_id = ? AND encounter_id = ? AND value_drug = ?",
+    obs = Core::Observation.last(:conditions => ["concept_id = ? AND encounter_id = ? AND value_drug = ?",
                                            concept_id, encounter.id, drug_id])
     if obs.blank?
-      Observation.create(
+     Core::Observation.create(
            :obs_datetime => encounter.encounter_datetime,
            :encounter_id => encounter.id,
            :person_id => @patient.id,
@@ -399,39 +399,39 @@ class HtnEncounterController < ApplicationController
   def save_notes
     @patient = Core::Patient.find(params[:patient_id])
     drug_name = params[:drug_name]
-    drug = Drug.find_by_name(drug_name) rescue nil
+    drug = Core::Drug.find_by_name(drug_name) rescue nil
     notes = params[:notes]
     session_date = session[:datetime].to_date rescue Date.today     
 
 	if !drug.blank?
 	
-		encounter_type = EncounterType.find_by_name("HYPERTENSION MANAGEMENT").id
+		encounter_type = Core::EncounterType.find_by_name("HYPERTENSION MANAGEMENT").id
 		encounter = @patient.encounters.last(:conditions => ["encounter_type = ? AND DATE(encounter_datetime) = ?",
 		encounter_type, session_date])
 	
 		if encounter.blank?
-		  encounter = Encounter.create(
+		  encounter = Core::Encounter.create(
 			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
 			  :encounter_type => encounter_type,
-			  :creator => User.current.id,
-			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ? 
-			  	User.current.person_id : session[:htn_provider_id]),
+			  :creator => Core::User.current.id,
+			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
+       Core::User.current.person_id : session[:htn_provider_id]),
 			  :location_id => @current_location.id,
 			  :patient_id => @patient.id
 		  )
 		end
 
-		concept_id = ConceptName.find_by_name("Notes").concept_id
+		concept_id = Core::ConceptName.find_by_name("Notes").concept_id
 
 		drug_id = drug.id
-		
-		Observation.create(
+
+  Core::Observation.create(
 		   :obs_datetime => encounter.encounter_datetime,
 		   :encounter_id => encounter.id,
 		   :person_id => @patient.id,
 		   :location_id => @current_location,
 		   :concept_id => concept_id,
-		   :creator => User.current.id,
+		   :creator => Core::User.current.id,
 		   :value_text => notes,
 		   :value_drug => drug_id
 		)     
@@ -453,15 +453,15 @@ class HtnEncounterController < ApplicationController
    obs.encounter_id = Core::Encounter.first(:conditions => ["patient_id = ? AND encounter_datetime BETWEEN ? AND ? AND encounter_type = ?",
                                                             params[:patient_id],params[:date].to_date.strftime('%Y-%m-%d 00:00:00'),
                                                             params[:date].to_date.strftime('%Y-%m-%d 23:59:59'),
-                                                            Core::EncounterType.find_by_name("Vitals").id]).id``
+                                                            Core::EncounterType.find_by_name("Vitals").id]).id
    obs.person_id = params[:patient_id]
    obs.concept_id = refer_concept.id
    obs.obs_datetime = params[:date].to_date.strftime('%Y-%m-%d 00:00:00')
-   obs.creator = Core::User.current.user_id
+   obs.creator = current_user.user_id
   end
   obs.value_coded = yes_concept.concept_id
   obs.value_coded_name_id = yes_concept.concept_name_id
   obs.save
-  redirect_to "/patients/show/#{params[:patient_id]}>"
+  redirect_to "/patients/show/#{params[:patient_id]}"
  end
 end
