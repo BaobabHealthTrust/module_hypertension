@@ -591,11 +591,13 @@
         </div>
         <div id="buttons" class="buttonsDiv">
           <button id="continueButton" class="button green navButton"
-                  onmousedown="buildParams()"><span>Continue</span></button>
-          <button id="continueButton" class="button green navButton"
+                  onmousedown="postAnswer()"><span>Continue</span></button>
+          <% if params[:review].blank? %>
+            <button id="continueButton" class="button green navButton"
                   onmousedown="window.location='<%= next_task(@patient)%>'"><span>Continue without prescribing</span></button>
-          <button id="nextButton" class="button blue navButton"
+            <button id="nextButton" class="button blue navButton"
                   onmousedown="window.location = '/htn_encounter/change_drugs?patient_id=<%= @patient.id%>'"><span>Change BP drugs</span></button>
+           <% end %>
           <button id="cancelButton" class="button red navButton"
                   onmousedown="window.location = '/htn_encounter/bp_management?patient_id=<%= @patient.id%>'"><span>Cancel</span></button>
         </div>
@@ -634,6 +636,14 @@
             }
 
             form.submit();
+        }
+        function postAnswer()
+        {
+            <% if !params[:review].blank? %>
+                window.location = '/htn_encounter/change_drugs?patient_id=<%= @patient.id%>'
+            <% else %>
+                buildParams();
+            <% end %>
         }
     </script>
 </html>
