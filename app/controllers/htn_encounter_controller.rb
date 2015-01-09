@@ -156,6 +156,43 @@ class HtnEncounterController < ApplicationController
 
  end
 
+def create_or_update(params)
+    @patient = Core::Patient.find(params['encounter']['patient_id'])
+	session_date = params["encounter"]["encounter_datetime"] rescue Date.today
+	encounter_type = Core::EncounterType.find_by_name(params["encounter"]["encounter_type_name"]).id
+	encounter = @patient.encounters.last(:conditions => ["encounter_type = ? AND DATE(encounter_datetime) = ?",
+		encounter_type, session_date])
+	
+	if encounter.blank?
+		  encounter = Core::Encounter.create(
+			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
+			  :encounter_type => encounter_type,
+			  :creator => Core::User.current.id,
+			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
+       Core::User.current.person_id : session[:htn_provider_id]),
+			  :location_id => @current_location.id,
+			  :patient_id => @patient.id
+		  )
+	end
+
+
+	(params['encounter']['observations'] || []).each do |observation|
+		concept_id = Core::ConceptName.find_by_name(observation['concept_name']).concept_id
+		obs = encounter.observations.last(:conditions => ["concept_id = ? AND voided = 0", concept_id])
+	end
+
+  Core::Observation.create(
+		   :obs_datetime => encounter.encounter_datetime,
+		   :encounter_id => encounter.id,
+		   :person_id => @patient.id,
+		   :location_id => @current_location,
+		   :concept_id => concept_id,
+		   :creator => Core::User.current.id,
+		   :value_text => notes,
+		   :value_drug => drug_id
+		)     
+ end
+ 
   def create_obs(encounter , params)
    # Observation handling
    # Chunk of code re-used from ccc
@@ -345,11 +382,14 @@ class HtnEncounterController < ApplicationController
     	next if value != true
     	drug = Drug.find_by_name(drug_name)
 		last_dispensation = Encounter.find_by_sql([
-				"SELECT SUM(obs.value_numeric) AS value_numeric, MAX(obs_datetime) AS obs_datetime FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id AND encounter.voided = 0
+				"SELECT SUM(obs.value_numeric) AS value_numeric, MAX(obs_datetime) AS obs_datetime, 0 AS remaining FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id AND encounter.voided = 0
 				WHERE obs.value_drug = ? AND encounter.encounter_type = ? AND 
 				encounter.patient_id = ? AND DATE(encounter.encounter_datetime) < ?
 				AND obs.concept_id = ? GROUP BY DATE(obs_datetime) ORDER BY obs.obs_datetime DESC LIMIT 1", 
 				drug.id, EncounterType.find_by_name("DISPENSING").id, @patient.id, session_date, dispensed_concept_id]).last rescue nil
+		
+		last_dispensation.remaining = (last_dispensation.value_numeric.to_i - (session_date - 
+			last_dispensation.obs_datetime.to_date).to_i) rescue nil # == days for a pill per day
 		 
 		 @last_dispensation[drug_name] = last_dispensation if !last_dispensation.blank?		
     end
@@ -421,10 +461,11 @@ class HtnEncounterController < ApplicationController
     ]).last rescue nil
   
     adherence = nil
+    expected_amount_remaining = nil
     if !last_dispensation.blank?
 		amount_given_last_time = last_dispensation.value_numeric.to_i		
-		expected_amount_remaining =  (session_date - 
-			last_dispensation.obs_datetime.to_date).days.to_i/(60 * 60 * 24) # == days for a pill per day
+		expected_amount_remaining =  amount_given_last_time - (session_date - 
+			last_dispensation.obs_datetime.to_date).to_i # == days for a pill per day			
 		amount_remaining = params[:pills].to_i  
 		adherence = (100*(amount_given_last_time - amount_remaining) / (amount_given_last_time - expected_amount_remaining)).round
     end
@@ -482,7 +523,7 @@ class HtnEncounterController < ApplicationController
 		  obs.update_attributes(:value_numeric => adherence)
 		end
     end                   
-     render :text => adherence
+     render :text => [adherence, expected_amount_remaining].to_json
    else
    	 #return a no template error
    end

@@ -190,28 +190,33 @@ module Core
    end
 
    def current_bp_drugs(date = Date.today)
-      medication_concept = ConceptName.find_by_name("HYPERTENSION DRUGS").concept_id
-      drug_concept_ids = ConceptSet.all(:conditions => ['concept_set = ?', medication_concept]).map(&:concept_id)
-      drugs = Drug.all(:conditions => ["concept_id IN (?)", drug_concept_ids])
+      medication_concept = Core::ConceptName.find_by_name("HYPERTENSION DRUGS").concept_id
+      dispensing_concept = Core::ConceptName.find_by_name("AMOUNT DISPENSED").concept_id
+      drug_concept_ids = Core::ConceptSet.all(:conditions => ['concept_set = ?', medication_concept]).map(&:concept_id)
+      drugs = Core::Drug.all(:conditions => ["concept_id IN (?)", drug_concept_ids])
 
+	  prev_date = Core::Encounter.last(:select => ["encounter_datetime"], :joins => "
+                INNER JOIN obs ON encounter.encounter_id = obs.encounter_id 
+               ",
+                               :conditions => ["encounter.voided = 0 AND value_drug IN (?) AND DATE(encounter.encounter_datetime) <=?
+                               AND encounter.encounter_type = ? AND obs.value_drug  IN (?)",
+                                               drugs.map(&:drug_id), date, Core::EncounterType.find_by_name("DISPENSING").id, drugs.map(&:drug_id)]).encounter_datetime.to_date rescue nil
+                                      
+      return [] if prev_date.blank?                                   
+      result = Core::Encounter.find_by_sql(["SELECT obs.value_drug FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id 
+      			WHERE encounter.voided = 0 AND obs.value_drug IN (?) AND obs.concept_id = ? AND encounter.encounter_type = ? AND DATE(encounter.encounter_datetime) = ? 
+      	", drugs.map(&:drug_id), dispensing_concept, Core::EncounterType.find_by_name("DISPENSING").id, prev_date]).map(&:value_drug).uniq  rescue []
+      	
+      
+=begin
       result = DrugOrder.all(:select => ["drug_inventory_id"], :joins => "
                 INNER JOIN orders ON orders.order_id = drug_order.order_id AND orders.patient_id = #{self.id}
-                INNER JOIN encounter ON orders.encounter_id = encounter.encounter_id",
-                     :conditions => ["drug_inventory_id IN (?) AND DATE(encounter.encounter_datetime) <= ?",
-                                     drugs.map(&:drug_id), date]).map(&:drug_inventory_id).uniq
-
-      prev_date = DrugOrder.last(:select => ["encounter_datetime"], :joins => "
-                INNER JOIN orders ON orders.order_id = drug_order.order_id AND orders.patient_id = #{self.id}
-                INNER JOIN encounter ON orders.encounter_id = encounter.encounter_id",
-                               :conditions => ["drug_inventory_id IN (?) AND DATE(encounter.encounter_datetime) <= ?",
-                                               drugs.map(&:drug_id), date]).encounter_datetime.to_date rescue nil
-
-      concept_id = ConceptName.find_by_name("Amount of drug remaining at home").concept_id
-      result += Observation.all(:select => ["value_drug"],
-                               :conditions => ["person_id = ? AND concept_id = ?
-                                                AND DATE(obs_datetime) = ? AND value_drug NOT IN (?)",
-                                                self.id, concept_id, prev_date.to_date, result
-                  ]).map(&:value_drug) rescue nil
+                INNER JOIN encounter ON orders.encounter_id = encounter.encounter_id
+                INNER JOIN obs ON obs.encounter_id = encounter.encounter.encounter_id
+                ",
+                     :conditions => ["obs.concept_id = ? drug_inventory_id IN (?) AND DATE(encounter.encounter_datetime) = ?",
+                                     drugs.map(&:drug_id), prev_date]).map(&:drug_inventory_id).uniq      
+=end  
      result = result.collect{|drug_id| Drug.find(drug_id).name}
    end
 
