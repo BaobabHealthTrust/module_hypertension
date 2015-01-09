@@ -208,8 +208,13 @@
                                     jQuery.ajax({
                                         url: "/htn_encounter/update_remaining_drugs?pills=" + global_control +
                                                 "&drug_name=" + node + "&patient_id=<%= @patient.id%>",
-                                        success: function(){
-                                            console.log("Updated remaining pills for drug: " +node + ".")
+                                        success: function(result){
+                                            try{
+		                                        result = JSON.parse(result)
+		                                        if (result.toString().length > 0){
+		                                        			__$("adherence_" + node).innerHTML = result
+		                                        }
+                                            }catch(e){}
                                         }
                                     })
                                 }catch(e){
@@ -504,7 +509,32 @@
                 font-size: 26px;
 
             }
+            #summary{
+            	width:97%;
+            	margin: auto;
+            }
 
+            #summary-table{
+            	width:90%;
+            	margin: auto;
+            }
+            
+            .label{
+            	padding-left: 90px;
+            	font-size: 22px;
+            }
+            .value{
+            	text-align: center;
+            	font-size: 22px;
+            	width: 20%;
+            }
+            .drug-title{
+            	padding-left: 50px;
+            	font-size: 22px;
+            }
+            .title-tr{
+            	background: lightgray;
+            }
         </style>
       <%
          @data = {"HCZ" => {"25mg" => "HCT (25mg tablet)"},
@@ -589,6 +619,41 @@
                   </caption></caption>
             </table>
         </div>
+		<div id = "summary">
+			<table id = "summary-table">
+				<caption>Adherence Summary</caption>
+				<% @last_dispensation.each do |drug, data| 
+				%>
+				<tr class="title-tr">
+					<td class="drug-title">
+						<%= drug%>
+					</td>
+
+					<td>				
+					</td>
+				</tr>
+				<tr>
+					<td class="label">
+						Amount of drugs dispensed during last visit (<%= data.obs_datetime.to_date.strftime('%d-%b-%Y')%>)
+					</td>
+
+					<td class="value">
+						<%= data.value_numeric.to_i%>
+					</td>
+				</tr>
+				<tr>
+					<td class="label">
+						Current adherence for drug
+					</td>
+
+					<td class="value" id="adherence_<%= drug%>">
+						?
+					</td>
+				</tr>
+				<% end %>
+			</table>
+		</div>
+
         <div id="buttons" class="buttonsDiv">
           <button id="continueButton" class="button green navButton"
                   onmousedown="buildParams()"><span>Continue</span></button>
