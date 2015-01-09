@@ -104,7 +104,7 @@
                         path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
                         break;
                     case 'Review Drugs':
-                        path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>&review=true"
                         break;
                     case 'Continue Drugs':
                         path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
@@ -160,7 +160,7 @@
 
     function referPatient()
     {
-        window.location = "/htn_encounter/create?" +
+        window.location = "/htn_encounter/refer_to_clinician?" +
                 "patient_id=<%= @patient.patient_id %>&date='<%= session[:datetime].to_date rescue DateTime.now() %>'"
     }
   //-->
@@ -204,7 +204,7 @@
 
   <div class="row" >
     <div class="cell" >
-      <div style="border:1px solid #000000; width: 97vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;height: 23vh;overflow:auto;">
+      <div style="border:1px solid #000000; width: 97vw;margin-bottom: 5px;margin-top: 5px; margin-left: auto;margin-right: auto;height: 30vh;overflow:auto;">
         <div class="heading">
           Select Action
         </div>

@@ -197,21 +197,21 @@
                           :helpText => "Summary",
                           :optional => "true"
                      } %>
-<<<<<<< HEAD
-                     
-   <% if @retrospective %>
-      <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
-        <%= text_field "filter" , 'provider', :helpText => 'Staff who provided the information (Provider)', :ajaxURL => '/user/username?username=' %></p>
-  <% else %>
-      <%= hidden_field_tag "filter[provider]", nil %>
-  <% end %>
-=======
+
   <% if !(current_user_roles.include?('Clinician') or current_user_roles.include?('Doctor'))  %>
       <%= touch_yes_no_tag "REFER PATIENT TO CLINICIAN", @patient, nil,
                            {:id => "refer_to_clinician",
                             :condition => "hasHighBp()",
                             :helpText => "Refer patient to clinician?" } %>
   <%end%>
->>>>>>> ca93a6e79102e05cc83fa4ef1a18f2e42d668437
+
+   <% if @retrospective %>
+      <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
+        <%= text_field "filter" , 'provider', :helpText => 'Staff who provided the information (Provider)', :ajaxURL => '/user/username?username=' %></p>
+  <% else %>
+      <%= hidden_field_tag "filter[provider]", nil %>
+  <% end %>
+
+
   <%= submit_tag "Finish" %>
 </form>
