@@ -116,8 +116,9 @@ module Core
       end
      else
       #Get plan
+
       plan_concept = Core::Concept.find_by_name('Plan').id
-      plan = Core::Observation.find(:last,:conditions => ["person_id = ? AND concept_id = ?
+      plan = Core::Observation.find(:first,:conditions => ["person_id = ? AND concept_id = ?
                                                AND obs_datetime <= ?",self.id,plan_concept,
                                                date.to_date.strftime('%Y-%m-%d 23:59:59')],
                                               :order => "obs_datetime DESC")
