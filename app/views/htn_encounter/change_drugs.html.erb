@@ -191,7 +191,7 @@
 		border-radius: 10px !important;
 	}	
 </style>
-<%   @data = {"HCZ" => {"25mg" => "HCT (25mg tablet)"},
+<%   @data = {"HCZ" => {"25mg" => "HCZ (25mg tablet)"},
               "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet)", "10mg" => "Amlodipine (10mg tablet)"},
               "Enalapril" => {"5mg" => "Enalapril (5mg tablet)", "10mg" => "Enalapril (10mg tablet)"},
               "Atenolol" => {"50mg" => "Atenolol (50mg tablet)", "100mg" => "Atenolol (100mg tablet)"}
@@ -294,12 +294,12 @@
                           
                           </span>
                           
-                          <% if !cur_drug_name.blank?%>
-		                      <div class='button button-success' 
+                           <div class='button button-success' 
 		                      	id = 'alert_<%= name%>' onclick="showCustomKeyboard('<%= (cur_drug_name || name)%>', '<%= key%>')">
 		                      	Add notes
-		                      </div>                          
-                          <%else%>                          
+		                      </div>  
+		                      
+                          <% if false%>                          
 							<div class='button button-success gray' 
 							  	id = 'alert_<%= name%>'>
 							  	Add notes
@@ -459,16 +459,8 @@
 	
     function nextDestinations(){
         
-        var nodes = document.getElementsByClassName("today-note-td");
-        for (var i = 0; i < nodes.length; i ++){
-        	var drug = nodes[i].getAttribute("drug");
-        	var notes = nodes[i].innerHTML;
-        	jQuery.ajax({
-        			url: "/htn_encounter/save_notes?patient_id=<%= @patient.id%>&drug_name=" + 
-        				escape(drug) + "&notes=" + escape(notes),
-        			success: ""
-        	})
-        }
+        nodes = document.getElementsByClassName("today-note-td");
+        received = 0;
         
         //check for prescriptions reroutes
         
@@ -481,6 +473,7 @@
         }
 
         var form = document.createElement("form")
+        form.id = "form";
         form.action = "/regimens/new?patient_id=<%= @patient.id%>"
         document.body.appendChild(form);
 
@@ -498,7 +491,22 @@
             form.appendChild(input)
         }
 
-        form.submit();
+		for (var i = 0; i < nodes.length; i ++){
+        	var drug = nodes[i].getAttribute("drug");
+        	var notes = nodes[i].innerHTML;
+        	
+        	jQuery.ajax({
+        			url: "/htn_encounter/save_notes?patient_id=<%= @patient.id%>&drug_name=" + 
+        				escape(drug) + "&notes=" + escape(notes),
+        			success: function(result){
+        				received = parseInt(received) + 1;        			
+        				if (received == nodes.length){
+        					document.getElementById("form").submit();
+        				}
+        			}
+        	})
+        }        
+        
     }
     
 function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
