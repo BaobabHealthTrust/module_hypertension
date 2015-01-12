@@ -166,7 +166,7 @@
 <form action="/htn_encounter/create/vitals">
       <%= hidden_field_tag "encounter[encounter_type_name]", "VITALS" %>
       <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
-      <%= hidden_field_tag "encounter[encounter_datetime]", dateToday %>
+      <%= hidden_field_tag "encounter[encounter_datetime]", (session[:datetime].to_date rescue DateTime.now) %>
       <%= hidden_field_tag "encounter[provider_id]", User.current.user_id %>
 
 
@@ -175,8 +175,8 @@
                      {	:id => "systolic_blood_pressure",
                         :field_type => "number",
                         :helpText => "Systolic blood pressure (?/Y)",
-                        :absoluteMin => 80,
-                        :absoluteMax => 180,
+                        :min => 80,
+                        :max => 180,
                         :validationRule => "^([0-9]+)|Unknown$",
                         :validationMessage => "You must enter numbers only (for example 157)",
                         :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
@@ -186,8 +186,8 @@
                       {	:id => "diastolic_blood_pressure",
                         :field_type => "number",
                         :helpText => "Diastolic blood pressure (X/?)",
-                        :absoluteMin => 50,
-                        :absoluteMax => 110,
+                        :min => 50,
+                        :max => 110,
                         :validationRule => "^([0-9]+)|Unknown$",
                         :validationMessage => "You must enter numbers only (for example 157)",
                         :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>

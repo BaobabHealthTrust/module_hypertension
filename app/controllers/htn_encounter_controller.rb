@@ -319,6 +319,7 @@ class HtnEncounterController < ApplicationController
   date = session[:datetime].to_date rescue Date.today
   @patient_program = @patient.enrolled_on_program(Core::Program.find_by_name("Hypertension program").id,date, true)
   @bp_trail =  @patient.bp_management_trail(date)
+  @note = @patient.pregnancy_status(date) if @patient.gender == "F"
  end
  
  def update_htn_provider

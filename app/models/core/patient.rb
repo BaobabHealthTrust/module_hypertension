@@ -181,11 +181,11 @@ module Core
                                        DATE_FORMAT(o.obs_datetime, '%Y-%m-%d 23:59:59') AND voided = 0 LIMIT 1) AS plan
                                        FROM obs as o WHERE o.person_id = #{self.id} AND o.voided = 0 AND obs_datetime <=
                                        '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}' HAVING SBP IS NOT NULL
-                                       AND DBP IS NOT NULL ORDER BY o.obs_datetime DESC").each do |record|
-     visits << {"date" => record.obs_datetime.strftime("%d-%b-%Y"), "systolic" => record["SBP"],
+                                       AND DBP IS NOT NULL ORDER BY o.obs_datetime DESC, o.encounter_id DESC").each do |record|
+     #visits[record.obs_datetime.strftime('%d-%b-%Y')] = [] if visits[record.obs_datetime.strftime('%d-%b-%Y')].blank?
+     visits << {"date" => record.obs_datetime.strftime('%d-%b-%Y'), "systolic" => record["SBP"],
                 "diastolic" => record["DBP"], "plan" => (record["plan"].blank? ? "" : record["plan"]), "drugs" => "None"}
     end
-
     return visits
    end
 
@@ -298,5 +298,27 @@ module Core
 	end	
 	return result	
    end
+
+    def pregnancy_status(date = Date.today)
+     pregnant = (Core::Observation.last(:conditions => ["person_id = ? AND voided = 0 AND concept_id = ?
+                                                          AND DATE(obs_datetime) = ?",self.id,
+                                       ConceptName.find_by_name("IS PATIENT PREGNANT?").concept_id,
+                                       (date.to_date)
+     ]).answer_string.downcase.strip rescue nil) == "yes"
+
+     if pregnant
+      return "Patient is pregnant"
+     end
+
+     wants_pregnancy = (Core::Observation.last(:conditions => ["person_id = ? AND voided = 0 AND concept_id = ?
+                                                          AND DATE(obs_datetime) = ?",self.id,
+                                                        ConceptName.find_by_name("Why does the woman not use birth control").concept_id,
+                                                        (date.to_date)
+     ]).answer_string.upcase.strip rescue nil) == "PATIENT WANTS TO GET PREGNANT"
+
+     if wants_pregnancy
+      return "Patient wants to get pregnant"
+     end
+    end
   end
 end
