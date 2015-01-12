@@ -167,9 +167,9 @@ def create_or_update(params)
 		  encounter = Core::Encounter.create(
 			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
 			  :encounter_type => encounter_type,
-			  :creator => Core::User.current.id,
+			  :creator => current_user.user_id,
 			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
-       Core::User.current.person_id : session[:htn_provider_id]),
+       current_user.person_id : session[:htn_provider_id]),
 			  :location_id => @current_location.id,
 			  :patient_id => @patient.id
 		  )
@@ -187,7 +187,7 @@ def create_or_update(params)
 		   :person_id => @patient.id,
 		   :location_id => @current_location,
 		   :concept_id => concept_id,
-		   :creator => Core::User.current.id,
+		   :creator => current_user.user_id,
 		   :value_text => notes,
 		   :value_drug => drug_id
 		)     
@@ -408,9 +408,9 @@ def create_or_update(params)
       encounter = Core::Encounter.create(
           :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
           :encounter_type => encounter_type,
-          :creator => User.current.id,
+          :creator => current_user.user_id,
           :provider_id =>  ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
-            Core::User.current.person_id : session[:htn_provider_id]),
+            current_user.person_id : session[:htn_provider_id]),
           :location_id => @current_location.id,
           :patient_id => @patient.id
       )
@@ -441,7 +441,7 @@ def create_or_update(params)
            :location_id => @current_location,
            :concept_id => concept_id,
            :order_id => order_id,
-           :creator => User.current.id,
+           :creator => current_user.user_id,
            :value_numeric => params[:pills],
            :value_drug => drug_id
        )
@@ -514,7 +514,7 @@ def create_or_update(params)
 		       :location_id => @current_location,
 		       :concept_id => adherence_concept_id,
 		       :order_id => order_id,
-		       :creator => User.current.id,
+		       :creator => current_user.user_id,
 		       :value_numeric => adherence,
 		       :value_text => '',
 		       :value_drug => drug_id
@@ -556,9 +556,9 @@ def create_or_update(params)
 		  encounter = Core::Encounter.create(
 			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
 			  :encounter_type => encounter_type,
-			  :creator => User.current.id,
+			  :creator => current_user.user_id,
 			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
-       User.current.person_id : session[:htn_provider_id]),
+       current_user.person_id : session[:htn_provider_id]),
 			  :location_id => @current_location.id,
 			  :patient_id => @patient.id
 		  )
@@ -575,15 +575,16 @@ def create_or_update(params)
 		   :person_id => @patient.id,
 		   :location_id => @current_location,
 		   :concept_id => concept_id,
-		   :creator => User.current.id,
+		   :creator => current_user.user_id,
 		   :value_text => notes,
 		   :value_drug => drug_id
 		)     
 		
-		render :text => "ok"
+		
 	else
-    	render :text => "Failed"
+    	
 	end
+	render :text => "ok"
   end
 
  def refer_to_clinician

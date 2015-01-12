@@ -517,18 +517,14 @@
             }
 
             #summary-table{
-            	width:90%;
+            	width:91%;
             	margin: auto;
-            }
-            
-            .label{
-            	padding-left: 90px;
-            	font-size: 22px;
-            }
+            	margin-left: 5.5%;
+            }           
+           
             .value{
             	text-align: center;
-            	font-size: 22px;
-            	width: 20%;
+            	font-size: 21px;            	
             }
             .drug-title{
             	padding-left: 50px;
@@ -536,10 +532,20 @@
             }
             .title-tr{
             	background: lightgray;
+            	font-size: 1.25em;
+            }
+            .data-tr{
+            	background: azure;
+            	text-align: center;
+            	font-size: 1.2em;
+            }
+            .name{
+            	text-align: left;
+            	padding-left: 15px;
             }
         </style>
       <%
-         @data = {"HCZ" => {"25mg" => "HCT (25mg tablet)"},
+         @data = {"HCZ" => {"25mg" => "HCZ (25mg tablet)"},
                   "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet) ", "10mg" => "Amlodipine (10mg tablet)"},
                   "Enalapril" => {"5mg" => "Enalapril (5mg tablet)", "10mg" => "Enalapril (10mg tablet)"},
                   "Atenolol" => {"50mg" => "Atenolol (50mg tablet)", "100mg" => "Atenolol (100mg tablet)"}
@@ -624,43 +630,45 @@
 		<div id = "summary">
 			<table id = "summary-table">
 				<caption>Adherence Summary</caption>
+				<tr class="title-tr">
+					<th>
+						Drug
+					</th>
+
+					<th>		
+						Pills dispensed during last visit
+					</th>
+					
+					<th  style="width:25%">
+						Expected pills remaining
+					</th>
+					
+					<th style="width:19%">
+						Adherence for drug
+					</th>
+				</tr>
+				
 				<% @last_dispensation.each do |drug, data| 
 				%>
-				<tr class="title-tr">
-					<td class="drug-title">
+				
+				<tr class="data-tr">
+					<td class="name value" >
 						<%= drug%>
 					</td>
 
-					<td>				
+					<td class="value">			
+						<%= data.value_numeric.to_i rescue nil%>
 					</td>
-				</tr>
-				<tr>
-					<td class="label">
-						Number of pills dispensed during last visit (<%= data.obs_datetime.to_date.strftime('%d-%b-%Y')%>)
-					</td>
-
-					<td class="value">
-						<%= data.value_numeric.to_i%>
-					</td>
-				</tr>
-				<tr>
-					<td class="label">
-						Expected pills remaining
-					</td>
-
+					
 					<td class="value" id="amount_expected_<%= drug%>">
-						<%= data.remaining%>
+						<%= data.remaining rescue nil%>
 					</td>
-				</tr>
-				<tr>
-					<td class="label">
-						Current adherence for drug
-					</td>
-
+					
 					<td class="value" id="adherence_<%= drug%>">
 						?
 					</td>
-				</tr>
+				</tr>			
+				
 				<% end %>
 			</table>
 		</div>

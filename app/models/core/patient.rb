@@ -268,7 +268,7 @@ module Core
    
    def drug_notes(date = Date.today)
 	notes_concept = sbp_concept = Core::Concept.find_by_name('Notes').id
-	drug_ids = ["HCT (25mg tablet)", "Amlodipine (5mg tablet)", "Amlodipine (10mg tablet)",
+	drug_ids = ["HCZ (25mg tablet)", "Amlodipine (5mg tablet)", "Amlodipine (10mg tablet)",
 				 "Enalapril (5mg tablet)", "Enalapril (10mg tablet)", 
 				 "Atenolol (50mg tablet)", "Atenolol (100mg tablet)"].collect{|name| Drug.find_by_name(name).id}
 	data = Core::Observation.find_by_sql(["SELECT value_text, value_drug, obs_datetime FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id
@@ -281,7 +281,7 @@ module Core
 			", self.id, date.to_date, notes_concept, drug_ids])
 	result = {}
 	map = {
-		"HCT (25mg tablet)" => "HCZ",
+		"HCZ (25mg tablet)" => "HCZ",
 		"Amlodipine (5mg tablet)" => "Amlodipine", 
 		"Amlodipine (10mg tablet)" => "Amlodipine",
 		"Enalapril (5mg tablet)" => "Enalapril", 
