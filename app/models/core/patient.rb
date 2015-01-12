@@ -198,14 +198,14 @@ module Core
 	  prev_date = Core::Encounter.last(:select => ["encounter_datetime"], :joins => "
                 INNER JOIN obs ON encounter.encounter_id = obs.encounter_id 
                ",
-                               :conditions => ["encounter.voided = 0 AND value_drug IN (?) AND DATE(encounter.encounter_datetime) <=?
+                               :conditions => ["encounter.patient_id = ? AND encounter.voided = 0 AND value_drug IN (?) AND DATE(encounter.encounter_datetime) <=?
                                AND encounter.encounter_type = ? AND obs.value_drug  IN (?)",
-                                               drugs.map(&:drug_id), date, Core::EncounterType.find_by_name("DISPENSING").id, drugs.map(&:drug_id)]).encounter_datetime.to_date rescue nil
+                                               self.id, drugs.map(&:drug_id), date, Core::EncounterType.find_by_name("DISPENSING").id, drugs.map(&:drug_id)]).encounter_datetime.to_date rescue nil
                                       
       return [] if prev_date.blank?                                   
       result = Core::Encounter.find_by_sql(["SELECT obs.value_drug FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id 
-      			WHERE encounter.voided = 0 AND obs.value_drug IN (?) AND obs.concept_id = ? AND encounter.encounter_type = ? AND DATE(encounter.encounter_datetime) = ? 
-      	", drugs.map(&:drug_id), dispensing_concept, Core::EncounterType.find_by_name("DISPENSING").id, prev_date]).map(&:value_drug).uniq  rescue []
+      			WHERE encounter.voided = 0 AND encounter.patient_id = ? AND obs.value_drug IN (?) AND obs.concept_id = ? AND encounter.encounter_type = ? AND DATE(encounter.encounter_datetime) = ? 
+      	", self.id, drugs.map(&:drug_id), dispensing_concept, Core::EncounterType.find_by_name("DISPENSING").id, prev_date]).map(&:value_drug).uniq  rescue []
       	
       
 =begin

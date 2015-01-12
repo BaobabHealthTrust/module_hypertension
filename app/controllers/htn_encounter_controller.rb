@@ -556,9 +556,9 @@ def create_or_update(params)
 		  encounter = Core::Encounter.create(
 			  :encounter_datetime => (session[:datetime].to_datetime rescue DateTime.now),
 			  :encounter_type => encounter_type,
-			  :creator => Core::User.current.id,
+			  :creator => User.current.id,
 			  :provider_id => ((session[:datetime].blank? || session[:htn_provider_id].blank?) ?
-       Core::User.current.person_id : session[:htn_provider_id]),
+       User.current.person_id : session[:htn_provider_id]),
 			  :location_id => @current_location.id,
 			  :patient_id => @patient.id
 		  )
@@ -575,7 +575,7 @@ def create_or_update(params)
 		   :person_id => @patient.id,
 		   :location_id => @current_location,
 		   :concept_id => concept_id,
-		   :creator => Core::User.current.id,
+		   :creator => User.current.id,
 		   :value_text => notes,
 		   :value_drug => drug_id
 		)     

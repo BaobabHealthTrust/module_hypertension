@@ -463,6 +463,7 @@
         for (var i = 0; i < nodes.length; i ++){
         	var drug = nodes[i].getAttribute("drug");
         	var notes = nodes[i].innerHTML;
+        	
         	jQuery.ajax({
         			url: "/htn_encounter/save_notes?patient_id=<%= @patient.id%>&drug_name=" + 
         				escape(drug) + "&notes=" + escape(notes),
