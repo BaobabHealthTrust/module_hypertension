@@ -326,5 +326,24 @@ module Core
       return "Patient wants to get pregnant"
      end
     end
+
+   def current_risk_factors(date = Date.today)
+    encounter_type = Core::EncounterType.find_by_name("MEDICAL HISTORY").id
+    concept_id = Core::ConceptName.find_by_name("HYPERTENSION RISK FACTORS").concept_id
+    yes_concept_id = Core::ConceptName.find_by_name("YES").concept_id
+    concept_ids = Core::ConceptSet.find_all_by_concept_set(concept_id).collect{|set| set.concept.id}
+    current_risk_factors = []
+    encounter_id = Core::Encounter.find_by_sql(["SELECT encounter_id FROM encounter
+ 					WHERE encounter.voided = 0 AND encounter.patient_id = ? AND encounter_datetime <= ?
+	 					AND	encounter.encounter_type = ? ORDER BY encounter_datetime DESC LIMIT 1",
+                                                self.id,date.strftime("%Y-%m%d 23:59:59"), encounter_type]).first.id
+
+    if encounter_id.present?
+     current_risk_factors = Core::Observation.all(:conditions => ["encounter_id = ? AND concept_id IN (?)
+	 							AND (value_coded = ? OR value_text = 'YES')",
+                                                                  encounter_id, concept_ids, yes_concept_id]).collect{|o| o.concept.concept_names.first.name.strip}
+    end
+    current_risk_factors
+   end
   end
 end

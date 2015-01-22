@@ -69,6 +69,17 @@ class HtnEncounterController < ApplicationController
    end
   end
 
+  def medical_history
+   @patient = Core::Patient.find(params[:patient_id])
+   @prev_risk_factors = @patient.current_risk_factors((session[:datetime].to_date rescue Date.today))
+   option_set = Core::ConceptSet.find_all_by_concept_set(Core::Concept.find_by_name("HYPERTENSION RISK FACTORS").id,:order => 'sort_weight')
+   @options = option_set.map{|item|next if item.concept.blank? ; [item.concept.fullname, item.concept.fullname] }
+   if session[:datetime]
+    @retrospective = true
+   else
+    @retrospective = false
+   end
+  end
   def lab_results
   end
 
@@ -82,7 +93,7 @@ class HtnEncounterController < ApplicationController
   end
 
  def create
-
+ #raise params["encounter"]["observations"].first.inspect
   encounter = Core::Encounter.new()
   encounter.encounter_type = Core::EncounterType.find_by_name(params["encounter"]["encounter_type_name"]).id
   encounter.patient_id = params['encounter']['patient_id']
