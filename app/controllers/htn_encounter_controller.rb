@@ -116,9 +116,9 @@ class HtnEncounterController < ApplicationController
 
   if encounter.name == "VITALS" && encounter.observations.length == 2
     bp  = encounter.patient.current_bp(encounter.encounter_datetime)
-    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
-      redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
-    end
+#    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
+ #     redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
+ #   end
   end
 
   if !params[:state].blank?
@@ -356,10 +356,13 @@ def create_or_update(params)
 
  def bp_management
   @patient = Core::Patient.find(params[:patient_id])
-  
-  redirect_to "/htn_encounter/update_htn_provider?patient_id=#{@patient.id}" and return if 
-  	params[:skip_provider_check].blank? && !session[:datetime].blank?
-  
+
+  if !@patient.were_htn_risk_factors_captured?((session[:datetime] || Date.today))
+   redirect_to "/htn_encounter/medical_history?patient_id=#{@patient.id}" and return
+  elsif  params[:skip_provider_check].blank? && !session[:datetime].blank?
+   redirect_to "/htn_encounter/update_htn_provider?patient_id=#{@patient.id}" and return
+  end
+
   if session[:datetime].blank? && !session[:htn_provider_id]
   	session.delete(:htn_provider_id)
   end
@@ -368,6 +371,7 @@ def create_or_update(params)
   @patient_program = @patient.enrolled_on_program(Core::Program.find_by_name("Hypertension program").id,date, true)
   @bp_trail =  @patient.bp_management_trail(date)
   @note = @patient.pregnancy_status(date) if @patient.gender == "F"
+  @risks = @patient.current_risk_factors(date).length.to_s
  end
  
  def update_htn_provider

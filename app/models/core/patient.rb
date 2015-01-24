@@ -336,7 +336,7 @@ module Core
     encounter_id = Core::Encounter.find_by_sql(["SELECT encounter_id FROM encounter
  					WHERE encounter.voided = 0 AND encounter.patient_id = ? AND encounter_datetime <= ?
 	 					AND	encounter.encounter_type = ? ORDER BY encounter_datetime DESC LIMIT 1",
-                                                self.id,date.strftime("%Y-%m%d 23:59:59"), encounter_type]).first.id
+                      self.id,date.strftime("%Y-%m%d 23:59:59"), encounter_type]).first.id rescue nil
 
     if encounter_id.present?
      current_risk_factors = Core::Observation.all(:conditions => ["encounter_id = ? AND concept_id IN (?)
@@ -345,5 +345,25 @@ module Core
     end
     current_risk_factors
    end
+
+    def were_htn_risk_factors_captured?(date)
+     encounters = Core::Encounter.find(:all, :conditions => ["patient_id = ? AND encounter_datetime <= ? AND encounter_type = ?",
+           self.id,date.strftime("%Y-%m%d 23:59:59"),Core::EncounterType.find_by_name("MEDICAL HISTORY").id]).collect{|x|x.id}
+
+     return false if encounters.blank?
+
+     risk_factors = Core::ConceptSet.find_all_by_concept_set(Core::ConceptName.find_by_name("HYPERTENSION RISK FACTORS").concept_id).collect{|set| set.concept.id}
+
+     encounter = Core::Observation.find_by_sql(["SELECT DISTINCT encounter_id FROM obs
+										WHERE encounter_id in (?) AND concept_id in (?) AND
+										person_id = ? AND voided = 0 LIMIT 1",encounters, risk_factors, self.id])
+
+     if encounter.blank?
+      return false
+     else
+      return true
+     end
+    end
+
   end
 end
