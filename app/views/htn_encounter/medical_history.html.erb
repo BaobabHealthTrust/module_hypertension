@@ -52,6 +52,10 @@
   <%= hidden_field_tag "encounter[encounter_datetime]", (session[:datetime].to_date rescue DateTime.now) %>
   <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
 
+  <% if !params[:reroute].blank? %>
+  	<%= hidden_field_tag "reroute", true %>
+  <% end %>
+  
   <%= select_tag "riskFactor",options_for_select(@options,@prev_risk_factors),
                  { :field_type => 'text',
                    :helpText => "Does patient have any of these conditions?",

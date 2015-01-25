@@ -80,6 +80,12 @@ class HtnEncounterController < ApplicationController
     @retrospective = false
    end
   end
+  
+  def risk_factors_index 
+  	@patient = Core::Patient.find(params[:patient_id])
+  	@risk_factors = @patient.current_risk_factors((session[:datetime].to_date rescue Date.today))
+  end
+  
   def lab_results
   end
 
@@ -92,7 +98,7 @@ class HtnEncounterController < ApplicationController
   def update_outcome
   end
 
- def create
+ def create 
  #raise params["encounter"]["observations"].first.inspect
   encounter = Core::Encounter.new()
   encounter.encounter_type = Core::EncounterType.find_by_name(params["encounter"]["encounter_type_name"]).id
@@ -158,13 +164,16 @@ class HtnEncounterController < ApplicationController
 
    end
   end
-
+	
+  if !params[:reroute].blank?
+  	redirect_to "/htn_encounter/bp_management?patient_id=#{Patient.find(params['encounter']['patient_id']).id}" and return
+  end
+  
   if !params[:return].blank?
    render :text => true and return
   else
    redirect_to next_task(Patient.find(params['encounter']['patient_id']))
   end
-
  end
 
 def create_or_update(params)
@@ -185,8 +194,7 @@ def create_or_update(params)
 			  :patient_id => @patient.id
 		  )
 	end
-
-
+	
 	(params['encounter']['observations'] || []).each do |observation|
 		concept_id = Core::ConceptName.find_by_name(observation['concept_name']).concept_id
 		obs = encounter.observations.last(:conditions => ["concept_id = ? AND voided = 0", concept_id])
@@ -371,7 +379,7 @@ def create_or_update(params)
   @patient_program = @patient.enrolled_on_program(Core::Program.find_by_name("Hypertension program").id,date, true)
   @bp_trail =  @patient.bp_management_trail(date)
   @note = @patient.pregnancy_status(date) if @patient.gender == "F"
-  @risks = @patient.current_risk_factors(date).length.to_s
+  @risks = @patient.current_risk_factors(date).length
  end
  
  def update_htn_provider
