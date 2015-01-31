@@ -95,7 +95,7 @@ module Core
    def eligible_for_htn_screening(date = Date.today)
     threshold = CoreService.get_global_property_value("htn.screening.age.threshold").to_i
 
-    if self.age(date) >= threshold
+    if (self.age(date) >= threshold || self.programs.map{|x| x.name}.include?("HYPERTENSION PROGRAM"))
 
      htn_program = Core::Program.find_by_name("HYPERTENSION PROGRAM")
 

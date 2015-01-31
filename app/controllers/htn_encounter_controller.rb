@@ -29,6 +29,11 @@ class HtnEncounterController < ApplicationController
     @patient = Core::Patient.find(params[:patient_id])
     @patient_bean = PatientService.get_patient(@patient.person)
     @bp = @patient.current_bp((session[:datetime] || Time.now()))
+    @patient_pregnant = false
+
+    if (@patient.gender == "F")
+     @patient_pregnant = true if @patient.pregnancy_status((session[:datetime] || Time.now())) == "Patient is pregnant"
+    end
 
   end
 
@@ -46,6 +51,9 @@ class HtnEncounterController < ApplicationController
     @max_weight = PatientService.get_patient_attribute_value(@patient, "max_weight")
     @min_height = PatientService.get_patient_attribute_value(@patient, "min_height")
     @max_height = PatientService.get_patient_attribute_value(@patient, "max_height")
+    if (@patient.gender == "F")
+     @patient_pregnant = true if @patient.pregnancy_status((session[:datetime] || Time.now())) == "Patient is pregnant"
+    end
   end
 
   def family_history
@@ -119,13 +127,14 @@ class HtnEncounterController < ApplicationController
   encounter.provider_id = user_person_id
   encounter.save
   create_obs(encounter, params)
-
+=begin
   if encounter.name == "VITALS" && encounter.observations.length == 2
     bp  = encounter.patient.current_bp(encounter.encounter_datetime)
-#    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
- #     redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
- #   end
+    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
+      redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
+    end
   end
+=end
 
   if !params[:state].blank?
    htn_program = Core::Program.find_by_name("HYPERTENSION PROGRAM")
@@ -642,5 +651,9 @@ def create_or_update(params)
   obs.value_coded_name_id = yes_concept.concept_name_id
   obs.save
   redirect_to "/patients/show/#{params[:patient_id]}"
+ end
+
+ def voluntary_check
+  @patient = Core::Patient.find(params[:id])
  end
 end
