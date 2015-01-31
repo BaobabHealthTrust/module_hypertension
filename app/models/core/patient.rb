@@ -316,14 +316,16 @@ module Core
       return "Patient is pregnant"
      end
 
-     wants_pregnancy = (Core::Observation.last(:conditions => ["person_id = ? AND voided = 0 AND concept_id = ?
+     answer = (Core::Observation.last(:conditions => ["person_id = ? AND voided = 0 AND concept_id = ?
                                                           AND DATE(obs_datetime) = ?",self.id,
                                                         ConceptName.find_by_name("Why does the woman not use birth control").concept_id,
                                                         (date.to_date)
-     ]).answer_string.upcase.strip rescue nil) == "PATIENT WANTS TO GET PREGNANT"
+     ]).answer_string.upcase.strip rescue nil)
 
-     if wants_pregnancy
+     if answer == "PATIENT WANTS TO GET PREGNANT"
       return "Patient wants to get pregnant"
+     elsif answer == "AT RISK OF UNPLANNED PREGNANCY"
+      return "At Risk of Unplanned Pregnancy"
      end
     end
 
@@ -335,8 +337,8 @@ module Core
     current_risk_factors = []
     encounter_id = Core::Encounter.find_by_sql(["SELECT encounter_id FROM encounter
  					WHERE encounter.voided = 0 AND encounter.patient_id = ? AND encounter_datetime <= ?
-	 					AND	encounter.encounter_type = ? ORDER BY encounter_datetime DESC LIMIT 1",
-                      self.id,date.strftime("%Y-%m%d 23:59:59"), encounter_type]).first.id rescue nil
+	 					AND	encounter.encounter_type = ? ORDER BY encounter_datetime DESC,encounter_id DESC  LIMIT 1",
+                      self.id,date.strftime("%Y-%m-%d 23:59:59"), encounter_type]).first.id rescue nil
 
     if encounter_id.present?
      current_risk_factors = Core::Observation.all(:conditions => ["encounter_id = ? AND concept_id IN (?)
