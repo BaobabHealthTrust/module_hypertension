@@ -29,6 +29,11 @@ class HtnEncounterController < ApplicationController
     @patient = Core::Patient.find(params[:patient_id])
     @patient_bean = PatientService.get_patient(@patient.person)
     @bp = @patient.current_bp((session[:datetime] || Time.now()))
+    @patient_pregnant = false
+
+    if (@patient.gender == "F")
+     @patient_pregnant = true if @patient.pregnancy_status((session[:datetime] || Time.now())) == "Patient is pregnant"
+    end
 
   end
 
@@ -46,6 +51,9 @@ class HtnEncounterController < ApplicationController
     @max_weight = PatientService.get_patient_attribute_value(@patient, "max_weight")
     @min_height = PatientService.get_patient_attribute_value(@patient, "min_height")
     @max_height = PatientService.get_patient_attribute_value(@patient, "max_height")
+    if (@patient.gender == "F")
+     @patient_pregnant = true if @patient.pregnancy_status((session[:datetime] || Time.now())) == "Patient is pregnant"
+    end
   end
 
   def family_history
@@ -119,13 +127,14 @@ class HtnEncounterController < ApplicationController
   encounter.provider_id = user_person_id
   encounter.save
   create_obs(encounter, params)
-
+=begin
   if encounter.name == "VITALS" && encounter.observations.length == 2
     bp  = encounter.patient.current_bp(encounter.encounter_datetime)
-#    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
- #     redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
- #   end
+    if !bp.blank? && ((!bp[0].blank? && bp[0] > 140) || (!bp[1].blank?  && bp[1] > 90))
+      redirect_to "/htn_encounter/bp_management?patient_id=#{encounter.patient_id}" and return
+    end
   end
+=end
 
   if !params[:state].blank?
    htn_program = Core::Program.find_by_name("HYPERTENSION PROGRAM")
@@ -400,19 +409,24 @@ def create_or_update(params)
     @current_drugs[drg] = true
   }
    
-    dispensed_concept_id = Concept.find_by_name("AMOUNT DISPENSED").concept_id rescue -1  
+    dispensed_concept_id = Core::Concept.find_by_name("AMOUNT DISPENSED").concept_id rescue -1
     @last_dispensation = {}
     (@current_drugs || []).each do |drug_name, value|
     	next if value != true
-    	drug = Drug.find_by_name(drug_name)
-		last_dispensation = Encounter.find_by_sql([
+    	drug = Core::Drug.find_by_name(drug_name)
+		last_dispensation = Core::Encounter.find_by_sql([
 				"SELECT SUM(obs.value_numeric) AS value_numeric, MAX(obs_datetime) AS obs_datetime, 0 AS remaining FROM encounter INNER JOIN obs ON obs.encounter_id = encounter.encounter_id AND encounter.voided = 0
 				WHERE obs.value_drug = ? AND encounter.encounter_type = ? AND 
 				encounter.patient_id = ? AND DATE(encounter.encounter_datetime) < ?
 				AND obs.concept_id = ? GROUP BY DATE(obs_datetime) ORDER BY obs.obs_datetime DESC LIMIT 1", 
-				drug.id, EncounterType.find_by_name("DISPENSING").id, @patient.id, session_date, dispensed_concept_id]).last rescue nil
-		
-		last_dispensation.remaining = (last_dispensation.value_numeric.to_i - (session_date - 
+				drug.id, Core::EncounterType.find_by_name("DISPENSING").id, @patient.id, session_date, dispensed_concept_id]).last rescue nil
+
+  remaining_last_time = Core::Observation.find(:last,
+                                               :conditions => ["concept_id = ? AND person_id = ? AND value_drug = ? AND DATE(obs_datetime) = ?",
+                                                               Core::ConceptName.find_by_name("Amount of drug remaining at home").concept_id,
+                                                               @patient.id,drug.id,last_dispensation.obs_datetime.to_date]).value_numeric rescue 0
+
+		last_dispensation.remaining = ((last_dispensation.value_numeric.to_i + remaining_last_time.to_i) - (session_date -
 			last_dispensation.obs_datetime.to_date).to_i) rescue nil # == days for a pill per day
 		 
 		 @last_dispensation[drug_name] = last_dispensation if !last_dispensation.blank?		
@@ -441,7 +455,7 @@ def create_or_update(params)
     end
     
     drug_id = Drug.find_by_name(params[:drug_name]).id    
-    concept_id = Concept.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id rescue -1     
+
     order_id = Order.find(:first,
                              :select => "orders.order_id",
                              :joins => "INNER JOIN drug_order USING (order_id)",
@@ -483,12 +497,17 @@ def create_or_update(params)
     		GROUP BY DATE(obs_datetime) ORDER BY obs.obs_datetime DESC LIMIT 1", drug_id,
     		EncounterType.find_by_name("DISPENSING").id, @patient.id, session_date, dispensed_concept_id
     ]).last rescue nil
-  
+
+    remaining_last_time = Core::Observation.find(:last,
+                                                 :conditions => ["concept_id = ? AND person_id = ? AND value_drug = ? AND DATE(obs_datetime) = ?",
+                                                                 Core::ConceptName.find_by_name("Amount of drug remaining at home").concept_id,
+                                                                 @patient.id,drug_id,last_dispensation.obs_datetime.to_date]).value_numeric rescue 0
+
     adherence = nil
     expected_amount_remaining = nil
     if !last_dispensation.blank?
 		amount_given_last_time = last_dispensation.value_numeric.to_i		
-		expected_amount_remaining =  amount_given_last_time - (session_date - 
+		expected_amount_remaining =  (amount_given_last_time + remaining_last_time.to_i) - (session_date -
 			last_dispensation.obs_datetime.to_date).to_i # == days for a pill per day			
 		amount_remaining = params[:pills].to_i  
 		adherence = (100*(amount_given_last_time - amount_remaining) / (amount_given_last_time - expected_amount_remaining)).round
@@ -632,5 +651,9 @@ def create_or_update(params)
   obs.value_coded_name_id = yes_concept.concept_name_id
   obs.save
   redirect_to "/patients/show/#{params[:patient_id]}"
+ end
+
+ def voluntary_check
+  @patient = Core::Patient.find(params[:id])
  end
 end

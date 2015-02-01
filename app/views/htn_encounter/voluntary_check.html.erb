@@ -1,0 +1,47 @@
+<html>
+<head>
+  <script>
+      var tt_next_destination = "/patients/show/<%= @patient.patient_id %>"
+  </script>
+  <style>
+      .body{
+          margin-top: 10%;
+          color: gray;
+          text-align: center;
+          width: 99%;
+          text-decoration: none;
+      }
+      .header{
+          width: 99%;
+          text-align: center;
+          margin-top: 3%;
+      }
+
+      .name{
+          color: blue;
+          font-style: italic;
+      }
+      .green{
+          width: 170px;
+      }
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1> Voluntary BP Check </h1>
+</div>
+    <div class="body">
+      <h2> <span class="name"><%= @patient.name%></span> is ineligible for hypertension screening.
+                    </span>  <br /> Does <%= (@patient.gender == "F") ? 'she':'he' %> want to volunteer for BP screening?</h2>
+
+    </div>
+
+    <div class="buttonsDiv footer">
+      <button id ="nextButton" class="navButton button green" onmousedown="window.location ='/htn_encounter/vitals_confirmation?patient_id=<%=@patient.id%>'">
+        <span>Yes</span>
+      </button>
+      <button id="referButton" class="button red navButton" style="float: left"
+              onmousedown="window.location = tt_next_destination"><span>No</span>
+      </button>
+</body>
+</html>
