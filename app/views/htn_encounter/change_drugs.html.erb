@@ -332,7 +332,10 @@
 		<%data_keys.each do |drg|%>
 			<td id = "<%= drg%>" style="padding-top: 2px !important;" valign="top">
 				<table class="table-inner-notes" id="notes-<%= drg%>">
-						<tr id = "<%= drg%>_today" class="date-tr today-tr" style="display: none;"><td class="date-td today-td">Now</td></tr>
+						<tr id = "<%= drg%>_today" class="date-tr today-tr" style="display: none;">
+						<td class="date-td today-td">Now</td>
+							<td class="date-td today-td"></td>
+						</tr>
 						<%
 						@dates = @notes[drg].keys.sort.reverse rescue []
 						(@dates || []).each do |date|
@@ -341,7 +344,7 @@
 							<tr class="date-tr"><td class="date-td"><%= date.to_date.strftime("%d-%b-%Y")%></td></tr>
 							<% (notes || []).each do |note|%>
 								<tr class="note-tr">
-									<td class="note-td"><%= note%></td>
+									<td colspan= '2' class="note-td"><%= note%></td>
 								</tr>
 							<% end %>
 						<%end%>
@@ -438,8 +441,30 @@
 			newCell.className = "note-td today-note-td";
 			newCell.setAttribute("drug", drug);
 			newCell.setAttribute("drug-group", drugGroup);
+			newCell.style.width = "85%";
 			newCell.innerHTML = data;
-			newRow.appendChild(newCell);			
+			newRow.appendChild(newCell);	
+			
+			var newCell = document.createElement("td");
+			newCell.className = "note-td";
+			newCell.setAttribute("drug", drug);
+			newCell.setAttribute("drug-group", drugGroup);
+			newCell.innerHTML =  "<img style='padding: 3px; padding-right: 10px;margin:auto;' height='35' width='35' alt='X' src = '/touchscreentoolkit/lib/images/cancel_flat_small_red.png'>";
+			
+			newCell.onclick = function(){
+			    
+			    var drugGroup = this.getAttribute("drug-group");
+			    var todayRow = __$(drugGroup + "_today");
+			    
+			    nodes = todayRow.parentNode.getElementsByClassName("today-note-tr");
+			    if (nodes.length == 1)
+			    	todayRow.style.display = "none";
+			    	
+				this.parentNode.parentNode.removeChild(this.parentNode);
+			}
+			
+			newRow.appendChild(newCell);	
+					
 			jQuery(todayRow).after(newRow);			
 		}
 	}
