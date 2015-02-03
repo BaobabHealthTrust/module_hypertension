@@ -186,7 +186,7 @@
         <span style="color: red;"> <%= (@note.blank? ? "" : " *" + @note)%></span>
          		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <span onclick="window.location = '/htn_encounter/<%= @risks == 0 ? "medical_history" : "risk_factors_index"%>?patient_id=<%= @patient.id%>&reroute=true'" id="risk_factor" style="">
-        		<%= @risks == 0 ? 'Add Risk Factors' : "View/Edit Risk Factors(<span style='color: red'>#{@risks}</span>)"%>        	
+                    <%= @risks == 0 ? 'Add Risk Factors' : "<span style='color: red'>View/Edit Risk Factors (#{@risks})</span>"%>
         </span>
         </span>
       </div>

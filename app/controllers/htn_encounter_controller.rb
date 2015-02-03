@@ -178,7 +178,7 @@ class HtnEncounterController < ApplicationController
   	redirect_to "/htn_encounter/bp_management?patient_id=#{Patient.find(params['encounter']['patient_id']).id}" and return
   end
   
-  if !params[:return].blank?
+  if !params[:return].blank? && params[:return]
    render :text => true and return
   else
    redirect_to next_task(Patient.find(params['encounter']['patient_id']))
