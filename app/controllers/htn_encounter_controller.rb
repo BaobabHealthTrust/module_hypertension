@@ -177,8 +177,8 @@ class HtnEncounterController < ApplicationController
   if !params[:reroute].blank?
   	redirect_to "/htn_encounter/bp_management?patient_id=#{Patient.find(params['encounter']['patient_id']).id}" and return
   end
-  
-  if !params[:return].blank? && params[:return]
+
+  if !params[:return].blank?
    render :text => true and return
   else
    redirect_to next_task(Patient.find(params['encounter']['patient_id']))
@@ -655,5 +655,9 @@ def create_or_update(params)
 
  def voluntary_check
   @patient = Core::Patient.find(params[:id])
+ end
+
+ def redirect_to_to_next_task
+  redirect_to next_task(Patient.find(params['patient_id']))
  end
 end

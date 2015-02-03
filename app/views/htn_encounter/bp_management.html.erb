@@ -124,7 +124,7 @@
                         path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
                         break;
                     default :
-                        path = "<%= next_task(@patient)%>"
+                        path = "/htn_encounter/redirect_to_to_next_task?patient_id=<%= @patient.patient_id %>"
                         break;
                 }
 
@@ -152,7 +152,9 @@
             "observations" : [{"patient_id":<%= @patient.patient_id %>, "concept_name":"PLAN", "value_text":chosenPlan,
             "obs_datetime":'<%= session[:datetime].to_date rescue DateTime.now() %>', "value_coded_or_text":""}],
             "return" : true, "state": state}
-	
+
+        //createLoadingMessage()
+
         jQuery.ajax({
             type: "POST",
             url: "/htn_encounter/create",
