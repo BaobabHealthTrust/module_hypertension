@@ -36,7 +36,7 @@
 			<% if (((@bp[0] || 0) <= 160) &&  ((@bp[1] || 0) <= 100) && !@patient_pregnant) %>
                 <div class="body">
                   <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
-                    </span>  <br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. Do you want to test BP?  </h2>
+                    </span>  <br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. <br>Do you want to test BP?  </h2>
 
                 </div>
 
