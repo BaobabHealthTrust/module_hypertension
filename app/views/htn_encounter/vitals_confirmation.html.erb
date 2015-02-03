@@ -199,7 +199,7 @@
                         :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
 
   <% if @patient_pregnant %>
-      <%= touch_hidden_tag "REFER TO HTC", @patient, nil, { :id => 'refferal' , :kind => "value_coded_or_text"} %>
+      <%= touch_hidden_tag "REFER TO ANC", @patient, nil, { :id => 'refferal' , :kind => "value_coded_or_text"} %>
   <% end %>
 
   <%= text_field_tag :summary, nil,
