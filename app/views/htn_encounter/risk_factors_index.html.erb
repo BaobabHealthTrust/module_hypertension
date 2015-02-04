@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<script>
+			var tt_next_destination = "/htn_encounter/vitals_confirmation?patient_id=<%=@patient.id%>"
+		</script>
+		<style>
+			.body{
+				margin-top: 10%;
+				color: gray;
+				text-align: center;
+				width: 99%;
+				text-decoration: none;		
+			}
+			
+			.main-table{
+				width: 90%;
+				margin: auto;
+				font-size : 1.8em;
+				background: rgb(243, 253, 250);
+				margin-top: 40px;
+				border: 1px dotted gray;
+				border-radius: 5px;
+			}
+			.header{
+				width: 99%;
+				text-align: center;
+				margin-top: 3%;	
+				color: black;				
+			}
+			th{			
+				font-size: 1.6em; 
+				font-weight: normal;
+				border-radius: 5px;
+			}
+			
+			.risk-tr{
+				background: rgb(233, 233, 200);
+				
+			}
+		</style>
+		
+		<script>
+		
+		function nextPage(){
+			window.location = "/htn_encounter/bp_management?patient_id=<%= @patient.id%>";
+		}
+		
+		function nextriskFactorPage(){
+			window.location = "/htn_encounter/medical_history?patient_id=<%= @patient.id%>&reroute=true";
+		}
+		</script>
+	</head>
+		<body>
+		<div>
+			<table class="main-table">
+					
+				<tr class='header'>
+					<th>&nbsp;</th>
+					<th>Risk Factors</th>					
+				</tr>
+				
+				<% @risk_factors.each_with_index do |risk_factor, i|%>
+				<tr class='risk-tr'>
+					<td class='num'>
+						<%= (i + 1)%>
+					</td>
+					<td class='risk'>
+						<%= risk_factor%>
+					</td>
+				</tr>
+				<% end %>
+			</table>
+		 </div>
+		 
+		 <div id="buttons" class="buttonsDiv">
+			  <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>			 
+			  <button class="button blue navButton" onmousedown="nextriskFactorPage()"><span>Edit Risk Factors</span></button>		
+		</div>
+		</body>
+</html>

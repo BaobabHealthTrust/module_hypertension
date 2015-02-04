@@ -1,0 +1,13 @@
+<script>
+    var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>";
+</script>
+
+<form action="/htn_encounter/update_htn_provider">  
+  <%= hidden_field_tag "patient_id", @patient.id %>
+  <%= hidden_field_tag "update_htn_provider", true %>
+  
+      <p><label for="filter_provider">Staff who provided  management information (Provider)</label></br>
+        <%= text_field "filter" , 'provider', :helpText => 'Staff who provided BP management information (Provider)', :ajaxURL => '/user/username?username=' %></p> 
+        
+  <%= submit_tag "Finish" %>
+</form>

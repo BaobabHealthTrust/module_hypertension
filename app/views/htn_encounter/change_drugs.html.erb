@@ -1,0 +1,776 @@
+<html>
+<head>
+<script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
+<script>
+	
+    var imgTick = 'data:image/png;base64,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';
+
+</script>
+
+<style>
+    #nextButton{
+        min-width: 170px !important;
+    }
+    .holder{
+        width: 99%;
+        padding: 1.5%;
+    }
+    .blue {
+        background-color: #a7cfdf !important;
+        background-image: linear-gradient(to bottom, #a7cfdf, #23538a) !important;
+        border: 1px solid #7eb9d0 !important;
+        border-radius: 3px !important;
+        color: #ffffff;
+        display: inline-block !important;
+        font-family: arial, helvetica, sans-serif !important;
+        font-size: 28px !important;
+        font-weight: bold !important;
+        padding: 10px !important;
+        background-repeat: repeat-x !important;
+        text-decoration: none !important;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3) !important;
+        border-radius: 8px !important;
+    }
+    
+	#done{
+		border:1px solid #34740e !important; 
+		-webkit-border-radius: 3px !important;
+		-moz-border-radius: 3px !important;
+		border-radius: 5px !important;
+		font-size:28px !important;
+		font-family:arial, helvetica, sans-serif !important;
+		padding: 10px !important;
+		margin-left: 20px !important;
+		text-decoration:none !important; 
+		display:inline-block !important;
+		text-shadow: -1px -1px 0 rgba(0,0,0,0.3) !important;
+		font-weight:bold !important; 
+		color: #FFFFFF !important;
+		background-color: #4ba614 !important;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#4ba614), to(#008c00)) !important;
+		background-image: -webkit-linear-gradient(top, #4ba614, #008c00) !important;
+		background-image: -moz-linear-gradient(top, #4ba614, #008c00) !important;
+		background-image: -ms-linear-gradient(top, #4ba614, #008c00) !important;
+		background-image: -o-linear-gradient(top, #4ba614, #008c00) !important;
+		background-image: linear-gradient(to bottom, #4ba614, #008c00) !important;
+		filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4ba614, endColorstr=#008c00) !important;
+	}
+   
+    #main-table,
+    #table-notes{
+        width: 95%;
+        margin:auto;
+    }
+    #main-table th,
+    #table-notes th{
+        font-size: 20px;
+        background-color: firebrick;
+        color: white;
+    }
+    #main-table th, #main-table td{
+        text-align: center;
+        padding: 10px;
+    }
+    .td-title{
+        font-size:22px;
+        text-shadow: 2px 2px white;
+    }
+    .td-title,
+    .td-current,
+    .td-remaining{
+    	padding: 2px !important;
+    }
+    .td-current{
+        background-color: #EED5D2;
+        text-shadow: 2px 2px white;
+        height: 40px !important;
+    }
+    .td-remaining{
+        background-color: #ffe5e5;
+        text-shadow: 2px 2px white;
+    }
+    .td-value{
+        font-size: 22px;
+    }
+    
+    
+    caption{
+        font-weight: bold;
+        font-size: 26px;
+        color: rgba(0,0,0,0.8);
+    }
+    .checked{
+        background: url("/touchscreentoolkit/lib/images/ticked")
+    }
+    .unchecked{
+        background: url("/touchscreentoolkit/lib/images/unticked")
+    }
+   
+	.button-success,   
+    .button-secondary {
+        color: white;
+        border-radius: 4px;
+        padding: 3px;
+        max-width: 130px;
+        margin: auto;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+    .button-success {
+        background: rgb(223, 117, 20);
+    }
+    
+    .gray{
+    	background: lightgray !important;
+    }
+    #table-notes td{
+    	background: rgba(210, 220, 240, 0.5);
+    	border-radius: 5px;
+    }
+    .table-inner-notes{
+    	width: 100%;
+    }
+    #table-notes th{
+    	background: lightgray;
+    	color: rgba(0,0,0,0.8);
+    }
+     #table-notes td{
+    	padding-left: 1px;
+    }
+    .date-td{
+    	padding-left: 4px !important;
+    	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    	font-size: 1em;
+    	background: rgba(235, 235, 240, 0.5) !important;
+    	color: rgba(0,0,0,0.9);
+    }
+    .note-td{
+    	padding-left: 20px !important;
+    	color: rgba(0,0,0,0.8);
+    	text-shadow: 2px 2px 3px rgba(255,255,255,0.1);
+    }
+    .notes-scroll{
+    	height: 265px !important;
+    	overflow: auto;
+    }
+	
+	#shield{
+		position: absolute;
+		top: 0%;
+		left: 0%;
+		width: 100%;
+		height: 100%;
+		z-index: 150;
+		background: rgba(200, 200, 200, 0.5);
+		display: none;
+	}
+	#keyboard-holder{
+		position: absolute;
+		top: 40%;
+		left: 21%;		
+		width: 60% !important;		
+		margin: auto;
+		display: none;	
+		z-index: 900;	
+	}
+	textarea{
+		width: 97% !important;	
+		border: 1px dotted lightblue;
+		border-radius: 5px;
+		background: white;
+		resize: none;
+	}
+	#fixedKeyboard{
+		z-index: 999;	
+	}
+	#done{
+		min-width: 100px !important;
+	}
+	.today-tr{		
+		font-style: italic;
+		font-weight: bold;
+		border-radius: 10px !important;
+	}	
+</style>
+<%   @data = {"HCZ" => {"25mg" => "HCZ (25mg tablet)"},
+              "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet)", "10mg" => "Amlodipine (10mg tablet)"},
+              "Enalapril" => {"5mg" => "Enalapril (5mg tablet)", "10mg" => "Enalapril (10mg tablet)"},
+              "Atenolol" => {"50mg" => "Atenolol (50mg tablet)", "100mg" => "Atenolol (100mg tablet)"}
+              }     
+     data_keys =  ["HCZ", "Enalapril", "Amlodipine", "Atenolol"]
+%>
+</head>
+<body>
+<div class="holder">
+  <table id = "main-table">
+    <caption>Prescribe BP drugs<caption>
+      <tr>
+        <th>&nbsp;</th>
+        <% data_keys.each do |key|%>
+            <th><%= key%>
+              <table style="width: 100%;"><tr>
+                <%
+                   keys = @data[key].keys.sort.reverse
+                   keys.each do |ky|
+                     name = @data[key][ky].strip
+                     cols = @data[key].keys.length
+                %>
+                    <td style="width: <%= 100/cols%>%; border: 1px dotted lightgray;border-radius: 3px;">
+                      <span><%= ky%></span>
+                    </td>
+                <%
+                   end
+                %>
+              </tr></table></th>
+        <%end%>
+        </tr>
+        <tr>
+          <td class = "td-current td-title"><span>Current</span></td>
+          <% data_keys.each do |key|%>
+              <td class="td-current td-value"> <table style="width: 100%;"><tr>
+                <%
+                   keys = @data[key].keys.sort.reverse
+                   keys.each do |ky|
+                     name = @data[key][ky].strip
+                     cols = @data[key].keys.length
+                %>
+                    <td style="width: <%= 100/cols%>%;">
+                          <span><%= @current_drugs[name].blank? ? "&nbsp" : "<img width='45' height='35' class='tick'>&nbsp;</img>"%></span>
+                    </td>
+                <%
+                   end
+                %>
+              </tr></table></td>
+          <%end%>
+        </tr>
+        <tr>
+          <td class = "td-remaining td-title"><span>New</span></td>
+          <% data_keys.each do |key|%>
+              <td class="td-remaining td-value">
+
+                <table style="width: 100%;"><tr>
+                  <%
+                     keys = @data[key].keys.sort.reverse
+                     keys.each do |ky|
+                       name = @data[key][ky].strip
+                       cols = @data[key].keys.length
+
+                  %>
+                          <td style="">                          
+                    <img class="choice <%= key%>" width="65" height="50" id = "<%= name%>"
+						<% if @current_drugs[name]%>
+                        
+                          <% end %>
+                          </td>
+
+                  <%
+                     end
+                  %>
+                </tr></table>
+              </td>
+          <%end%>
+        </tr>
+         <tr>
+          <td class = "td-remaining td-title"><span>&nbsp</span></td>
+          <%
+           drugs_passed = []
+           data_keys.each do |key|%>
+              <td class="td-remaining td-value">
+
+                <table style="width: 100%;"><tr>
+                  <%
+                     keys = @data[key].keys.sort.reverse
+                     cur_drug_name = nil
+                     keys.each do |ky|
+                     	cur_drug_name = @data[key][ky].strip if @current_drugs.include?(@data[key][ky].strip)
+                     end
+                     
+                     keys.each do |ky|
+                     name = @data[key][ky].strip                     
+                     cols = @data[key].keys.length
+					 next if drugs_passed.include?(key)
+					 drugs_passed << key					
+                  %>
+                          <td  colspan = "<%=cols%>" style="max-height: 20px !important; margin: 0px !important; padding: 0px !important; height: 15px !important;">
+                          
+                          </span>
+                          
+                           <div class='button button-success' 
+		                      	id = 'alert_<%= name%>' onclick="showCustomKeyboard('<%= (cur_drug_name || name)%>', '<%= key%>')">
+		                      	Add notes
+		                      </div>  
+		                      
+                          <% if false%>                          
+							<div class='button button-success gray' 
+							  	id = 'alert_<%= name%>'>
+							  	Add notes
+							</div>     
+                          <%end%>
+                          </td>
+
+                  <%
+                     end
+                  %>
+                </tr></table>
+              </td>
+          <%end%>
+        </tr>
+  </table>
+</div>
+
+<div class="notes-scroll holder" style="padding-top:0px !important;">
+	<table id="table-notes" >
+		<caption style="font-size: 1.2em;">Notes</caption>
+		<tr>
+		</tr>
+		<%data_keys.each do |drg|%>
+			<th style="width: 25%;">
+					<span><%= drg%></span>
+			</th>
+		<% end %>
+		</tr>
+		<tr>
+		<%data_keys.each do |drg|%>
+			<td id = "<%= drg%>" style="padding-top: 2px !important;" valign="top">
+				<table class="table-inner-notes" id="notes-<%= drg%>">
+						<tr id = "<%= drg%>_today" class="date-tr today-tr" style="display: none;">
+						<td class="date-td today-td">Now</td>
+							<td class="date-td today-td"></td>
+						</tr>
+						<%
+						@dates = @notes[drg].keys.sort.reverse rescue []
+						(@dates || []).each do |date|
+							notes = @notes[drg][date]
+						%>
+							<tr class="date-tr"><td class="date-td"><%= date.to_date.strftime("%d-%b-%Y")%></td></tr>
+							<% (notes || []).each do |note|%>
+								<tr class="note-tr">
+									<td colspan= '2' class="note-td"><%= note%></td>
+								</tr>
+							<% end %>
+						<%end%>
+				</table>
+			</td>
+		<% end %>
+		</tr>
+	</table>
+<div>
+
+<div id="buttons" class="buttonsDiv">
+  <button id="continueButton" class="button green navButton"
+          onclick="nextDestinations()"><span>Continue</span></button>
+  <button id="cancelButton" class="button red navButton"
+          onclick="window.location='/htn_encounter/bp_management?patient_id=<%= @patient.id%>&skip_provider_check=true'"><span>Cancel</span></button>
+</div>
+<div id="shield"><div>
+<div onclick =""; id="keyboard-holder"><div>
+</body>
+<script>
+
+	var currentCaseUpper = true;
+	var currentKeysNumeric = false;
+	var currentKeysQWERTY = true;
+    var checks = document.getElementsByClassName("choice")
+    var ticks = document.getElementsByClassName("tick");  
+	var currentDrugs = [];
+	<% @current_drugs.each do |drug, value|%>
+		currentDrugs.push("<%= drug%>")
+	<% end %>
+	
+    for (var i = 0; i < ticks.length; i ++){
+        ticks[i].src = imgTick;
+    }	
+	
+    for (var k in checks){
+    	
+    	if (currentDrugs.indexOf(checks[k].id) >= 0){
+    		checks[k].src = "/touchscreentoolkit/lib/images/ticked.jpg";
+    		checks[k].onclick = function(){
+    			  		
+		        if (this.src.match("unticked")){		        	        
+		            this.src = this.src.replace("unticked", "ticked")
+		        }else{		       		    	
+		            this.src = this.src.replace("ticked", "unticked")
+		        }
+		        var drugClass =  this.className.split(" ")[1];
+		        var nodes = document.getElementsByClassName(drugClass)
+		        for (var i = 0; i < nodes.length; i ++){
+		            if (nodes[i].id != this.id){
+		               nodes[i].src = nodes[i].src.replace("unticked", "ticked").replace("ticked", "unticked")
+		            }
+		        }
+		       		        
+         }
+    	}else{
+		    checks[k].src = "/touchscreentoolkit/lib/images/unticked.jpg";
+		    checks[k].onclick = function(){
+		        if (this.src.match("unticked")){
+		            this.src = this.src.replace("unticked", "ticked")
+		        }else{
+		            this.src = this.src.replace("ticked", "unticked")
+		        }
+		        var drugClass =  this.className.split(" ")[1];
+		        var nodes = document.getElementsByClassName(drugClass)
+		        for (var i = 0; i < nodes.length; i ++){
+		            if (nodes[i].id != this.id){
+		               nodes[i].src = nodes[i].src.replace("unticked", "ticked").replace("ticked", "unticked")
+		            }
+		        }
+         }
+        }
+    }
+
+	function hideCustomKeyboard(){
+		//update input
+		var drug = __$("shield").getAttribute("drug");
+		var drugGroup = __$("shield").getAttribute("drug-group");
+		var data = __$("target").value;
+		__$("keyboard-holder").innerHTML = "";
+		__$("shield").style.display = "none";
+		
+		if (data.trim().length > 0){
+		
+			var todayRow = __$(drugGroup + "_today");
+		
+			if (todayRow.style.display == "none");
+				todayRow.style.display = "table-row";
+				
+			var newRow = document.createElement("tr");
+			newRow.className = "note-tr today-note-tr";
+			
+			var newCell = document.createElement("td");
+			newCell.className = "note-td today-note-td";
+			newCell.setAttribute("drug", drug);
+			newCell.setAttribute("drug-group", drugGroup);
+			newCell.style.width = "85%";
+			newCell.innerHTML = data;
+			newRow.appendChild(newCell);	
+			
+			var newCell = document.createElement("td");
+			newCell.className = "note-td";
+			newCell.setAttribute("drug", drug);
+			newCell.setAttribute("drug-group", drugGroup);
+			newCell.innerHTML =  "<img style='padding: 3px; padding-right: 10px;margin:auto;' height='35' width='35' alt='X' src = '/touchscreentoolkit/lib/images/cancel_flat_small_red.png'>";
+			
+			newCell.onclick = function(){
+			    
+			    var drugGroup = this.getAttribute("drug-group");
+			    var todayRow = __$(drugGroup + "_today");
+			    
+			    nodes = todayRow.parentNode.getElementsByClassName("today-note-tr");
+			    if (nodes.length == 1)
+			    	todayRow.style.display = "none";
+			    	
+				this.parentNode.parentNode.removeChild(this.parentNode);
+			}
+			
+			newRow.appendChild(newCell);	
+					
+			jQuery(todayRow).after(newRow);			
+		}
+	}
+	
+	function showCustomKeyboard(drug, group){
+		 var input = document.createElement("textarea");
+		 input.id = "target";			 	 	
+		 holder = __$("keyboard-holder");
+		 holder.innerHTML = "";
+		 holder.appendChild(input);		
+		 __$("shield").style.display = "block";
+		 __$("shield").setAttribute("drug", drug);
+		 __$("shield").setAttribute("drug-group", group);
+		 holder.style.display = "block";
+		 showFixedKeyboard(input, holder, {}, false, false)   
+	}
+	
+    function nextDestinations(){
+        
+        nodes = document.getElementsByClassName("today-note-td");
+        received = 0;
+        
+        //check for prescriptions reroutes
+        
+        var result = [];
+        for (var i = 0; i < checks.length; i ++){
+
+            if (!checks[i].src.match("unticked")){
+                result.push(checks[i].id)
+            }
+        }
+
+        var form = document.createElement("form")
+        form.id = "form";
+        form.action = "/regimens/new?patient_id=<%= @patient.id%>"
+        document.body.appendChild(form);
+
+        var input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "patient_id");
+        input.setAttribute("value", "<%= @patient.id%>");
+        form.appendChild(input);
+
+        for (var i = 0; i < result.length; i ++){
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "auto_rx[]");
+            input.setAttribute("value", result[i]);
+            form.appendChild(input)
+        }
+
+		for (var i = 0; i < nodes.length; i ++){
+        	var drug = nodes[i].getAttribute("drug");
+        	var notes = nodes[i].innerHTML;
+        	
+        	jQuery.ajax({
+        			url: "/htn_encounter/save_notes?patient_id=<%= @patient.id%>&drug_name=" + 
+        				escape(drug) + "&notes=" + escape(notes),
+        			success: function(result){
+        				received = parseInt(received) + 1;        			
+        				if (received == nodes.length){
+        					document.getElementById("form").submit();
+        				}
+        			}
+        	})
+        }        
+        
+        if (nodes.length == 0)
+        	document.getElementById("form").submit();
+        
+    }
+    
+function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
+    if(ctrl == undefined || container == undefined)    
+      return; 
+    
+    if(__$('fixedkeyboard')){
+      __$('fixedkeyboard').parentNode.removeChild(__$('fixedkeyboard'));
+    }
+
+    if(!__$("main")){
+      var main = document.createElement("div");
+      main.id = "main";
+      
+      container.appendChild(main);
+    }
+
+    target = ctrl;
+    
+    var pos = checkCtrl(ctrl);
+    
+    if(typeof(disabled) == 'undefined') disabled = {};
+    
+    if(typeof(numbers) == 'undefined') numbers = false;
+    
+    if(typeof(caps) == 'undefined') caps = false;
+    
+    currentCaseUpper = caps;
+    
+    currentKeysNumeric = numbers;
+    
+    var div = document.createElement('div');
+    div.id = 'fixedkeyboard';
+    div.style.margin = 'auto';
+    div.style.borderRadius = '10px';
+    div.style.backgroundColor = 'rgba(255,255,255,0.8)';
+    
+    container.appendChild(div);
+    
+    var keys;
+    
+    if(currentKeysNumeric){
+     
+      keys = [[1,2,3,':'],[4,5,6,'/'],[7,8,9,'.'],['&larr;',0,'','abc', 'done']];
+      
+    } else {
+     
+      if(currentKeysQWERTY){
+        
+        keys = [["Q","W","E","R","T","Y","U","I","O","P"],
+		    ["A","S","D","F","G","H","J","K","L"],
+		    ['',"Z","X","C","V","B","N","M",'',"CAP"],
+		    ['','|_|','&larr;',":",".","/","num","abc", "", "done"]
+        ];
+        
+      } else {
+      
+        keys = [["A","B","C","D","E","F","G","H","I"],
+		    ["J","K","L","M","N","O","P","Q","R"],
+		    ["S","T","U","V","W","X","Y","Z","CAP"],
+		    ['','|_|','&larr;',":",".","/","num","qwe", "", "", "done"]
+        ];
+        
+      }
+      
+    }
+    
+    var letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+                        
+    var table = document.createElement('div');
+    table.style.display = 'table';
+    table.style.margin = 'auto';
+    
+    div.appendChild(table);
+    
+    for(var i = 0; i < keys.length; i++){
+        var row = document.createElement('div');
+        row.style.display = 'table-row';
+        
+        table.appendChild(row);
+        
+        for(var j = 0; j < keys[i].length; j++){
+            var cell = document.createElement('div');
+            cell.style.display = 'table-cell';
+            cell.style.verticalAlign = "middle";
+            
+            row.appendChild(cell);
+            
+            if(String(keys[i][j]).trim().length == 0){
+              cell.innerHTML = "&nbsp;";
+              
+              continue;
+            }
+            
+            var button = document.createElement('button');
+            button.setAttribute('class', (disabled[keys[i][j]] ? 'button gray' : 'button blue'));
+            button.style.width = '65px';
+            button.style.height = '60px';
+            button.style.minWidth = '40px';
+            button.style.minHeight = '40px';
+            button.style.margin = '2px';
+            button.style.fontSize = "22px";           
+            
+            button.id = keys[i][j];
+            
+            if(target && keys[i][j] == '.'){
+                if(target.value.trim().match(/\./) || target.value.trim().length == 0){
+                    button.setAttribute('class', 'button gray');
+                } else {
+                    button.setAttribute('class', 'button blue');
+                }
+            }
+                         
+              button.innerHTML = String(keys[i][j]).toLowerCase();             
+           
+            
+            if(disabled[keys[i][j]]){
+                    button.setAttribute('class', 'button gray');
+            } else {
+                button.setAttribute('class', 'button blue');
+                
+                button.onmousedown = function(){
+                
+                    if(this.innerHTML.trim().charCodeAt(0) == 8592){
+                        if(target){
+                            target.value = target.value.trim().substring(0,(target.value.trim().length - 1));
+                        }
+                    } else if(this.innerHTML.trim() == 'done'){
+                        
+                       hideCustomKeyboard();
+                        
+                    }else if(this.innerHTML.trim() == 'num'){
+                        
+                        currentKeysNumeric = true;                        
+                        showFixedKeyboard(__$(target.id), container, {}, currentKeysNumeric, currentCaseUpper);
+                        
+                    } else if(this.innerHTML.trim() == 'abc'){
+                        
+                        currentKeysQWERTY = false;
+                        
+                        currentKeysNumeric = false;
+                        
+                        showFixedKeyboard(__$(target.id), container, {}, currentKeysNumeric, currentCaseUpper);
+                        
+                    } else if(this.innerHTML.trim() == 'qwe'){
+                        
+                        currentKeysQWERTY = true;
+                        
+                        currentKeysNumeric = false;
+                        
+                        showFixedKeyboard(__$(target.id), container, {}, currentKeysNumeric, currentCaseUpper);
+                        
+                    } else if(this.innerHTML.trim().toLowerCase() == 'cap'){
+                        currentCaseUpper = !currentCaseUpper;
+                        
+                        if(!currentCaseUpper){
+                          this.innerHTML = "CAP";
+                          
+                          for(var l = 0; l < letters.length; l++){
+                            if(__$(letters[l])){
+                              __$(letters[l]).innerHTML = letters[l].toUpperCase();
+                            } 
+                          }
+                          
+                        } else {
+                          this.innerHTML = "cap";
+                          
+                          for(var l = 0; l < letters.length; l++){
+                            if(__$(letters[l])){
+                              __$(letters[l]).innerHTML = letters[l].toLowerCase();
+                            }
+                          }
+                          
+                        }
+                       
+                    } else if(this.innerHTML.trim() == '|_|'){ 
+                       
+                       target.value += " ";
+                       
+                    } else {
+                    
+                        target.value += (currentCaseUpper ? this.innerHTML.trim().toLowerCase() : this.innerHTML.trim());
+                        
+                    }
+                    
+                    __$('.').setAttribute('class', 'button blue');
+                    
+                }
+                
+            }
+            
+            cell.appendChild(button);
+        }
+    }
+    
+    if(__$("fixedkeyboard")){
+    
+      // [w, h, t, l]
+      var kpos = checkCtrl(__$("fixedkeyboard"));
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      
+      if(kpos[0] + kpos[3] > w){
+        
+        __$("fixedkeyboard").style.left = (w - kpos[0] - 10) + "px";
+        
+      }                
+      
+      if(kpos[1] + kpos[2] > h){
+        
+        __$("fixedkeyboard").style.top = (pos[2] - kpos[1] - 2) + "px";
+        
+      }                
+      
+    }
+    
+}       
+
+function checkCtrl(obj){
+    var o = obj;
+    var t = o.offsetTop;
+    var l = o.offsetLeft + 1;
+    var w = o.offsetWidth;
+    var h = o.offsetHeight;
+
+    while((o ? (o.offsetParent != document.body) : false)){
+        o = o.offsetParent;
+        t += (o ? o.offsetTop : 0);
+        l += (o ? o.offsetLeft : 0);
+    }
+    return [w, h, t, l];
+}
+
+function __$(id){
+	return document.getElementById(id);
+}
+ 
+</script>
+</html>

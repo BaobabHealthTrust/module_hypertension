@@ -1,0 +1,366 @@
+<script type='text/javascript' language='javascript'>
+    <!--
+    tt_cancel_show = '/clinic?user_id=<%= params[:user_id] %>';
+    tt_cancel_destination = '/clinic?user_id=<%= params[:user_id] %>';
+
+    <%
+
+    next_task = @task.encounter_type.gsub('_',' ') rescue nil
+
+    %>
+
+    function showNexttask(){
+        if(__$("patient-dashboard-application") == null){
+            setTimeout("showNexttask()", 500);
+            return;
+        }
+        var graphArea = document.createElement("div");
+        graphArea.id = "dashboard_graph";
+        __$("content").appendChild(graphArea);
+        __$("dashboard_graph").innerHTML = "<b>Graph Area</b>"
+        if(!__$("nextTask")){
+            var pos = checkCtrl(__$("patient-dashboard-applicationname"));
+            // [w, h, t, l]
+
+            var nextTask = document.createElement("div");
+            nextTask.id = "nextTask";
+            // nextTask.style.position = "absolute";
+            // nextTask.style.left = (pos[3] + (pos[0]/2) - (270/2)) + "px";
+            // nextTask.style.top = (pos[1] + 40) + "px";
+
+            //__$("patient-dashboard-application").appendChild(nextTask);
+        }
+
+        //__$("nextTask").innerHTML = "<b>Next Task:</b><br /><i><%= next_task.titleize  rescue "None" %></i>";
+    }
+
+    <% if !next_task.nil? %>
+    setTimeout("showNexttask()", 500);
+    <% end %>
+
+    function addDiv(){
+        var html = "<div style='display: table-row;'><div style='display: table-cell;margin: 5px;margin-top: 0px;padding: 2px;'>Patient State</div><div style='display: table-cell;margin: 5px;margin-top: 0px;padding: 2px;'>State</div>";
+        document.getElementById('mainTopicContent').innerHTML += html;
+    }
+    function selectProgram(){
+
+        var ele = document.getElementById('cover')
+        ele.style.display = "inline";
+        document.body.appendChild(ele);
+
+        var ele = document.getElementById('program_menu')
+        ele.style.display = "inline";
+        document.body.appendChild(ele);
+        return
+
+        var newDiv = document.createElement('div');
+        newDiv.id = "alertPage";
+        newDiv.style.left = "38%";
+        newDiv.style.top = "30%";
+        newDiv.style.width = "548px";
+        newDiv.style.height = "500px";
+
+        var display = "<div id='main_head'><span>Chronic Care Program</span></div>";
+        display += "<div height='80%'>"
+        display += '<div id = "reason_for_change">'
+        display += '<fieldset data-role="controlgroup">'
+        display += '<legend>Choose a program:</legend>'
+        display += '<table cellspacing="10"><tr>'
+
+        display += '<td align="left"><a href="/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=ASTHMA">Asthma</a></td></tr>'
+
+        display += '<tr>'
+        display += '<td align="left"><a href="/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=HYPERTENSION">Hypertension</a></td></tr>'
+
+        display += '<tr>'
+        display += '<td align="left"><a href="/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=DIABETES">Diabetes</a></td></tr>'
+
+
+        display += '<tr>'
+        display += '<td align="left"><a href="/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  params[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=EPILEPSY">Epilepsy</a></td></tr></table>'
+
+        display += '</fieldset>'
+        display += '</div>'
+        display += "</div>";
+        newDiv.innerHTML = '<div id="popup">' + display + '</div>' ;
+        document.body.appendChild(newDiv);
+
+    }
+ //-->
+</script>
+
+<style type="text/css">
+
+    #popup{
+        -moz-user-select: none;
+        background-color: white;
+        border: 4px solid #C6C6C6;
+        border-radius: 15px 15px 15px 15px;
+        color: black;
+        font-size: 28px;
+        height: 579px;
+        left: 14%;
+        padding: 5px;
+        position: absolute;
+        text-align: center;
+        top: 5%;
+        width: 947px;
+        z-index: 991;
+    }
+    #cover{
+        display:none;
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 990;
+        opacity: 0.5;
+    }
+
+    #viral_load_done {
+        position: absolute;
+        border-radius: 7px;
+        background-color:	#2E8B57;
+        border-bottom: 1px outset black;
+        border-style: outset;
+        border-top: 1px outset black;
+        color: white;
+        padding: 9px 16px 16px 19px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        bottom: 0px;
+        left: 54px;
+        font-weight: bold;
+        font-size: 18pt;
+    }
+    #program_menu{
+        border-radius: 10px;
+        position: absolute;
+        background-color: #DCDCDC;
+        border: 3px solid black;
+        height: 50%;
+        z-index: 991;
+        left: 40%;
+        top:20%;
+        width: 45%;
+        left: 20%;
+    }
+
+    #program_button{
+        display: block;
+        border-radius: 17px;
+        background-color: #6E7B8B;
+        border-style: outset;
+        padding: 19px 21px 18px 45px;
+        cursor: pointer;
+        width: 40%;
+        margin-left: 20%;
+        text-align: center;
+        color: white;
+        font-size: 14pt;
+    }
+
+    #reason_for_tb_treatment_change {
+        height:80%;
+        width:100%;
+        background:none repeat scroll 0 0 light-grey;
+        border-color: -moz-use-text-color -moz-use-text-color silver;
+        border-style: none none solid;
+        border-width: medium medium 1px;
+        font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+        font-size: 2.2em;
+        padding-left: 5px;
+
+    }
+
+    #main_head{
+        float: left;
+        width: 100%;
+        font-size: 32px;
+        font-weight:bold;
+    }
+
+    #reason_for_change{
+        height:406px;
+        width:100%;
+        border-style: none none solid;
+        border-width: medium medium 1px;
+        font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+        font-size: 2.2em;
+        padding-left: 5px;
+        color: black;
+        background-color:white;
+        border-radius: 20px ;
+        border-style:solid;
+        border-color:#ff0000 #0000ff;
+
+    }
+
+    .create_button, a {
+        background-color: #7784AE;
+        border-bottom: 1px outset black;
+        border-radius: 7px 7px 7px 7px;
+        border-style: outset;
+        border-top: 1px outset black;
+        color: #E8EAF1;
+        display: block;
+        padding: 10px 16px 10px 10px;
+        text-align: center;
+        text-decoration: none !important;
+        font-size:27px;
+        width: 138%
+    }
+
+    #ok {
+        float:right ! important;
+        width: 150px;
+    }
+
+    #cancel {
+        float:left ! important;
+        width: 150px;
+    }
+
+    #newText{
+        top: 40%;
+        left: 40%;
+        margin-top: -200px;
+        margin-left: -250px;
+        position: absolute;
+        margin-right:auto;
+        width: 800px;
+        height: 38px;
+        padding-bottom: 10px;
+        font-size: 2em;
+        text-align: left;
+        background-color: white;
+        padding: 10px;
+        z-index: 999;
+        border: 5px outset blue;
+        border-radius: 15px;
+        z-index: 900;
+        display:none;
+    }
+
+    #alertPage{
+        top: 50%;
+        left: 40%;
+        margin-top: -200px;
+        margin-left: -250px;
+        position: absolute;
+        margin-right:auto;
+        width: 800px;
+        height: 411px ! important;
+        padding-bottom: 10px;
+        font-size: 1em;
+        text-align: center;
+        background-color: #7784AE;
+        padding: 10px;
+        z-index: 999;
+        border: 5px outset blue;
+        border-radius: 15px;
+        z-index: 900;
+    }
+
+</style>
+
+<div id='contented'>
+  <div id='description' style='color:#777;position:absolute;margin-top:-70px;'>
+    <form id = 'dashboard' action='home.html' onload="addDiv()">
+      <div>Patient Dashboard</div>
+      <div id='project_name'>
+        <div style="margin-top: 10px; color: #6281A7;">
+          htn<sub style="font-size: 12px;">module</sub>
+        </div>
+      </div>
+
+      <span id='patient_name'>
+        <%= "#{@patient.name}" %>
+      </span>
+
+      <span id='patient_id'><%= "#{@patient.national_id_with_dashes}" %></span>
+      <span id='patient_residence'><%= "#{@patient.address rescue nil}" %></span>
+      <span id='patient_age'><%= "#{(@patient.age > 0 ? @patient.age : "#{@patient.age_in_months rescue nil} months")}" %></span>
+      <span id='patient_gender'><%= "#{@patient.gender}" %></span>
+      <select id="tabs">
+        <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Current Visit</option>
+        <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Visit History</option>
+        <option value='/patients/patient_report/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Report</option>
+        <option value='/patients/patient_bp?user_id=<%= @user["user_id"] %>&patient_id=<%= @patient.id %>'>Chart</option>
+        <option value='/patients/printouts/<%= @patient.id %>?user_id=<%= @user[:user_id] %>'>Printouts</option>
+        <option value='#'>Next Task : <%= next_task.titleize rescue "" %></option>
+      </select>
+      <select id="links">
+        <optgroup value="javascript:selectProgram()" label="Change Workflow"></optgroup>
+        <% i = 1
+           groups = @task
+           done = []
+           @links.each do |encounter, link| %>
+            <% if  i <= 7 %>
+                <optgroup value='<%= link %>' label="<%= (!@task.labels[encounter.downcase].nil? ?
+                        @task.labels[encounter.downcase] : encounter) %>" >
+                  <% done << encounter.to_s %>
+                </optgroup>
+            <% else %>
+                <%  if i == 8 %>
+                    <optgroup label="Other Tasks" >
+                <% end %>
+                <%  @links.each do |group_encounter, group_link|
+                  unless done.include?(group_encounter.to_s) %>
+                        <option value='<%= group_link %>'>
+                          <%= (!@task.labels[group_encounter.downcase].nil? ? @task.labels[group_encounter.downcase] : group_encounter) %>
+                        </option>
+                    <% end
+                       end %>
+
+                <%  if i == 8 %>
+                    </optgroup>
+                <% end %>
+            <% end
+               i += 1 %>
+
+        <% end %>
+      </select>
+      <%#= raise @disable.to_yaml %>
+      <select id="navigation_links">
+
+        <% if !@demographics_url.nil? %>
+            <option link="<%= @demographics_url %>" ttSize = "160px">
+              Demographics
+            </option>
+            <option link='<%= "/patients/mastercard/#{@patient.id}?user_id=#{@user[:user_id]}"  %>' ttSize = "160px">Mastercard</option>
+        <% end %>
+<%#= raise @task.url.to_yaml %>
+
+        <%# if @disable.to_s != "true" and ! @disable.blank? %>
+        <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user[:user_id]}" %>
+            <option link="/encounter_types/show?user_id=<%=  @user["user_id"] %>&encounter_type=Appointment&id=show&patient_id=<%= @patient.id -%>" ttSize = "160px">Appointment</option>
+            <option link="<%= @task.url  %>" ttSize = "160px">Continue</option>
+        <% else %>
+            <option link="/encounter_types/show?encounter_type=Appointment&id=show&patient_id=<%= @patient.id -%>&user_id=<%=  @user[:user_id] %>" ttSize = "160px">Set Appointment</option>
+        <% end %>
+        <%# end %>
+
+      </select>
+
+      <input type='submit' value='Finish' />
+    </form>
+  </div>
+</div>
+<div id="cover">
+</div>
+<div id="program_menu" style="display:none">
+  <div><br />
+
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=HYPERTENSION"'>Hypertension</span><br />
+
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=DIABETES"'>Diabetes</span><br />
+
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=ASTHMA"'>Asthma</span><br />
+
+    <span id="program_button" onclick='window.location = "/clinic/programs?patient_id=<%= @patient.id %>&user_id=<%=  session[:user_id] %>&location_id=<%= session[:location_id] || params[:location_id] %>&program=EPILEPSY"'>Epilepsy</span><br />
+  </div>
+</div>

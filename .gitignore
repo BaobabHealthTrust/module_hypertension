@@ -1,4 +1,10 @@
 log/
 *.log
 *.yml
-~*
+.idea/*
+*~*
+public/touchscreentoolkit
+*.lock
+vendor/plugins/usermanagement
+
+*.save

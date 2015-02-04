@@ -1,0 +1,74 @@
+<script>
+    var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>";
+    function buildAnswers()
+    {
+
+        var answers = document.getElementById('riskFactors');
+        var form = document.forms[0];
+        for (i = 0 ; i < answers.options.length ; i++) {
+            if (answers.options[i].value.trim() != "")
+            {
+                var input_field = document.createElement("INPUT");
+                input_field.setAttribute("type", 'hidden')
+                input_field.setAttribute("name", "observations[][concept_name]")
+                input_field.value = answers.options[i].value
+
+
+                var input_field2 = document.createElement("INPUT");
+                input_field2.setAttribute("type", 'hidden')
+                input_field2.setAttribute("name", "observations[][value_coded_or_text]")
+                input_field2.value = answers.options[i].selected ? "Yes" : "No"
+
+                form.appendChild(input_field)
+                form.appendChild(input_field2)
+
+            }
+
+        }
+//        document.getElementById('encounter_observations').value = obs_hash + "]";
+        gotoNextPage()
+    }
+
+    function changeFinish()
+    {
+        finishButton = document.getElementById('nextButton');
+        finishButton.setAttribute("onMouseDown", "buildAnswers()")
+    }
+    setTimeout("changeFinish()", 300);
+</script>
+
+<style>
+    .inputFrameClass {
+        height: 600px;
+    }
+    #viewport {
+        height: 550px;
+    }
+
+</style>
+<form action="/htn_encounter/create/">
+  <%= hidden_field_tag "encounter[encounter_type_name]", "MEDICAL HISTORY" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", (session[:datetime].to_date rescue DateTime.now) %>
+  <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
+
+  <% if !params[:reroute].blank? %>
+  	<%= hidden_field_tag "reroute", true %>
+  <% end %>
+  
+  <%= select_tag "riskFactor",options_for_select(@options,@prev_risk_factors),
+                 { :field_type => 'text',
+                   :helpText => "Does patient have any of these conditions?",
+                   :id => "riskFactors",
+                   :multiple => true,
+                   :tt_pageStyleClass => "MultiSelectList",
+                   :optional => true
+                   } %>
+
+  <% if @retrospective %>
+      <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
+        <%= text_field "filter" , 'provider', :helpText => 'Staff who provided the information (Provider)', :ajaxURL => '/user/username?username=' %></p>
+  <% else %>
+      <%= hidden_field_tag "filter[provider]", nil %>
+  <% end %>
+</form>

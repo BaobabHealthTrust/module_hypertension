@@ -1,0 +1,260 @@
+<%= javascript_include_tag "date" %>
+
+<style>
+  .summary {
+    font-size: 27px;
+    padding-left: 15px;
+  }
+
+  .data {
+    color: black;
+    font-size: 25px;
+  }
+
+  ul
+{
+list-style-type: none;
+}
+
+  #tt_page_hiv_test_month  .inputFrameClass {
+  height: 600px;
+}
+
+ #tt_page_hiv_test_month  #viewport {
+  height: 600px;
+}
+    #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+
+<script type='text/javascript' language='javascript'>
+<!--
+	<% @session_date = "#{session[:datetime].to_date rescue Date.today}" %>
+	<% @alert_date = @session_date.to_date - 90.days %>
+	var alertDate = createDate("<%= @alert_date.year %>","<%= @alert_date.month %>","<%= @alert_date.day %>");
+	var testDate = null;
+  
+
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+
+	function updateTestDate(){
+		var testDate = new Date($('hiv_test_year').value, $('hiv_test_month').value - 1, $('hiv_test_day').value);
+		$('hiv_test_date').value = testDate;
+                
+	}
+        function validateDate(){
+          <% @session_date =   @session_date.to_date %>
+          session = createDate("<%=  @session_date.year %>", "<%=  @session_date.month %>" , "<%=  @session_date.day %>")
+          testDate = createDate($('hiv_test_year').value, $('hiv_test_month').value , $('hiv_test_day').value);
+          if (testDate > session){
+            return false;
+          }
+          else{
+            return true;
+          }
+        }
+	function showSelectedConditions() {
+      var conditions = [];
+
+      if ($('status').value.length > 0)
+        conditions.push("HIV status: " + $('status').value);
+
+      if ($('hiv_test_date').value.length > 0){
+		if ($('hiv_test_date').value != "Invalid Date"){
+		  var hivDate = new Date($('hiv_test_date').value)
+		  conditions.push("HIV Test Date: " + hivDate.getFullYear() + "/" + (hivDate.getMonth()+ 1)  + "/" + $('hiv_test_day').value);
+		}
+	  }
+
+      if ($('on_art').value.length > 0)
+        conditions.push("On ART: " + $('on_art').value);
+
+      if ($('enroll').value.length > 0)
+        conditions.push("Enroll in HIV program: " + $('enroll').value);
+
+      var html
+      html = "<ul>"
+      for(var i=0;i < conditions.length;i++) {
+        if (conditions[i].length > 0)
+          html += "<li class='data'>" + conditions[i] + "</li>";
+
+      }
+      html += "</ul>"
+	  $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + html + '</div>' ;
+	  $("clearButton").style.display = "none";
+	}
+
+  function checkTestDate(){
+    testDate = createDate($('hiv_test_year').value, $('hiv_test_month').value , $('hiv_test_day').value);
+    $('hiv_test_date').value = testDate;
+	 if (testDate == 'Invalid Date'){
+	  return "true"
+	}
+	else {
+	  return isTestOverDue(testDate,alertDate);
+	}
+  }
+
+  function isTestOverDue(testDate,alertDate) {
+    if (testDate <= alertDate){
+      return "true";
+    }else {
+      return "false";
+    }
+  }
+
+  function createDate(year,month,day) {
+    date_str = year
+
+    if(month.length == 1)
+      month = '0' + month
+
+    date_str+='-' + month
+
+    if(day.length == 1)
+      day = '0' + day
+
+    date_str+='-' + day
+
+    intyear = 0 ; intmonth = 0 ; intday = 0;
+    intyear = parseInt(date_str.substring(0,4))
+    intmonth = (parseInt(date_str.substring(5,7)) - 1)
+    intday = (parseInt(date_str.substring(8,10)))
+
+    if (intmonth == -1)
+      intmonth = (parseInt(date_str.substring(5,7).substring(1,2)) - 1)
+
+    if (intday == 0)
+      intday = parseInt(date_str.substring(8,10).substring(1,2))
+
+    return new Date(intyear,intmonth,intday);
+  }
+//-->
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+	<input type='hidden' name='encounter_type' value='UPDATE HIV STATUS' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= @user.id %>' />
+	<input type ="hidden" id="hiv_test_date" name="concept[HIV TEST DATE]" />
+	<table>
+		<tr>
+			<td>
+				HIV Status 
+			</td>
+			<td>
+<select id='status' name='concept[HIV Status]' helpText='HIV Status' pos='0' tt_onLoad ="showCategory('HIV Status')" >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='Positive'>Positive</option>
+ <option value='Negative'>Negative</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				HIV test year 
+			</td>
+			<td>
+<%= text_field_tag "hiv_test_year", nil,
+	{:helpText => 'HIV test year',
+	:field_type => 'number',
+	:absoluteMin => "1982",
+	:min => "1982",
+	:absoluteMax => Date.today.year,
+	:tt_pageStyleClass => "Numeric NumbersOnly",
+	:condition => '$("status").value.toLowerCase() != "unknown"',
+    :tt_onLoad => "showCategory('HIV Status')"} %>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				HIV test month 
+			</td>
+			<td>
+<%= select_tag "hiv_test_month", month_name_options,
+	{:helpText => 'HIV test month',
+	:condition => '($("hiv_test_year").value.toLowerCase() != "unknown") && ($("status").value.toLowerCase() != "unknown")',
+	:tt_onLoad => "__$('keyboard').style.display = 'none'; showCategory('HIV Status');"}%>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				HIV test day 
+			</td>
+			<td>
+  <%= text_field_tag "hiv_test_day",  nil,
+	{:field_type => 'number',
+	:helpText => 'HIV test day <span id="helper"> HIV Status</span>',
+	:condition => '($("hiv_test_year").value != "Unknown") && ($("hiv_test_month").value != "Unknown") && ($("status").value.toLowerCase() != "unknown")',
+	:tt_onLoad => "getDayOfMonthPicker($('hiv_test_year').value, $('hiv_test_month').value);;",
+	:tt_onUnload=> "updateTestDate(); showCategory('HIV Status');",
+        :validationCode => 'validateDate();',
+        :validationMessage => "Test date out of range",
+	:tt_pageStyleClass => 'NumbersOnlyWithUnknown'
+  } %>
+
+			</td>
+			<td>
+    <%= touch_yes_no_tag "Refer to HTC", @patient, nil,
+      {:id => "refer_to_htc",
+	  :name => "name[Refer to HTC]",
+      :condition => '(checkTestDate() == "true") && ($("status").value.toLowerCase() == "negative")',
+      :tt_pageStyleClass => "NoKeyboard",
+      :tt_onLoad => "showCategory('HIV Status')",
+      :helpText => "Patient has been -ve for more than 3 months. Refer patient to HTC?" } %>
+
+	<%= touch_yes_no_tag "Refer to HTC", @patient, nil,
+      {:id => "refer_to_htc",
+      :name => "name[Refer to HTC]",
+	  :condition => '$("status").value.toLowerCase() == "unknown"',
+          :tt_onLoad => "showCategory('HIV Status')",
+      :tt_pageStyleClass => "NoKeyboard",
+      :helpText => "Refer patient to HTC?" } %>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				On ART? 
+			</td>
+			<td>
+<select id='on_art' name='concept[on art]' helpText='On ART?' pos='5' tt_onload ="showCategory('HIV Status')"
+		condition = '$("status").value.toLowerCase() == "positive"'>
+<option></option>
+<option value='No'>No</option>
+<option value='Yes'>Yes</option> 
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Enroll in HIV program?
+			</td>
+			<td>
+<select id='enroll' name='concept[Patient enrolled in HIV program]' helpText='Enroll in HIV program?' pos='6'  condition='__$("on_art").value.toLowerCase() == "no"'
+		condition = '$("status").value.toLowerCase() == "positive"' tt_onload ="showCategory('HIV Status')" >
+<option></option>
+<option value='No'>No</option>
+ <option value='Yes'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+		<td>
+			<label for='summary'>Summary</label>
+			<%= text_field_tag :summary, nil, {
+			  :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';showCategory('HIV Status');",
+			  :optional => "true",
+			  :tt_pageStyleClass => "NoControls" } %>
+		  </td>
+		</tr>
+	</table>
+</form>

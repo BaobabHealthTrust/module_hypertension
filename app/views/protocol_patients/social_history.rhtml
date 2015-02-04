@@ -1,0 +1,403 @@
+<style>
+  .summary {
+    font-size: 27px;
+    padding-left: 15px;
+  }
+
+  .data {
+    color: black;
+    font-size: 25px;
+  }
+  .warning{
+	color: red;
+	font-weight:bold;
+	font-size: 25px;
+  }
+  span{
+        color: red;
+	font-weight:bold;
+	font-size: 25px;
+  }
+  #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+	var cigaretesPerminute
+	var program = '<%= @current_program %>'
+
+  function calculateBP(pos){
+    var bp;
+
+    if(!$('bp')){
+      var div = document.createElement("div");
+      div.id = "bp";
+      div.className = "statusLabel";
+
+      $("inputFrame" + tstCurrentPage).appendChild(div);
+    }
+
+    if(pos == 1){
+	  if ($("touchscreenInput" + tstCurrentPage).value.trim().length > 0){
+		cigaretes = parseInt($("touchscreenInput" + tstCurrentPage).value)
+		cigaretesPerminute = (60 * 24) / cigaretes
+
+		$("bp").innerHTML = "Smokes 1 cigarette every <i style='font-size: 1.2em; float: right;'>"+ parseInt(cigaretesPerminute) + " Minutes</i>";
+	  }
+	  else{
+		$("bp").innerHTML = "<i style='font-size: 1.2em; float: right;'> Specify</i>";
+	  }
+
+	}
+	timedEvent = setTimeout('calculateBP(' + pos + ')', 500);
+  }
+	function showSelectedConditions() {
+      var conditions = [];
+
+      if ($('education').value.length > 0)
+        conditions.push("Highest Education: <b>" + $('education').value + "</b>");
+	  
+	  if ($('substance_use').value.length > 0)
+        conditions.push("Substance Use: <b>" + $('substance_use').value + "</b>");
+	  
+	  if ($('pork').value.length > 0)
+        conditions.push("Eats pork: <b>" + $('pork').value + "</b>");
+
+	  if ($('smoking').value.length > 0)
+        conditions.push("Smoke Cigarettes: <b>" + $('smoking').value + "</b>");
+
+      if ($('number_of_cigarettes').value.length > 0){
+                cigaretesPerminute = (60 * 24) / $('number_of_cigarettes').value
+		if ($('smoking').value.toLowerCase() == "yes")
+		  conditions.push("Number of cigarettes per day: <b>" + $('number_of_cigarettes').value + " Cigarettes : 1 per every " + parseInt(cigaretesPerminute) + " Minutes </b>");
+	  }
+
+
+      if ($('current_smoker').value.length > 0)
+        conditions.push("Currently smokes: <b>" + $('current_smoker').value + "</b>");
+
+	  if ($('duration').value.length > 0){
+		conditions.push("Duration on smoking: <b>" + $('duration').value + "</b>");
+	  }
+	  else {
+		$('duration').value = "Passive Smoker"
+		conditions.push("Duration on smoking: <b>Passive Smoker</b>");
+	  }
+
+	   if ($('smoke_history').value.length > 0)
+        conditions.push("Patient with family member who smoke: <b>" + $('smoke_history').value + "</b>");
+
+	  if ($('patient_home').value.length > 0)
+        conditions.push("Patient lives or works near: <b>" + $('patient_home').value + "</b>");
+
+	  if ($('exposed').value.length > 0)
+        conditions.push("Patient exposed to pollution: <b>" + $('exposed').value + "</b>");
+
+	  if ($('cooking').value.length > 0)
+        conditions.push("Patient mode of cooking: <b>" + $('cooking').value + "</b>");
+
+      if ($('drink_alcohol').value.length > 0)
+        conditions.push("Drinks alcohol: <b>" + $('drink_alcohol').value + "</b>");
+
+	  if ($('drinks_per_day').value.length > 0)
+        conditions.push("Units of alcohol per day: <b>" + $('drinks_per_day').value + " Units</b>");
+
+	  if ($('days_per_week').value.length > 0)
+        conditions.push("Number of Alcohol drinking days per week: <b>" + $('days_per_week').value + " Days</b>");
+
+       if ($('employment').value.length > 0)
+        conditions.push("Type of employment: <b>" + $('employment').value + "</b>");
+
+      var html
+      html = "<ol>"
+      for(var i=0;i < conditions.length;i++) {
+        if (conditions[i].length > 0)
+          html += "<li class='data'>" + conditions[i] + "</li>";
+      }
+      html += "</ol>"
+	  if (($('drinks_per_day').value > 6) || ($('days_per_week').value > 3)){
+		html += "<span class='warning'>Patient is a heavy drinker! <br>Please refer patient for advice on life changes</span>";
+		 	$('alcoholism').value = "Yes"
+			$('refer_to_clinician').value = "Yes"
+	  }
+
+	  $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + html + '</div>' ;
+	  $("clearButton").style.display = "none";
+  }
+</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+	<input type='hidden' name='encounter_type' value='SOCIAL HISTORY ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= @user.id %>' />
+	<input type='hidden' name='concept[Alcoholism]' id="alcoholism">
+	<input type='hidden' name='concept[refer to clinician]' id="refer_to_clinician">
+        <input type='hidden' name='concept[Education level completed]' id="education">
+        <input type='hidden' name='concept[Substance use]' id="substance_use">
+        <input type='hidden' name='concept[Food package provided]' id="pork">
+	<input type='hidden' name='concept[Family health seeking behavior construct]' id="smoke_history" value="No">
+	<%#= raise @patient.gender.to_yaml   %>
+	<%#= raise @patient.age.to_yaml   %>
+	<table>
+		<tr>
+                  <% if  @current_program == "EPILEPSY PROGRAM" %>
+                <select id='education'
+                        name='concept[Education level completed]'
+                        helpText='Education level completed?<%= @person_attribute %> <span id="helper">Social History</span>'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			condition='program == "EPILEPSY PROGRAM"'
+			tt_requireNextClick = false >
+			  <option></option>
+			  <option value='Tertiary education'>Tertiary education</option>
+			  <option value=' Secondary education '>Secondary education</option>
+			  <option value='Primary education'>Primary education</option>
+			  <option value='None'>None</option>
+	</select>
+
+	<select id='substance_use'
+			name='concept[Substance use]'
+			helpText='Use of substance?<%= @person_attribute %> <span id="helper">Social History</span> '
+			pos='3'
+			condition='program == "EPILEPSY PROGRAM"'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			tt_requireNextClick = false >
+			  <option></option>
+			  <option value='No'>No</option>
+			  <option value='Yes'>Yes</option>
+ </select>
+
+ <select id='pork'
+			name='concept[Food package provided]'
+			helpText='Eats pork? <%= @person_attribute %> <span id="helper">Social History</span> '
+			pos='3'
+			condition='program == "EPILEPSY PROGRAM"'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			tt_requireNextClick = false >
+			  <option></option>
+			  <option value='Do not eat pork'>No</option>
+			  <option value='Eats pork'>Yes</option>
+ </select>
+<% end %>
+			<td>
+				Ever smoked?
+			</td>
+			<td>
+<select id='smoking'
+		name='concept[Smoking History]'
+		helpText='Ever smoked?  <%= @person_attribute %>  <span id="helper">Social History</span>'
+		tt_onLoad ="__$('nextButton').style.display = 'none';"
+		tt_requireNextClick = false >
+<option></option>
+<option value='No'>No</option>
+ <option value='Yes'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Number of cigarettes per day?
+			</td>
+			<td>
+<input type='text' id='number_of_cigarettes'
+	   name='concept[Number of cigarettes smoked per day]'
+           helpText='Number of cigarettes per day? <%= @person_attribute %> <span id="helper">Social History</span> '
+	   field_type="number"  pos='1'
+	   min = 1
+	   max = 90
+	   condition='__$("smoking").value.toLowerCase() == "yes"'
+	  
+	   
+	   tt_pageStyleClass = "Numeric NumbersWithUnknown"
+	   tt_onLoad ="__$('nextButton').style.display = 'block';"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				How long Have been smoking?
+			</td>
+			<td>
+	   <select id='duration'
+			   name='concept[smoking duration]'
+			   helpText='How long Have been smoking? <%= @person_attribute %>  <span id="helper">Social History</span>'
+			   tt_onLoad ="__$('nextButton').style.display = 'none';"
+			   condition='__$("smoking").value.toLowerCase() == "yes"'
+			   tt_requireNextClick = false >
+			  <option></option>
+			  <option value='Less than five years'>Less than five years</option>
+			  <option value='Five years or more'>Five years or more</option>
+	   </select>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Do you currently smoke?
+			</td>
+			<td>
+
+<select id='current_smoker' 
+		name='concept[current smoker]'
+		helpText='Do you currently smoke?  <%= @person_attribute %>  <span id="helper">Social History</span>'
+		pos='3'
+		condition='__$("smoking").value.toLowerCase() == "yes"'
+		tt_onLoad ="__$('nextButton').style.display = 'none';"
+		tt_requireNextClick = false >
+<option></option>
+<option value='No'>No</option>
+ <option value='Yes'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+		  <td>
+<% if @current_program == "ASTHMA PROGRAM"  %>
+<select id='smoke_history' 
+		name='concept[Family health seeking behavior construct]'
+		helpText='Do you have a family member who smokes? <%= @person_attribute %>  <span id="helper">Social History</span>'
+		pos='3'
+		condition='(__$("smoking").value.toLowerCase() == "yes") && (__$("current_smoker").value.toLowerCase() == "no")'
+		tt_onLoad ="__$('nextButton').style.display = 'none';"
+		tt_requireNextClick = false >
+	 <option></option>
+	 <option value='No'>No</option>
+	<option value='Smoking'>Yes</option>
+ </select>
+<% end %>
+		  </td>
+		</tr>
+		<tr>
+			<td>
+				Does patient drink alcohol?
+			</td>
+			<td>
+	<% if ((@patient.gender.to_s.upcase == "F" || "FEMALE") and  @patient.age.to_i >= 4) || ((@patient.gender.to_s.upcase == "M" || "MALE") and  @patient.age.to_i >= 5) %>
+
+<select id='drink_alcohol'
+		name='concept[Does the patient drink alcohol?]'
+		helpText='Does patient drink alcohol?  <%= @person_attribute %>  <span id="helper">Social History</span>'
+		pos='4'
+		 tt_onLoad ="__$('nextButton').style.display = 'none';"
+		 tt_requireNextClick = false >
+<option></option>
+<option value='No'>No</option>
+ <option value='Yes'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Alcohol drinks per day?
+			</td>
+			<td>
+<input type='text' id='drinks_per_day'
+	   name='concept[Alcoholic drinks per day]'
+	   helpText='Alcohol units per day? <%= @person_attribute %> <span id="helper">Social History</span> '
+	   field_type="number"
+	   pos='5'
+	   condition='__$("drink_alcohol").value.toLowerCase() == "yes"'
+	   tt_pageStyleClass = "Numeric NumbersWithUnknown"
+	   tt_onLoad ="__$('nextButton').style.display = 'block';"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Number of days per week alcohol is used?
+			</td>
+			<td>
+<input type='text' id='days_per_week'
+	   name='concept[Number of days per week alcohol is used]'
+	   helpText='Number of days per week alcohol is used?  <%= @person_attribute %> <span id="helper">Social History</span> '
+	   field_type="number"
+	   pos='6'
+	   min = 1
+	   max = 7
+	   condition='__$("drink_alcohol").value.toLowerCase() == "yes"'
+	   tt_pageStyleClass = "Numeric NumbersWithUnknown"
+	   tt_onLoad ="__$('nextButton').style.display = 'block';"/>
+			</td>
+		</tr>
+		<tr>
+	<% else %>
+		  <%= touch_hidden_tag "Does the patient drink alcohol?", @patient, nil, {:id => "drink_alcohol"}%>
+		  <%= touch_hidden_tag "Alcoholic drinks per day", @patient, nil, {:id => "drinks_per_day"}%>
+		  <%= touch_hidden_tag "Number of days per week alcohol is used", @patient, nil, {:id => "days_per_week"}%>
+	<% end %>
+    
+	<td>
+	<select id='patient_home' 
+			condition='program == "ASTHMA PROGRAM"'
+			name='concept[Patient lives or works near?]'
+			helpText='Patient lives or works near? <%= @person_attribute %> <span id="helper">Social History</span> ' pos='3'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			tt_requireNextClick = false >
+	 <option></option>
+	 <option value='Near factory'>Near factory</option>
+	 <option value='Near hospital'>Near hospital</option>
+	 <option value='None'>None</option>
+	</select>
+	</td>
+
+	<td>
+	<select id='exposed'
+			name='concept[patient has been exposed to pollution?]'
+			helpText='Patient exposed to pollution? <%= @person_attribute %> <span id="helper">Social History</span> '
+			pos='3'
+			condition='program == "ASTHMA PROGRAM"'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			tt_requireNextClick = false >
+	 <option></option>
+         <option value='No'>No</option>
+	 <option value='Yes'>Yes</option>
+	 
+   </select>
+	</td>
+
+	<td>
+          <select id='cooking'
+                  name='concept[patient mode of cooking]'
+                  helpText='Patient mode of coking? <%= @person_attribute %> <span id="helper">Social History</span> '
+			pos='3'
+			condition='program == "ASTHMA PROGRAM"'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			tt_requireNextClick = false >
+	 <option></option>
+	 <option value='Gas'>Gas</option>
+	 <option value='Electricity'>Electricity</option>
+	 <option value='Firewood'>Firewood</option>
+	 <option value='Charcoal'>Charcoal</option>
+	 <option value='None'>None</option>
+   </select>
+	</td>
+
+        <td>
+          <select id='employment'
+                  name='concept[type of employment]'
+                  helpText='Type of employment? <%= @person_attribute %>  <span id="helper">Social History</span>'
+			pos='3'
+			condition='program == "HYPERTENSION PROGRAM"'
+			tt_onLoad ="__$('nextButton').style.display = 'none';"
+			tt_requireNextClick = false >
+	 <option></option>
+	 <option value='Sedentary'>Sedentary</option>
+	 <option value='Active'>Active</option>
+   </select>
+	</td>
+		  <td>
+			<label for='summary'>Summary <span id="helper">Social History</span></label>
+	<%= text_field_tag :summary, nil, {
+	  :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';__$('nextButton').style.display = 'block';",
+	  :optional => "true",
+	  :tt_pageStyleClass => "NoControls" } %>
+		  </td>
+		</tr>
+	</table>
+</form>

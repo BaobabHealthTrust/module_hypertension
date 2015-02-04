@@ -1,0 +1,306 @@
+<style>
+  #tt_page_chronic_disease_medicine_patient_is_taking #viewport {
+    height: 500px;
+  }
+
+  #tt_page_summary #viewport {
+    height: 480px;
+  }
+
+  #tt_page_summary .inputFrameClass {
+    height: 600px;
+    overflow: auto;
+  }
+
+  #summary_container {
+    bottom: 124px;
+    font-size: 20px;
+    left: 25px;
+    position: absolute;
+    z-index: 600;
+    border-radius: 10px 10px 10px 10px;
+    width: 47.2em;
+    border-style: solid;
+    border-width: 1px;
+    background-color: lightgrey;
+    display: none;
+    -moz-user-select: none;
+    height: 18em;
+  }
+  #treatment{
+    height: 18em ! important;
+}
+  .summary {
+    font-size: 27px;
+    padding-left: 15px;
+  }
+
+  .data {
+    color: black;
+    font-size: 25px;
+  }
+
+  .header {
+    font-size: 27px;
+    color: white;
+    padding-left: 30px;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+  }
+    #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+var conditions = [];
+function selectedOptions(selected){
+	 var x = 1
+      for (i = 0; i < selected.options.length; i++) {
+        if (selected.options[i].selected) {
+            conditions.push( x + " : " + selected.options[i].value);
+			x += 1
+        }
+    }
+
+}
+
+function showSelectedConditions() {
+      conditions = []
+      if ($('tb').value.length > 0)
+        conditions.push("TB within the past two years: " + $('tb').value);
+
+
+      if ($('stroke').value.length > 0)
+        conditions.push("History of stroke: " + $('stroke').value);
+
+      if ($('deformaties').value.length > 0)
+        conditions.push("Chest deformaties at birth: " + $('deformaties').value);
+
+      if ($('allergic').value.length > 0){
+		 conditions.push("Allergic To: ");
+		 selectedOptions($('allergic'))
+	  }
+       
+
+      if ($('asthma').value.length > 0)
+        conditions.push("Asthma in the past month: " + $('asthma').value);
+
+      if ($('treatment').value.length > 0){
+		conditions.push("Medicine being taken: ");
+		selectedOptions($('treatment'))
+	  }     
+
+      var html
+      html = "<ul>"
+      for(var i=0;i < conditions.length;i++) {
+        if (conditions[i].length > 0)
+          html += "<li class='data'>" + conditions[i] + "</li>";
+
+      }
+      html += "</ul>"
+	  $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + html + '</div>' ;
+	  $("clearButton").style.display = "none";
+  }
+
+
+<%	@concept = []
+	@regimen_concepts.each do |reg|
+		@concept << reg.concept.fullname
+ end
+ @concept = @concept.uniq
+%>
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+	<input type='hidden' name='encounter_type' value='MEDICAL HISTORY ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= @user.id %>' />
+	<table>
+		<tr>
+
+                  <% if @current_program == "EPILEPSY PROGRAM" %>
+                  <td>
+                    <select id='cysticercosis'
+        name='concept[Cysticercosis]'
+        helpText='Ever had cysticercosis?<span id="helper">Medical History</span>'
+        pos='2'
+        tt_requireNextClick = false >
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ </select>
+
+                  </td>
+
+                  <td>
+                    <select id='head_injury'
+        name='concept[Head Injury]'
+        helpText='Previous head trauma?<span id="helper">Medical History</span>'
+        pos='2'
+        tt_requireNextClick = false >
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ </select>
+
+                  </td>
+
+                   <td>
+        <select id='meningitis'
+        name='concept[Meningitis]'
+        helpText='Ever had meningitis?<span id="helper">Medical History</span>'
+        pos='2'
+        tt_requireNextClick = false >
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ </select>
+
+                  </td>
+
+                  <td>
+        <select id='malaria'
+        name='concept[Malaria cerebral]'
+        helpText='Ever had cerebral malaria?<span id="helper">Medical History</span>'
+        pos='2'
+        tt_requireNextClick = false>
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ </select>
+
+                  </td>
+
+        <td>
+        <select id='seizure_history'
+        name='concept[Seizures known epileptic]'
+        helpText='Any known history of seizure?<span id="helper">Medical History</span>'
+        pos='2'
+        tt_requireNextClick = false >
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ </select>
+
+                  </td>
+
+<% else %>
+
+
+			<td>
+				History of TB in the past two years 
+			</td>
+			<td>
+<select id='tb'
+        name='concept[tb in previous two years]'
+        helpText='History of TB in the past two years<span id="helper">Medical History</span>'
+        pos='1'
+        tt_requireNextClick = false>
+<option></option>
+<option value = 'NO'>No</option>
+ <option value = 'YES'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				History of stroke 
+			</td>
+			<td>
+<select id='stroke'
+        name='concept[ever had a stroke]'
+        helpText='History of stroke<span id="helper">Medical History</span>'
+        pos='2'
+        tt_requireNextClick = false  >
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Chest deformaties at birth 
+			</td>
+			<td>
+<select id='deformaties'
+        name='concept[cardiovascular complications present]'
+        helpText='Chest deformaties at birth<span id="helper">Medical History</span>'
+        tt_requireNextClick = false 
+        pos='3'>
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ <option value='Unknown'>Unknown</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Allergic to: 
+			</td>
+			<td>
+
+<% @treatements_list = ["Exposure to cold water or cold weather", "Exposure to pollen, dust or strong smell", "Change of soap"] %>
+
+<%= select_tag "allergic", options_for_select(@treatements_list),
+	{ :field_type => 'text',
+      :helpText => "Allergic to:<span id='helper'>Medical History</span>",
+      :id => "allergic",
+	  :name=> "concept[allergic][]",
+      :multiple => true,
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true} %>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Asthma history in the past month 
+			</td>
+			<td>
+<select id='asthma'
+        name='concept[asthma]'
+        helpText='Asthma history in the past month?<span id="helper">Medical History</span>'
+        pos='5'
+        tt_requireNextClick = false>
+<option></option>
+<option value='NO'>No</option>
+ <option value='YES'>Yes</option>
+ <option value='Unknown'>Unknown</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Chronic Disease medicine patient is taking 
+			</td>
+			<td>
+		<%= select_tag "treatment", options_for_select(@concept),
+		{:id => 'treatment',
+		:optional => true,
+		:multiple => true,
+		:name => 'concept[taking medication][]',
+		:tt_pageStyleClass => "MultiSelectList",
+		:helpText => "Chronic Disease medicine patient is taking <span id='helper'>Medical History</span>" } %>
+			</td>
+			<td>
+			    <label for='summary'>Summary <span id="helper">Medical History</span></label>
+	<%= text_field_tag :summary, nil, {
+	  :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';",
+	  :optional => "true",
+	  :tt_pageStyleClass => "NoControls" } %>
+			</td>
+                        <% end %>
+		</tr>
+	</table>
+</form>

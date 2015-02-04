@@ -1,0 +1,45 @@
+<style>
+    .inputFrameClass {
+        height: 600px;
+    }
+    #viewport {
+        height: 550px;
+    }
+
+</style>
+<form action="/htn_encounter/create/">
+  <%= hidden_field_tag "encounter[encounter_type_name]", "GENERAL HEALTH" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]",  User.current.user_id %>
+
+
+  <%= select_tag "Chronic disease", options_for_select(@existing_conditions),
+                 { :field_type => 'text',
+                   :helpText => "Does patient have any of these conditions?",
+                   :id => "chronicDiseases",
+                   :multiple => true,
+                   :tt_pageStyleClass => "MultiSelectList",
+                   :optional => true
+                   } %>
+
+  <%= select_tag "Treatment", options_for_select(@drugs),
+                 { :field_type => 'text',
+                   :helpText => "Is patient taking any medication?",
+                   :id => "drugs",
+                   :multiple => true,
+                   :condition => "$('chronicDiseases').value.length > 0",
+                   :tt_pageStyleClass => "MultiSelectList",
+                   :optional => true
+                 } %>
+
+  <%= select_tag "Drug allergy", options_for_select(["","Yes", "No"]),
+                 { :field_type => 'text',
+                   :helpText => "Is patient allergic to any drug?",
+                   :id => "allergies",
+                   :multiple => true,
+                   :tt_pageStyleClass => "MultiSelectList",
+                   :condition => "$('chronicDiseases').value.length > 0 "
+                 } %>
+
+</form>

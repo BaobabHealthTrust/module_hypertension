@@ -1,0 +1,293 @@
+<%= javascript_include_tag 'jquery' %>
+<%= javascript_include_tag "utils" %>
+<style>
+      #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+  #tt_page_treatment_received #viewport {
+    height: 500px;
+  }
+    ol
+	{
+	list-style-type: none;
+	}
+  #tt_page_any_drug_allergies #viewport {
+    height: 200px;
+  } 
+  #tt_page_patient_has_any_of_the_following #viewport {
+    height: 550px;
+  }
+
+  #tt_page_patient_has_any_of_the_following .inputFrameClass {
+    height: 600px;
+  }
+
+  #tt_page_any_drug_allergies #viewport {
+    height: 550px;
+  }
+
+  #tt_page_any_drug_allergies .inputFrameClass {
+    height: 600px;
+  }
+
+  #tt_page_summary  .inputFrameClass {
+    height: 600px;
+  }
+
+  #tt_page_summary  #viewport {
+    height: 600px;
+  }
+  th { text-align: center;
+       vertical-align: middle;
+       background-color: #9250DE;
+       color: white;
+       height: 10%;
+       border-radius: 20px ;
+  }
+  ul {
+    height: 500px ! important;
+  }
+  #charttable{
+    border-color:#ff0000 #0000ff;
+    border-radius: 20px ;
+    border-style: outset;
+    height: 600px;
+    overflow: scroll;
+  }
+
+  .data {
+    color: black;
+    font-size: 25px;
+  }
+
+  .create_button {
+    background-color: #7784AE;
+    border-bottom: 1px outset black;
+    border-radius: 7px 7px 7px 7px;
+    border-style: outset;
+    border-top: 1px outset black;
+    color: #E8EAF1;
+    display: block;
+    padding: 10px 16px 10px 10px;
+    text-align: center;
+    text-decoration: none !important;
+    font-size:27px;
+    width: 327%;
+    height: 70px;
+  }
+
+  .menu{
+    border-radius: 20px ;
+    border-style:solid;
+    border-color:#ff0000 #0000ff;
+  }
+
+  .range{
+    height: 5%;
+    width: 400px;
+    background-color:white;
+    border-radius: 20px ;
+    border-style:solid;
+    border-color:#ff0000 #0000ff;
+  }
+  #summary_container {
+    bottom: 124px;
+    font-size: 20px;
+    left: 25px;
+    position: absolute;
+    z-index: 600;
+    border-radius: 10px 10px 10px 10px;
+    width: 47.2em;
+    border-style: solid;
+    border-width: 1px;
+    background-color: lightgrey;
+    display: none;
+    -moz-user-select: none;
+  }
+
+  .summary {
+    font-size: 27px;
+    padding-left: 15px;
+  }
+
+  .header {
+    font-size: 27px;
+    color: white;
+    padding-left: 30px;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+  }
+  .warning{
+    color: red;
+    font-weight:bold;
+    font-size: 25px;
+  }
+</style>
+
+<script type="text/javascript">
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+
+<% @side_effects = MedicationService.concept_set('MALAWI ART DRUG INDUCED SYMPTOM SET') %>
+  var program = '<%= @current_program %>'
+  var conditions = [];
+
+  function selectedOptions(selected){
+    var x = 1
+    for (i = 0; i < selected.options.length; i++) {
+      if (selected.options[i].selected) {
+        conditions.push( x + " : <i>" + selected.options[i].value) + "</i>";
+        x += 1
+      }
+    }
+
+  }
+
+  function clearTreatment(){
+    $('regimen_concept_id').value = null
+  }
+  function showSelectedConditions() {
+    conditions = [];
+    var i = 0
+    if ($('drug_allergy').value.length > 0)
+      conditions.push("Allergies: " + $('drug_allergy').value);
+	  
+    if ($('choice').value.length > 0)
+    { conditions.push("Chronic Diseases: ");
+      selectedOptions($('choice'));
+      i += 1
+    }
+
+
+    if ($('regimen_concept_id').value.length > 0)
+    {conditions.push("Treatment Received: ");
+      selectedOptions($('regimen_concept_id'))
+    }
+
+    if ($('epilepsy').value.length > 0)
+    {
+      conditions.push("Epilepsy experienced on: ");
+      selectedOptions($('epilepsy'))
+    }
+
+    if ($('1.1.13').value.length > 0)
+    {
+      conditions.push("Complications during birth: " );
+      selectedOptions( $('1.1.13'))
+    }
+
+    if ($('explanation').value != "")
+    {
+      conditions.push("Epilepsy experienced on: " + $('explanation').value);
+    }
+    var html
+    html = "<ol>"
+    for(var i=0;i < conditions.length;i++) {
+      if (conditions[i].length > 0){
+        html += "<li class='data'>" + conditions[i] + "</li>";
+      }
+    }
+
+    if (conditions.length <= 0) {
+      html += "<li class='data'>No conditions selected</li>";
+    }
+     
+    if (i > 0){
+      html += "<li class='warning'>Please refer patient for advice</li>";
+      $('refer_to_clinician').value = "Yes"
+    }
+    html += "</ol>"
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary" style="width:98%;overflow:auto;hieght:500px ! important;">' + html + '</div>' ;
+    $("clearButton").style.display = "none";
+  }
+
+
+</script>
+<%	@concept = []
+@regimen_concepts.each do |reg|
+  @concept << reg.concept.fullname
+end
+@concept = @concept.sort.uniq %>
+<form method='post' action="/encounters/create">
+  <input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+  <input type='hidden' name='encounter_type' value='GENERAL HEALTH' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= @user.id %>' />
+  <input type='hidden' id="explanation" value="" />
+  <input type='hidden' name='concept[refer to clinician]' id="refer_to_clinician">
+  <% if @diabetic.upcase == "YES" %>
+    <input type='hidden' name='concept[Chronic disease][]' value='Diabetes' id = "diabetes" />
+  <% end %>
+    <% if  @current_state.blank? %>
+        <input type="hidden" name="programs[][states][][state]" value="alive" id="program_id" />
+        <% end %>
+  <% if @task != "disable" %>
+    <%= select_tag "choice", options_for_select(@treatements_list),
+      { :field_type => 'text',
+      :helpText => "Patient has any of the following<span id='helper'> General Health</span>",
+      :id => "choice",
+      :name=> "concept[Chronic disease][]",
+      :multiple => true,
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true,
+      :tt_onLoad => "clearTreatment();"} %>
+
+
+    <%= select_tag "treatment", options_for_select(@concept),
+      {:id => 'regimen_concept_id',
+      :optional => true,
+      :multiple => true,
+      :name => 'concept[treatment][]',
+      :tt_pageStyleClass => "MultiSelectList",
+      :condition => "$('choice').value.length > 0",
+      :helpText => "Treatment Received<span id='helper'> General Health</span>",
+      :tt_onLoad => ""} %>
+
+    <%= select_tag "Drug Allergy", options_for_select(["","Yes", "No"]),
+      {	:id => "drug_allergy",
+      :condition => "$('choice').value.length > 0" ,
+      :name => 'concept[Drug Allergy]',
+      :helpText => "Any drug allergies<span id='helper'> General Health</span>",
+      :tt_onLoad => ""} %>
+
+    <select id='1.1.13' name="concept[Complications during patient's birth][]"
+            helpText="Complications during patient's birth<span id='helper'> General Health</span>"
+            pos='15'
+            condition='program == "EPILEPSY PROGRAM"'
+            multiple ="multiple"
+            optional ="true">
+      <option></option>
+      <option value='Development'>Development</option>
+      <option value='Neonatal'>Neonatal</option>
+    </select>
+
+    <%= select_tag "epilepsy", options_for_select(["Effects on occupation", "School", "Marital status", "Overprotection"]),
+      {:id => 'epilepsy',
+      :optional => true,
+      :multiple => true,
+      :name => 'concept[epilepsy][]',
+      :tt_pageStyleClass => "MultiSelectList",
+      :condition => 'program == "EPILEPSY PROGRAM"',
+      :helpText => "Effects of Epilepsy experienced on the following: <span id='helper'> General Health</span>",
+      :tt_onLoad => ""} %>
+
+    <% if @current_program == "EPILEPSY PROGRAM" %>
+    <textarea name="concept[CLINICAL NOTES CONSTRUCT]"
+              helpText="Explanation of effects experienced<span id='helper'> General Health</span>"
+              condition="$('epilepsy').value.length > 0"
+              id="explanation"
+              >
+    </textarea>
+    <% end %>
+  <label for='summary'>Summary<span id='helper'> General Health</span></label>
+  <%= text_field_tag :summary, nil, {
+    :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';",
+    :optional => "true",
+    :tt_pageStyleClass => "NoControls" } %>
+  <% end %>
+</form>

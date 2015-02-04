@@ -1,0 +1,139 @@
+<style>
+  
+#buttonlinks {
+          display: none;
+        }
+        #tab1 {
+          background-color: white;
+          border: 0 none;
+          color: black;
+          font-weight: bold;
+        }
+        #view_tab1 {
+          display:none;
+        }
+  body {
+    -moz-user-select:none;
+  }
+
+  .charts {
+    padding-left:20px;
+    -moz-user-select:none;
+  }
+
+  #header {
+    padding-left:10px;
+    -moz-user-select:none;
+  }
+
+  #program{
+    color: #6281A7;
+    font-size: 49px;
+    margin-top: 0;
+    position: absolute;
+    right: 116px;
+    top: 50px;
+  }
+  
+  #inform{
+    width: 80%;
+    background-color:white;
+    border-radius: 20px ;
+    border-style:solid;
+    border-color:#ff0000 #0000ff;
+    margin:0 auto;
+  }
+  th {
+    text-align:center;
+    -moz-user-select:none;
+  }
+
+  td {
+     font-size: 20px;
+  }
+  .innerside {
+        font-size: 28px;
+        width: 100%;
+  }
+  th tr td {
+    width:100%;
+  }
+  #cancelhButton {
+    float:left;
+    -moz-user-select:none;
+  }
+
+  .messageBar {
+    background-color: tomato;
+    font-size: 2em;
+    left: 270px;
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    width: 450px;
+    z-index: 999;
+    display:none;
+    height:210px;
+    -moz-user-select:none;
+  }
+
+  #btnStart {
+    display:none;
+  }
+  a {
+    background-color: grey;
+    border-bottom: 1px outset black;
+    border-style: outset;
+    border-top: 1px outset black;
+    color: white;
+    display: block;
+    padding: 0px 0px 0px 0px;
+    text-align: center;
+    text-decoration: none;
+    width: 300px;
+    -moz-user-select:none;
+  }
+</style>
+
+<%
+task = @task
+#next_task = task.encounter_type.gsub('_',' ') rescue nil
+#raise task.url.to_yaml
+%>t
+
+<%= javascript_include_tag "jquery" %>
+<%= javascript_include_tag "jquery.flot" %>
+<%= javascript_include_tag "prototype" %>
+<script>
+  function changeAttributes(){
+
+  }
+</script>
+
+<body onload = "changeAttributes();">
+
+<form id = 'dashboard' action='/clinic'>
+  <div id='project_name'>
+       <%=  map_programs(current_program.humanize.split(" ")[0]) rescue "" %>
+      </div>
+  <span id="patient_name"><%= @patient.name %></span>
+  
+   <span id="patient_age"><%= @patient.age %></span>
+   <%#= raise @patient.gender.to_yaml %>
+   <span id="patient_gender"><%= @patient.gender %></span>
+   <span id="guardian"><%= (@patient.guardian rescue nil) || 'NONE'%></span>
+   <div id="patient_card">
+    <span value="<%= @patient.national_id_with_dashes %>">National ID</span>
+   </div>
+  <select id="tabs">
+      <option value='/patients/patient_bp?user_id=<%= @user["user_id"] %>&patient_id=<%= @patient.id %>'>BP</option>
+      <option value='/patients/patient_overview?user_id=<%= @user["user_id"] %>&patient_id=<%= @patient.id %>'> Overview</option>
+  </select>
+  <input type='submit' value='Finish' />
+  <select id="navigation_links">
+    <option link="/clinic/index?user_id=<%=  params[:user_id]%>&location_id=<%=  params[:location_id]%>" class="green">Cancel</option>
+                <option link="<%= task.url %>" class="green">Continue</option>
+                
+              </select>
+</form>
+</body>

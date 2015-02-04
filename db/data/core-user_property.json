@@ -1,0 +1,6 @@
+[
+  {"core-user_property":{ "user_id":"1","property":"First Name", "property_value":"Super" }},
+  {"core-user_property":{ "user_id":"1","property":"Gender", "property_value":"Male" }},
+  {"core-user_property":{ "user_id":"1","property":"Last Name", "property_value":"User" }},
+  {"core-user_property":{ "user_id":"1","property":"Status", "property_value":"ACTIVE" }}
+]

@@ -1,0 +1,733 @@
+<html>
+    <head>
+        <script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
+        <script>
+
+            function showNumber(node, min, max){
+                loadPopup()
+                jQuery('#backButton, #nextButton').attr("disabled", true);
+                cn = 9;
+                var global_control = ""
+                var row1 = ["1","2","3"];
+                var row2 = ["4","5","6"];
+                var row3 = ["7","8","9"];
+                var row4 = ["Del","0","OK"];
+
+                var cl = document.createElement("div");
+                cl.className = "button_red cancel";
+                cl.innerHTML = "Cancel";
+                cl.onclick = function(){
+                    jQuery('#continueButton, #nextButton').attr("disabled", false);
+                    jQuery("#shield, #popup").css("display", "none");
+                }
+
+                jQuery(cl).css({
+                    "float" : "left",
+                    "margin-top" : "140px",
+                    "margin-left" : "10px"
+                });
+                var holder = document.createElement("div");
+                holder.innerHTML = "<table style='width: 100%;'><tr><td id = 'left' style='width: 35%;'></td><td id='right' style='width: 65%;' rowspan='2'></td></tr>" +
+                        "<tr><td id = 'bcancel'></td></tr></table>"
+                jQuery(holder).css({
+                    "width":"100%",
+                    "border" : "hidden"
+                });
+
+                var tbl = document.createElement("table");
+                tbl.className = "keyBoardTable";
+                tbl.cellSpacing = 0;
+                tbl.cellPadding = 3;
+                tbl.id = "tblKeyboard";
+                tbl.style.minWidth = 0.20 * screen.width + "px";
+                jQuery(tbl).css({
+                    "border-left" : "1.5px dotted black"
+                });
+                tbl.style.margin = "auto";
+
+                var tr1 = document.createElement("tr");
+
+                for(var i = 0; i < row1.length; i++){
+                    var td1 = document.createElement("td");
+                    td1.align = "center";
+                    td1.vAlign = "middle";
+                    td1.style.cursor = "pointer";
+                    td1.bgColor = "#ffffff";
+                    td1.width = "30px";
+
+                    tr1.appendChild(td1);
+
+                    var btn = document.createElement("div");
+                    btn.className = "button_blue keyboard_button";
+                    btn.innerHTML = "<span>" + row1[i] + "</span>";
+                    btn.onmousedown = function(){
+                        if(!this.innerHTML.match(/^__$/)){
+
+                            global_control += this.innerHTML.match(/<span>(.+)<\/span>/)[1];
+                            if (global_control != undefined && parseInt(global_control) <= max && parseInt(global_control) >= min){
+                                __$("input").innerHTML =  global_control;
+                            }else if (global_control != undefined && parseInt(global_control) > max || parseInt(global_control) < min){
+
+                                var str = global_control.length > cn ? (global_control.substring(0, cn - 2) + "..." + global_control.substring(global_control.length - 2, global_control.length)) : (global_control)
+                                __$("input").innerHTML =  str + "<div style='color: red; font-size: 24px; padding-top: 0px;'><br />&nbsp<br />" + " Out of range (" + min + "-" + max + ")</div>";
+                            }
+                        }
+                    }
+                    td1.appendChild(btn);
+
+                }
+
+                tbl.appendChild(tr1);
+
+                var tr2 = document.createElement("tr");
+
+                for(var i = 0; i < row2.length; i++){
+                    var td2 = document.createElement("td");
+                    td2.align = "center";
+                    td2.vAlign = "middle";
+                    td2.style.cursor = "pointer";
+                    td2.bgColor = "#ffffff";
+                    td2.width = "30px";
+
+                    tr2.appendChild(td2);
+
+                    var btn = document.createElement("div");
+                    btn.className = "button_blue keyboard_button";
+                    btn.innerHTML = "<span>" + row2[i] + "</span>";
+                    btn.onmousedown = function(){
+                        if(!this.innerHTML.match(/^$/)){
+
+                            global_control += this.innerHTML.match(/<span>(.+)<\/span>/)[1];
+                            global_control = global_control.replace(/^0+/, "")
+                            if (global_control != undefined && parseInt(global_control) <= max && parseInt(global_control) >= min){
+                                __$("input").innerHTML =  global_control;
+                            }else if (global_control != undefined && parseInt(global_control) > max || parseInt(global_control) < min){
+
+                                var str = global_control.length > cn ? (global_control.substring(0, cn - 2) + "..." + global_control.substring(global_control.length - 2, global_control.length)) : (global_control)
+                                __$("input").innerHTML =  str + "<div style='color: red; font-size: 24px; padding-top: 0px;'><br />&nbsp<br />" + " Out of range (" + min + "-" + max + ")</div>";
+                            }
+                        }
+                    }
+
+                    td2.appendChild(btn);
+
+                }
+
+                tbl.appendChild(tr2);
+
+                var tr3 = document.createElement("tr");
+
+                for(var i = 0; i < row3.length; i++){
+                    var td3 = document.createElement("td");
+                    td3.align = "center";
+                    td3.vAlign = "middle";
+                    td3.style.cursor = "pointer";
+                    td3.bgColor = "#ffffff";
+                    td3.width = "30px";
+
+                    tr3.appendChild(td3);
+
+                    var btn = document.createElement("div");
+                    btn.className = "button_blue keyboard_button";
+                    btn.innerHTML = "<span>" + row3[i] + "</span>";
+                    btn.onmousedown = function(){
+                        if(!this.innerHTML.match(/^__$/)){
+
+                            global_control += this.innerHTML.match(/<span>(.+)<\/span>/)[1];
+                            global_control = global_control.replace(/^0+/, "0")
+                            if (global_control != undefined && parseInt(global_control) <= max && parseInt(global_control) >= min){
+                                __$("input").innerHTML =  global_control;
+                            }else if (global_control != undefined && parseInt(global_control) > max || parseInt(global_control) < min){
+
+                                var str = global_control.length > cn ? (global_control.substring(0, cn - 2) + "..." + global_control.substring(global_control.length - 2, global_control.length)) : (global_control)
+                                __$("input").innerHTML =  str + "<div style='color: red; font-size: 24px; padding-top: 0px;'><br />&nbsp<br />" + " Out of range (" + min + "-" + max + ")</div>";
+                            }
+                        }
+                    }
+
+                    td3.appendChild(btn);
+
+                }
+
+                tbl.appendChild(tr3);
+
+                var tr4 = document.createElement("tr");
+
+                for(var i = 0; i < row4.length; i++){
+                    var td4 = document.createElement("td");
+                    td4.align = "center";
+                    td4.vAlign = "middle";
+                    td4.style.cursor = "pointer";
+                    td4.bgColor = "#ffffff";
+                    td4.width = "30px";
+
+                    tr4.appendChild(td4);
+
+                    var btn = document.createElement("div");
+                    btn.innerHTML = "<span>" + row4[i] + "</span>";
+                    if (i == 1){
+                        btn.className = "button_blue keyboard_button";
+                    }else if (i == 0){
+                        btn.className = "button_red keyboard_button";
+                    }else if (i == 2){
+                        btn.className = "button_green keyboard_button";
+                    }
+                    btn.onmousedown = function(){
+                        if(this.innerHTML.match(/<span>(.+)<\/span>/)[1] == "Del"){
+
+                            if (global_control.length == 1){
+                                global_control = ""
+                                __$("input").innerHTML = ""
+                            }else{
+                                global_control = global_control.substring(0,global_control.length - 1);
+                                global_control = global_control.replace(/^0+/, "0")
+                                if (global_control != undefined && parseInt(global_control) <= max && parseInt(global_control) >= min){
+                                    __$("input").innerHTML =  global_control;
+                                }else if (global_control != undefined && parseInt(global_control) > max || parseInt(global_control) < min){
+
+                                    var str = global_control.length > cn ? (global_control.substring(0, cn - 2) + "..." + global_control.substring(global_control.length - 2, global_control.length)) : (global_control)
+                                    __$("input").innerHTML =  str + "<div style='color: red; font-size: 24px; padding-top: 0px;'><br />&nbsp<br />" + " Out of range (" + min + "-" + max + ")</div>";
+                                }
+                            }
+                        }
+                        else if(this.innerHTML.match(/OK/)){
+                        
+                            global_control = global_control.replace(/^0+/, "0")
+                            if (global_control != undefined && parseInt(global_control) > max || parseInt(global_control) < min){
+
+                                showMessage("Value out of bound (" + min + " -  (" + min + "-" + max + "))", false, false);
+                            }else if (global_control == ""){
+                                showMessage("Please select a value!", false, false);
+                            }else{
+                                global_control= global_control.trim();
+
+                                try{
+                                    __$(node).value = global_control;
+                                    __$("input").innerHTML = "";
+                                    __$("tblKeyboard").parentNode.removeChild(__$("tblKeyboard"));
+                                    __$("input").parentNode.removeChild(__$("input"));
+                                    jQuery.ajax({
+                                        url: "/htn_encounter/update_remaining_drugs?pills=" + global_control +
+                                                "&drug_name=" + node + "&patient_id=<%= @patient.id%>",
+                                        success: function(result){
+                                            try{
+		                                        result = JSON.parse(result)
+		                                        if (result.toString().length > 0){
+		                                        			__$("adherence_" + node).innerHTML = result[0] + "%"
+		                                        			__$("amount_expected_" + node).innerHTML = result[1]
+		                                        }
+                                            }catch(e){}
+                                        }
+                                    })
+                                }catch(e){
+                                    showMessage("Failed to update input!");
+                                }
+                                jQuery("#shield, #popup").css("display", "none");
+                                jQuery('#backButton, #nextButton').attr("disabled", false);
+                            }
+
+                        }else if(!this.innerHTML.match(/^$/)){
+
+                            global_control += this.innerHTML.match(/<span>(.+)<\/span>/)[1];
+                            global_control = global_control.replace(/^0+/, "0")
+                            if (global_control != undefined && parseInt(global_control) <= max && parseInt(global_control) >= min){
+                                __$("input").innerHTML =  global_control;
+                            }else if (global_control != undefined && parseInt(global_control) > max || parseInt(global_control) < min){
+
+                                var str = global_control.length > cn ? (global_control.substring(0, cn - 2) + "..." + global_control.substring(global_control.length - 2, global_control.length)) : (global_control)
+                                __$("input").innerHTML =  str + "<div style='color: red; font-size: 24px; padding-top: 0px;'><br />&nbsp<br />" + " Out of range (" + min + "-" + max + ")</div>";
+                            }
+                        }
+                    }
+
+                    td4.appendChild(btn);
+
+                }
+
+                tbl.appendChild(tr4);
+
+                var input = document.createElement("div");
+                input.id = "input";
+                input.innerHTML = "";
+                jQuery(input).css({
+                    "font-size" : "28px",
+                    "font-style" : "italic",
+                    "float" : "left",
+                    "height" : "50px",
+                    "padding-top" : "0%",
+                    "padding-left" : "2%"
+                })
+
+                __$("popup").appendChild(holder);
+                __$("left").appendChild(input);
+                __$("right").appendChild(tbl);
+                __$("bcancel").appendChild(cl);
+                __$("popup-header").innerHTML = "Remaining pills for " + node;
+
+                __$("input").style.minWidth = (parseInt(__$("popup").style.minWidth.replace("px", "")) - parseInt(__$("tblKeyboard").style.minWidth.replace("px", ""))) + "px";
+                jQuery("#shield, #popup").css("display", "block");
+            }
+
+            function loadPopup(){
+
+                try{
+                    if(__$("popup") != undefined){
+                        __$("popup").innerHTML = "";
+                        __$("popup").parentNode.removeChild(__$("popup"))
+                    }
+
+                    if(__$("popup-header") != undefined){
+                        __$("popup-header").innerHTML = "";
+                        __$("popup-header").parentNode.removeChild(__$("popup-header"))
+                    }
+
+
+                    if(__$("shield") != undefined){
+                        __$("shield").innerHTML = "";
+                        __$("shield").parentNode.removeChild(__$("shield"));
+                        __$("shield") = null;
+                    }
+                }catch(e){}
+
+                var popup = document.createElement("div");
+                popup.id = "popup";
+
+                jQuery(popup).css({
+                    position : "absolute",
+                    "min-width" : 0.35 * screen.width + "px",
+                    "height" : 0.25 * screen.height + "px",
+                    width : "auto",
+                    height: "auto",
+                    "z-index" : 100,
+                    left : 0.325 * screen.width + "px",
+                    top : 0.31 * screen.height + "px",
+                    border: "1px solid black",
+                    background : "white",
+                    "border-radius" : "5px",
+                    opacity : "1"
+                });
+
+
+                var popupHeader = document.createElement("div");
+                popupHeader.id = "popup-header";
+
+                jQuery(popupHeader).css({
+                    "width" : "100%",
+                    "height" :  0.055 * screen.height + "px",
+                    "font-size" : "22px",
+                    "font-weight" : "bold",
+                    "padding-top" : "10px",
+                    "text-align" : "center",
+                    border: "1px dotted white",
+                    background : "#6D929B",
+                    color : "white"
+                });
+
+                var shield = document.createElement("div");
+                shield.id = "shield";
+                shield.style.display = "none";
+                shield.style.position = "absolute";
+                shield.style.width = "100%";
+                shield.style.height = "100%";
+                shield.style.left = "0px";
+                shield.style.top = "0px";
+                shield.style.backgroundColor = "#333";
+                shield.style.opacity = "0.4";
+                shield.style.zIndex = 50;
+
+                document.body.appendChild(shield);
+
+                popup.appendChild(popupHeader);
+
+                document.body.appendChild(popup);
+            }
+
+        </script>
+
+        <style>
+            #nextButton{
+                min-width: 170px !important;
+            }
+            .holder{
+                width: 99%;
+                padding: 1.5%;
+            }
+            #main-table{
+                width: 90%;
+                margin:auto;
+            }
+            #main-table th{
+                font-size: 20px;
+                background-color: firebrick;
+                color: white;
+            }
+            #main-table th, #main-table td{
+                text-align: center;
+                padding: 10px;
+            }
+            .td-title{
+                font-size:22px;
+                text-shadow: 2px 2px white;
+            }
+            .td-current{
+                background-color: #EED5D2;
+                text-shadow: 2px 2px white;
+            }
+            .td-remaining{
+                background-color: #ffe5e5;
+                text-shadow: 2px 2px white;
+            }
+            .td-value{
+                font-size: 22px;
+            }
+            .butt{
+                background: #E0FFFF;
+                border-radius: 5px;
+                padding: 7px;
+                width: 110px;
+                cursor: pointer;
+                margin: auto;
+                font-size: 24px;
+                text-shadow: 2px 2px white;
+                text-align: center;
+            }
+
+            .keyboard_button {
+                cursor: pointer;
+                font-size: 1.5em;
+                min-width: 60px;
+                width: 55px;
+                height: 35px;
+                min-height: 35px;
+                margin: 2px;
+                padding-top: 10px;
+            }
+
+            .button_blue{
+                border:1px solid #7eb9d0; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:28px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+                background-color: #a7cfdf; background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));
+                background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+                background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);
+                background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);
+                background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
+                background-image: linear-gradient(to bottom, #a7cfdf, #23538a);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#a7cfdf, endColorstr=#23538a);
+            }
+
+            .button_blue:hover{
+                border:1px solid #5ca6c4;
+                background-color: #82bbd1; background-image: -webkit-gradient(linear, left top, left bottom, from(#82bbd1), to(#193b61));
+                background-image: -webkit-linear-gradient(top, #82bbd1, #193b61);
+                background-image: -moz-linear-gradient(top, #82bbd1, #193b61);
+                background-image: -ms-linear-gradient(top, #82bbd1, #193b61);
+                background-image: -o-linear-gradient(top, #82bbd1, #193b61);
+                background-image: linear-gradient(to bottom, #82bbd1, #193b61);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#82bbd1, endColorstr=#193b61);
+            }
+
+            .button_green{
+                border:1px solid #34740e;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                font-size:28px;
+                font-family:arial, helvetica, sans-serif;
+                padding: 10px 10px 10px 10px;
+                text-decoration:none;
+                display:inline-block;
+                text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+                font-weight:bold; color: #FFFFFF;
+                background-color: #4ba614;
+                background-image: -webkit-gradient(linear, left top, left bottom, from(#4ba614), to(#008c00));
+                background-image: -webkit-linear-gradient(top, #4ba614, #008c00);
+                background-image: -moz-linear-gradient(top, #4ba614, #008c00);
+                background-image: -ms-linear-gradient(top, #4ba614, #008c00);
+                background-image: -o-linear-gradient(top, #4ba614, #008c00);
+                background-image: linear-gradient(to bottom, #4ba614, #008c00);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4ba614, endColorstr=#008c00);
+            }
+
+            .button_green:hover{
+                border:1px solid #224b09;
+                background-color: #36780f; background-image: -webkit-gradient(linear, left top, left bottom, from(#36780f), to(#005900));
+                background-image: -webkit-linear-gradient(top, #36780f, #005900);
+                background-image: -moz-linear-gradient(top, #36780f, #005900);
+                background-image: -ms-linear-gradient(top, #36780f, #005900);
+                background-image: -o-linear-gradient(top, #36780f, #005900);
+                background-image: linear-gradient(to bottom, #36780f, #005900);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#36780f, endColorstr=#005900);
+            }
+
+            .button_red{
+                border:1px solid #72021c; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:28px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+                background-color: #a90329; background-image: -webkit-gradient(linear, left top, left bottom, from(#a90329), to(#6d0019));
+                background-image: -webkit-linear-gradient(top, #a90329, #6d0019);
+                background-image: -moz-linear-gradient(top, #a90329, #6d0019);
+                background-image: -ms-linear-gradient(top, #a90329, #6d0019);
+                background-image: -o-linear-gradient(top, #a90329, #6d0019);
+                background-image: linear-gradient(to bottom, #a90329, #6d0019);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#a90329, endColorstr=#6d0019);
+            }
+
+            .button_red:hover{
+                border:1px solid #450111;
+                background-color: #77021d; background-image: -webkit-gradient(linear, left top, left bottom, from(#77021d), to(#3a000d));
+                background-image: -webkit-linear-gradient(top, #77021d, #3a000d);
+                background-image: -moz-linear-gradient(top, #77021d, #3a000d);
+                background-image: -ms-linear-gradient(top, #77021d, #3a000d);
+                background-image: -o-linear-gradient(top, #77021d, #3a000d);
+                background-image: linear-gradient(to bottom, #77021d, #3a000d);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#77021d, endColorstr=#3a000d);
+            }
+
+            .ok, .cancel{
+                min-width: 82px;
+                min-height: 35px !important;
+                width: 82px;
+                height: 35px !important;
+                padding-top: 10px;
+                text-align: center;
+                font-size: 27px;
+                border-radius: 10px;
+            }
+
+            .ok{
+                float: left;
+                margin-left: 22px;
+            }
+            .cancel{
+                float: right;
+                margin-right: 18px;
+                top: 0px;
+            }
+            .display-space{
+                width: 100%;
+                text-decoration: underline;
+                padding-left: 3%;
+            }
+
+            #left{
+                padding: 0px;
+            }
+            #input{
+                margin-top: 10px !important;
+            }
+            caption{
+                font-weight: bold;
+                font-size: 26px;
+
+            }
+            #summary{
+            	width:97%;
+            	margin: auto;
+            }
+
+            #summary-table{
+            	width:91%;
+            	margin: auto;
+            	margin-left: 5.5%;
+            }           
+           
+            .value{
+            	text-align: center;
+            	font-size: 21px;            	
+            }
+            .drug-title{
+            	padding-left: 50px;
+            	font-size: 22px;
+            }
+            .title-tr{
+            	background: lightgray;
+            	font-size: 1.25em;
+            }
+            .data-tr{
+            	background: azure;
+            	text-align: center;
+            	font-size: 1.2em;
+            }
+            .name{
+            	text-align: left;
+            	padding-left: 15px;
+            }
+        </style>
+      <%
+         @data = {"HCZ" => {"25mg" => "HCZ (25mg tablet)"},
+                  "Amlodipine" => {"5mg" => "Amlodipine (5mg tablet) ", "10mg" => "Amlodipine (10mg tablet)"},
+                  "Enalapril" => {"5mg" => "Enalapril (5mg tablet)", "10mg" => "Enalapril (10mg tablet)"},
+                  "Atenolol" => {"50mg" => "Atenolol (50mg tablet)", "100mg" => "Atenolol (100mg tablet)"}
+        }
+        data_keys =  ["HCZ", "Enalapril", "Amlodipine", "Atenolol"]
+      %>
+    </head>
+    <body>
+        <div class="holder">
+            <table id = "main-table">
+              <caption>BP Drug Management<caption>
+                <tr>
+                    <th>&nbsp;</th>
+                  <% data_keys.each do |key|%>
+                    <th><%= key%>
+                    <table style="width: 100%;"><tr>
+                      <%
+                      keys = @data[key].keys.sort.reverse
+                      keys.each do |ky|
+                       name = @data[key][ky].strip
+                         cols = @data[key].keys.length
+                      %>
+                          <td style="width: <%= 100/cols%>%; border: 1px dotted lightgray;border-radius: 3px;">
+                            <span><%= ky%></span>
+                          </td>
+                      <%
+                         end
+                      %>
+                    </tr></table></th>
+                  <%end%>
+                </tr>
+                <tr>
+                  <td class = "td-current td-title"><span>Current</span></td>
+                  <% data_keys.each do |key|%>
+                      <td class="td-current td-value"> <table style="width: 100%;"><tr>
+                        <%
+                           keys = @data[key].keys.sort.reverse
+                           keys.each do |ky|
+                             name = @data[key][ky].strip
+                             cols = @data[key].keys.length
+                        %>
+                            <td style="width: <%= 100/cols%>%;">
+                              <span><%= @current_drugs[name].blank? ? "&nbsp" :  "<img  width='45' height='35' class='tick'>&nbsp;</img>"%></span>
+                            </td>
+                        <%
+                           end
+                        %>
+                      </tr></table></td>
+                  <%end%>
+                </tr>
+                <tr>
+                <td class = "td-remaining td-title"><span>Pills remaining</span></td>
+                <% data_keys.each do |key|%>
+                    <td class="td-remaining td-value">
+
+                      <table style="width: 100%;"><tr>
+                        <%
+                           keys = @data[key].keys.sort.reverse
+                           keys.each do |ky|
+                             name = @data[key][ky].strip
+                             cols = @data[key].keys.length
+                        if !@current_drugs[name].blank?
+                        %>
+                          <td style="width: 50%">
+                          <input id = "<%= name%>" onclick = "showNumber('<%= name%>', 0, 500)" class="butt" value = ""></input>
+
+                            </td>
+
+                            <% else %>
+                                <td> &nbsp;</td>
+                            <% end %>
+                            <%
+                           end
+                        %>
+                      </tr></table>
+                    </td>
+                <%end%>
+                </tr>
+                  </caption></caption>
+            </table>
+        </div>
+		<div id = "summary">
+			<table id = "summary-table">
+				<caption>Adherence Summary</caption>
+				<tr class="title-tr">
+					<th>
+						Drug
+					</th>
+
+					<th>		
+						Pills dispensed during last visit
+					</th>
+					
+					<th  style="width:25%">
+						Expected pills remaining
+					</th>
+					
+					<th style="width:19%">
+						Adherence for drug
+					</th>
+				</tr>
+				
+				<% @last_dispensation.each do |drug, data| 
+				%>
+				
+				<tr class="data-tr">
+					<td class="name value" >
+						<%= drug%>
+					</td>
+
+					<td class="value">			
+						<%= data.value_numeric.to_i rescue nil%>
+					</td>
+					
+					<td class="value" id="amount_expected_<%= drug%>">
+						<%= data.remaining rescue nil%>
+					</td>
+					
+					<td class="value" id="adherence_<%= drug%>">
+						?
+					</td>
+				</tr>			
+				
+				<% end %>
+			</table>
+		</div>
+
+        <div id="buttons" class="buttonsDiv">
+          <button id="continueButton" class="button green navButton"
+                  onmousedown="postAnswer()"><span>Continue</span></button>
+          <% if params[:review].blank? %>
+            <button id="continueButton" class="button green navButton"
+                  onmousedown="window.location='<%= next_task(@patient)%>'"><span>Continue without prescribing</span></button>
+            <button id="nextButton" class="button blue navButton"
+                  onmousedown="window.location = '/htn_encounter/change_drugs?patient_id=<%= @patient.id%>'"><span>Change BP drugs</span></button>
+           <% end %>
+          <button id="cancelButton" class="button red navButton"
+                  onmousedown="window.location = '/htn_encounter/bp_management?patient_id=<%= @patient.id%>&skip_provider_check=true'"><span>Cancel</span></button>
+        </div>
+    </body>
+    <script>
+        var ticks = document.getElementsByClassName("tick")
+        var imgTick = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAF8klEQVR4nO3cz4scRRQH8J7N5sfmh5pfqNGTUSERYT2IuYgDngY9BRqVZDezs9NV74FC/AfCIOQaMZBDAhpRlDBBJG4ybqarRBFRJAgSQtCDhBCCIkFEQpAQxkNmZfbHzHT3dFXtTH0/UOd93a+652111QsCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC61YEycFGtdhwEORPPRM1VVfdh1HGBZ+XR5Ayk6yud5q+tYwDLWXGLNl8Sc2Og6FrBodn52Gyv+ihQ18Zvvk1owRookK75Hmj4JasGY65DAEtEQu0nTZdbcIkVHgyAouI4JLCjWiuMUU401t1hzS8byLdcxgSUc8z7S9OdC8knRq65jAgumLk5tYsVnFhLPiu9FzWjSdVxgXkHGcj9putPx1N8WDbHbdWBgmJgTO0jTN/8/9feTf3NaTW93HRuYVAvGKKa3OxPPmluk6erUxalNrsMDg6pxdQ8r/m1p8lnzd2E9XOc6PjAkrIfrSNF7KyS+xYrPYIFnhFFMRVJ0a8Xkaz4eYIFnNIX1cDMpOtsl8S3WfNh1jGBGQSp5kDXf7ZZ8UvS66yDBgEqzsosU/dTjqW9xzPtcxwk5C+vhGqnkkV6JJ013Zudnn3QdK+QsakaTrPlaz+QrulW+UH7EdayQo1KjtJ4Unej5ur+f/F/DerjZdbzGRc3opbAeTriOw4ZIRc93frXr8dq/7MX2LdmUb7Rn+wHXsZjE53krKWr2S3z7XpwN6+Ea1zEbR5re7Ljo34PRXNgoLGzNSpj8E8Fo3ofFVqp8q3F1j+u48lRtVB9nxT8nSTxrbkklj7iO2YaCjOW7Xda2P3YdXB6S/Gu3QvIPuo7bhgIp+rDXjRj2widqRpOk6Eaa5FNMRddxGxfWwzWs+IsEv4FDWQyWT5c3kKZTaRLPmu+KWDzrOnbjxEmxdukOlh4TYOiKQdZcIkW3Uyb/r0qzsst17Ma1v2d/n+bmDEsxuHDqJmXiW6z4evnz8kOu4zcurIcTpOhKhhu0uovBjlM3qa9N86Xy6fIG15dgXOVcZQv3WecexmKw89RNhon9ZbFWHHd9DcZNq+ntpOiPrMlfjcXg0lM3qa9H06lgyGqbTGYaMzuTrHUn+Z10fS0LpJJ7WfH1AZJ/LPAh+bIpnyJF/w6c/PZwXQwuO3WTbSIfcnkN1lBMz2UsinrdPFfF4LJTNxlHyVH8dlFMxVwT3zFsF4MrnbrJMO56dT6PNVdNTQCp5GuWLqNATZoa9C1Gmu5EKnraUsyrB2s+bmIC2FgZ7HHqJm2sN/xtwFQLxljxjyYmgalisOepm/TJv7Ja1y6sEXNiY4+TLNmHgWKwz6mbtMlHA6YFrPgJE2+BvJ6uBKdu0iUfDZiWk7Hcn/cEyGFlsO+pmwwxoQFTN6TpWM4TIHMxmOjUTcqBBkz9FVjz13ne9LTFYJatWQknIxowJdH+HDzQR6FFI0UxmOTUTYa/jwZMaZGmx/JcIu5XDCY9dZPhqUcDpqxELF7JMRFdi0HOtjUryd9EA6ZBdd0Knv41vOwzsZgTG0nTp3knvj2uiVg86OKejZoCaVJ5JKWjGEx16ibDQAOmPIX1cCKPzSKk6P2ZxsxOVvytocS3SNMFL7Zv2SbmxaMGn9i8BhowmSSb8uVVkORuAw2YbDCxQDPwax8NmKwqJDkqZm2gAZN9YT1cx3mv1qV96tGAyS0xJ3bkuZM45SsfDZhWA1b8ooPk+9GAaViw5sMWJ8APpUZpvetrhsUKrPkzC0++Hw2YhlGxVhxnxb8YTL4fDZiG2ez87DYTRaEvDZhGgrgoXsg5+V40YBopnT0EB3rt+9CAaVSRpo8GSL4fDZhGWbFWHCdNVzMk348GTD440DjwAGv+J3HyfWnA5JP2Dt8kE8CPBkw+YsWH+jz5fjRg8hlr/mDFSt+XBkzeu9+fb9ERL1L0juuwwKLKucoWVvx3+7XvRwMmWEwquZd9acAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQBEEQ/AfEGi0VtD0hMwAAAABJRU5ErkJggg==';
+
+
+        for (var i = 0; i < ticks.length; i ++){
+            ticks[i].src = imgTick;
+        }
+        function buildParams(){
+
+            var drugs = [];
+            <% @current_drugs.each do |drug, value|%>
+                drugs.push("<%= drug%>");
+            <% end %>
+
+            var form = document.createElement("form")
+            form.action = "/regimens/new?patient_id=<%= @patient.id%>"
+            document.body.appendChild(form);
+
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "patient_id");
+            input.setAttribute("value", "<%= @patient.id%>");
+            form.appendChild(input);
+
+            for (var i = 0; i < drugs.length; i ++){
+                var input = document.createElement("input");
+                input.setAttribute("type", "hidden");
+                input.setAttribute("name", "auto_rx[]");
+                input.setAttribute("value", drugs[i]);
+                form.appendChild(input)
+            }
+
+            form.submit();
+        }
+        function postAnswer()
+        {
+            <% if !params[:review].blank? %>
+                window.location = '/htn_encounter/change_drugs?patient_id=<%= @patient.id%>'
+            <% else %>
+                buildParams();
+            <% end %>
+        }
+    </script>
+</html>

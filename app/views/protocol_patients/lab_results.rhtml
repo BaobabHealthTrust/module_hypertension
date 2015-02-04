@@ -1,0 +1,631 @@
+<style>
+      #helper {
+  display: block;
+  float:right;
+  color: black;
+  background-color: #EEFFEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 20px 20px 20px 20px;
+  }
+</style>
+<%= javascript_include_tag 'jquery' %>
+<%= javascript_include_tag "utils" %>
+<script type="text/javascript">
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+
+  function resetPageAttributes(currentPage, attr){
+    var attributes = {};
+
+    switch(attr){
+      case 'fbs':
+        if ($('fbs_unit').value == 'mmol/l')
+          attributes = {'min':[2.7],'max':[27.8]};
+        else
+          attributes = {'min':[50],'max':[500]};
+      break;
+
+	  case 'ctn':
+        if ($('ctn_unit').value == 'mmol/l')
+          attributes = {'min':[2.7],'max':[27.8]};
+        else
+          attributes = {'min':[50],'max':[500]};
+      break;
+
+      case 'rbs':
+        if ($('rbs_unit').value == 'mmol/l')
+          attributes = {'min':[2.7],'max':[27.8]};
+        else
+          attributes = {'min':[50],'max':[500]};
+      break;
+
+      case 'hba1c':
+        attributes = {'min':[4], 'max':[30], 'absoluteMin':[0], 'absoluteMax':[50]};
+      break;
+
+      case 'cf':
+        if ($('cf_unit').value == 'mmol/l')
+          attributes = {'min':[7],'max':[17]};
+        else if($('cf_unit').value == 'mg/dl')
+          attributes = {'min':[130],'max':[300]};
+        else{
+          $('cf_value_text').value     = '';
+          $('cf_value_numeric').value  = '';
+        }
+      break;
+
+      case 'cnf':
+        if ($('cnf_unit').value == 'mmol/l')
+          attributes = {'min':[7],'max':[17]};
+        else if($('cnf_unit').value == 'mg/dl')
+          attributes = {'min':[130],'max':[300]};
+        else{
+          $('cnf_value_text').value     = '';
+          $('cnf_value_numeric').value  = '';
+          }
+      break;
+    }
+
+    setAttributes(currentPage, attributes);
+  }
+
+  function setAttributes(currentPage, attributes){
+
+    for (var value in attributes){
+      $(currentPage).setAttribute(value, attributes[value]);
+    }
+  }
+
+  function setConceptNamesAndValues(){
+
+    var values_string = selectedValue('test_types');
+
+    if(values_string.contains("FASTING BLOOD SUGAR")){
+      $('fbs_test_type_concept_name').value           = 'BLOOD SUGAR TEST TYPE';
+      $('fbs_parent_concept_name').value              = 'BLOOD SUGAR TEST TYPE';
+      $('fbs_test_type_value_coded_or_text').value    = 'FASTING';
+      $('fbs_concept_name').value                     = 'FASTING';
+    }
+
+    if(values_string.contains("RANDOM BLOOD SUGAR")){
+      $('rbs_test_type_concept_name').value           = 'BLOOD SUGAR TEST TYPE';
+      $('rbs_parent_concept_name').value              = 'BLOOD SUGAR TEST TYPE';
+      $('rbs_test_type_value_coded_or_text').value    = 'RANDOM';
+      $('rbs_concept_name').value                     = 'RANDOM';
+    }
+
+    if(values_string.contains("HbA1c")){
+      $('HbA1c_test_type_concept_name').value         = 'BLOOD SUGAR TEST TYPE';
+      $('HbA1c_parent_concept_name').value            = 'BLOOD SUGAR TEST TYPE';
+      $('HbA1c_test_type_value_coded_or_text').value  = 'HbA1c';
+      $('HbA1c_concept_name').value                   = 'HbA1c';
+    }
+  }
+
+  function getSelected(){
+    var choices = "";
+
+    for(var o = 0; o < __$('test_types').options.length; o++){
+      if(__$('test_types').options[o].selected == true){
+        choices += __$('test_types').options[o].innerHTML + " ";
+      }
+    }
+
+    return choices;
+  }
+
+    function setConceptNamesAndValues1(){
+
+    var values_string = selectedValue('test_types1');
+
+    if(values_string.contains("CHOLESTEROL FASTING")){
+      $('cf_test_type_concept_name').value            = 'CHOLESTEROL TEST TYPE';
+      $('cf_parent_concept_name').value               = 'CHOLESTEROL TEST TYPE';
+      $('cf_test_type_value_coded_or_text').value     = 'FASTING';
+      $('cf_concept_name').value                      = 'FASTING';
+    }
+
+    if(values_string.contains("CHOLESTEROL NOT FASTING")){
+      $('cnf_test_type_concept_name').value           = 'CHOLESTEROL TEST TYPE';
+      $('cnf_parent_concept_name').value              = 'CHOLESTEROL TEST TYPE';
+      $('cnf_test_type_value_coded_or_text').value    = 'NOT FASTING';
+      $('cnf_concept_name').value                     = 'NOT FASTING';
+    }
+  }
+
+  function getSelected1(){
+    var choices = "";
+
+    for(var o = 0; o < __$('test_types1').options.length; o++){
+      if(__$('test_types1').options[o].selected == true){
+        choices += __$('test_types1').options[o].innerHTML + " ";
+      }
+    }
+
+    return choices;
+  }
+
+  function setConceptNamesAndValues2(){
+
+    var values_string = selectedValue('test_types2');
+
+	  if(values_string.contains("CREATININE")){
+      $('ctn_test_type_concept_name').value           = 'CREATININE';
+      $('ctn_parent_concept_name').value              = 'CREATININE';
+      $('ctn_test_type_value_coded_or_text').value    = 'CREATININE';
+      $('ctn_concept_name').value                     = 'CREATININE';
+    }
+  }
+
+  function getSelected2(){
+    var choices = "";
+
+    for(var o = 0; o < __$('test_types2').options.length; o++){
+      if(__$('test_types2').options[o].selected == true){
+        choices += __$('test_types2').options[o].innerHTML + " ";
+      }
+    }
+
+    return choices;
+  }
+</script>
+
+  <% default={
+    :allowFreeText => 'true',
+  } %>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='HYPERTENSION PROGRAM' />
+	<input type='hidden' name='encounter_type' value='LAB RESULTS' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= @user.id %>' />
+
+  <% if @current_program == "EPILEPSY PROGRAM" %>
+  <%= touch_yes_no_tag "Patient in active seizure", @patient, nil,
+			{	:id => 'seizure_focal',
+			:allowFreeText => 'false',
+			:helpText => "Is the patient in active seizure?",
+                        :tt_onLoad => "__$('nextButton').style.display = 'block'; showCategory('Lab Results')"} %>
+
+  <% options=default.merge({
+      :field_type => 'text',
+      :helpText => "Select the type of blood sugar test taken:",
+      :id => "test_types",
+      :tt_onUnLoad => "setConceptNamesAndValues()",
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true,
+	  :condition => "$('seizure_focal').value.toLowerCase() == 'yes'",
+	  :tt_onLoad => "__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+    }) %>
+
+	  <%= select_tag("test_type_values",options_for_select(@sugar),options)%>
+
+  <% options = default.merge({
+          :id           => "fbs_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = ' Fasting Blood Sugar';__$('nextButton').style.display = 'none';",
+          :condition    => "getSelected().match(/FASTING\sBLOOD\sSUGAR/i) && $('seizure_focal').value.toLowerCase() == 'yes'",
+          :tt_onUnLoad  => "$('fbs_measurement_unit').value = $('fbs_unit').value;  showCategory('Lab Results')",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select blood sugar units of measure"
+      }) %>
+    <%= select_tag("fbs_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "fbs_value",
+        :field_type     => 'number',
+        :helpText       =>"Fasting Blood Sugar Value",
+        :condition      => "getSelected().match(/FASTING\sBLOOD\sSUGAR/i) && $('seizure_focal').value.toLowerCase() == 'yes'",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('fbs_value_numeric').value = $('fbs_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'fbs');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "fbs_value_numeric", nil, options%>
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'fbs_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'fbs_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'fbs_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'fbs_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'fbs_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'fbs_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+
+    <% options = default.merge({
+          :id           => "rbs_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = ' Random Blood Sugar';__$('nextButton').style.display = 'none'; showCategory('Lab Results')",
+          :condition      => "getSelected().match(/RANDOM\sBLOOD\sSUGAR/i) && $('seizure_focal').value.toLowerCase() == 'yes'",
+          :tt_onUnLoad  => "$('rbs_measurement_unit').value = $('rbs_unit').value",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select blood sugar units of measure"
+      }) %>
+    <%= select_tag("rbs_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "rbs_value",
+        :field_type     => 'number',
+        :helpText       =>"Random Blood Sugar Value",
+        :condition      => "getSelected().match(/RANDOM\sBLOOD\sSUGAR/i) && $('seizure_focal').value.toLowerCase() == 'yes'",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('rbs_value_numeric').value = $('rbs_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'rbs'); showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "rbs_value_numeric", nil, options%>
+
+		<%= touch_select_tag "RDT or blood smear positive for malaria", @patient, options_for_select(["Yes","No"]),
+		{	:id => "mrdt",
+			:multiple => false,
+			:condition      => "$('seizure_focal').value.toLowerCase() == 'yes'",
+			:helpText => "RDT or blood smear positive for malaria",
+                        :tt_onLoad => "__$('nextButton').style.display = 'block'; showCategory('Lab Results')"} %>
+
+ <% else %>
+	 <% options=default.merge({
+      :field_type => 'text',
+      :helpText => "Select the type of blood sugar test taken:",
+      :id => "test_types",
+      :tt_onUnLoad => "setConceptNamesAndValues()",
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true,
+	  :tt_onLoad => "__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+    }) %>
+
+	  <%= select_tag("test_type_values",options_for_select(@sugar),options)%>
+
+  <% options = default.merge({
+          :id           => "fbs_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = ' Fasting Blood Sugar';__$('nextButton').style.display = 'none'; showCategory('Lab Results')",
+          :condition    => "getSelected().match(/FASTING\sBLOOD\sSUGAR/i)",
+          :tt_onUnLoad  => "$('fbs_measurement_unit').value = $('fbs_unit').value",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select blood sugar units of measure"
+      }) %>
+    <%= select_tag("fbs_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "fbs_value",
+        :field_type     => 'number',
+        :helpText       =>"Fasting Blood Sugar Value",
+        :condition      => "getSelected().match(/FASTING\sBLOOD\sSUGAR/i)",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('fbs_value_numeric').value = $('fbs_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'fbs');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "fbs_value_numeric", nil, options%>
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'fbs_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'fbs_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'fbs_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'fbs_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'fbs_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'fbs_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+
+    <% options = default.merge({
+          :id           => "rbs_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = ' Random Blood Sugar';__$('nextButton').style.display = 'none'; showCategory('Lab Results')",
+          :condition      => "getSelected().match(/RANDOM\sBLOOD\sSUGAR/i)",
+          :tt_onUnLoad  => "$('rbs_measurement_unit').value = $('rbs_unit').value",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select blood sugar units of measure"
+      }) %>
+    <%= select_tag("rbs_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "rbs_value",
+        :field_type     => 'number',
+        :helpText       =>"Random Blood Sugar Value",
+        :condition      => "getSelected().match(/RANDOM\sBLOOD\sSUGAR/i)",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('rbs_value_numeric').value = $('rbs_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'rbs');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "rbs_value_numeric", nil, options%>
+  <% end %>
+
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'rbs_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'rbs_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'rbs_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'rbs_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'rbs_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'rbs_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+
+    <% options = default.merge({
+        :id             => "HbA1c_value",
+        :field_type     => 'number',
+        :helpText       =>"Enter HbA1c Value",
+        :condition      => "getSelected().match(/HbA1c/i)",
+        :min            => 0,
+        :max            => 30,
+        :absoluteMin    => 0,
+        :absoluteMax    => 50,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('HbA1c_value_numeric').value = $('HbA1c_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'hba1c');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "HbA1c_value_numeric", nil, options%>
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'HbA1c_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'HbA1c_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'HbA1c_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'HbA1c_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'HbA1c_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'HbA1c_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+
+<% unless @cholesterol.blank? %>
+	  <% options=default.merge({
+      :field_type => 'text',
+      :helpText => "Select the type of test taken:",
+      :id => "test_types1",
+      :tt_onUnLoad => "setConceptNamesAndValues1()",
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true,
+	  :tt_onLoad => "__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+    }) %>
+
+	
+  <%= select_tag("test_type_values",options_for_select(@cholesterol),options)%>
+	
+    <% options = default.merge({
+          :id           => "cf_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = ' Cholesterol Fasting';__$('nextButton').style.display = 'none'; showCategory('Lab Results')",
+          :condition    => "getSelected1().match(/CHOLESTEROL\sFASTING/i)",
+          :tt_onUnLoad  => "$('cf_measurement_unit').value = $('cf_unit').value",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select cholesterol units of measure"
+      }) %>
+    <%= select_tag("cf_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl",
+      "Lo/Hi"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "cf_value",
+        :field_type     => 'number',
+        :helpText       =>"Cholesterol Fasting Value",
+        :condition      => "(getSelected1().match(/CHOLESTEROL\sFASTING/i)) && ($('cf_unit').value != 'Lo/Hi')",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('cf_value_numeric').value = $('cf_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'cf');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "cf_value_numeric", nil, options%>
+
+    <% options = default.merge({
+      :field_type   => 'text',
+      :id           => "cf_lo_or_hi",
+      :tt_onUnLoad  => "$('cf_value_text').value = $('cf_lo_or_hi').value",
+      :condition    => "(getSelected1().match(/CHOLESTEROL\sFASTING/i)) && ($('cf_unit').value == 'Lo/Hi')",
+      :helpText     =>"Cholesterol Fasting Value",
+      :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'cf');__$('nextButton').style.display = 'block'; showCategory('Lab Results')",
+      :tt_requireNextClick => false
+    }) %>
+    <%= select_tag("cf_value_lo_or_hi", options_for_select(["","Lo","Hi"]), options ) %>
+
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'cf_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'cf_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'cf_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_text]",          "", {:id => 'cf_value_text'} ) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'cf_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'cf_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'cf_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+
+    <% options = default.merge({
+          :id           => "cnf_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = ' Cholesterol Not Fasting';__$('nextButton').style.display = 'none'; showCategory('Lab Results')",
+          :condition    => "getSelected1().match(/CHOLESTEROL\sNOT\sFASTING/i)",
+          :tt_onUnLoad  => "$('cnf_measurement_unit').value = $('cnf_unit').value",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select cholesterol units of measure"
+      }) %>
+    <%= select_tag("cnf_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl",
+      "Lo/Hi"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "cnf_value",
+        :field_type     => 'number',
+        :helpText       =>"Cholesterol Not Fasting Value",
+        :condition      => "(getSelected1().match(/CHOLESTEROL\sNOT\sFASTING/i))  && ($('cnf_unit').value != 'Lo/Hi')",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('cnf_value_numeric').value = $('cnf_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'cnf');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "cnf_value_numeric", nil, options%>
+
+    <% options = default.merge({
+      :field_type   => 'text',
+      :id           => "cnf_lo_or_hi",
+      :tt_onUnLoad  => "$('cnf_value_text').value = $('cnf_lo_or_hi').value",
+      :condition    => "(getSelected1().match(/CHOLESTEROL\sNOT\sFASTING/i))  && ($('cnf_unit').value == 'Lo/Hi')",
+      :helpText     =>"Cholesterol Not Fasting Value",
+      :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'cnf');__$('nextButton').style.display = 'block'; showCategory('Lab Results')",
+      :tt_requireNextClick => false
+    }) %>
+    <%= select_tag("cnf_value_lo_or_hi", options_for_select(["","Lo","Hi"]), options ) %>
+
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'cnf_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'cnf_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'cnf_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_text]",          "", {:id => 'cnf_value_text'} ) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'cnf_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'cnf_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'cnf_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+<% end %>
+<% unless @generic.blank? %>
+	 <% options=default.merge({
+      :field_type => 'text',
+      :helpText => "Select the type of test taken:",
+      :id => "test_types2",
+      :tt_onUnLoad => "setConceptNamesAndValues2()",
+      :tt_pageStyleClass => "MultiSelectList",
+      :optional => true,
+	  :tt_onLoad => "__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+    }) %>
+
+	
+  <%= select_tag("test_type_values",options_for_select(@generic),options)%>
+	
+ <% options = default.merge({
+          :id           => "ctn_unit",
+          :field_type   => "text",
+          :tt_onload    => "$('infoBar'+tstCurrentPage).innerHTML = 'Creatinine';__$('nextButton').style.display = 'none'; showCategory('Lab Results')",
+          :condition    => "getSelected2().match(/CREATININE/i)",
+          :tt_onUnLoad  => "$('ctn_measurement_unit').value = $('ctn_unit').value",
+          :tt_requireNextClick => false,
+          :helpText   =>"Select creatinine units of measure"
+      }) %>
+    <%= select_tag("ctn_unit", options_for_select([
+      "",
+      "mmol/l",
+      "mg/dl",
+      "Lo/Hi"
+      ]), options ) %>
+
+  <% options = default.merge({
+        :id             => "ctn_value",
+        :field_type     => 'number',
+        :helpText       =>"Creatinine",
+        :condition      => "(getSelected2().match(/CREATININE/i)) && ($('ctn_unit').value != 'Lo/Hi')",
+        :min            => 50,
+        :max            => 500,
+        :validationRule    => "([0-9]+(\\.)*[0-9]*)|Unknown$",
+        :validationMessage => "You must enter a decimal between 0 and 9 (for example: 36<b>.6</b>)",
+        :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal",
+        :tt_onUnLoad  => "$('ctn_value_numeric').value = $('ctn_value').value",
+        :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'ctn');__$('nextButton').style.display = 'block'; showCategory('Lab Results')"
+      }) %>
+
+    <%= text_field_tag "ctn_value_numeric", nil, options%>
+
+    <% options = default.merge({
+      :field_type   => 'text',
+      :id           => "ctn_lo_or_hi",
+      :tt_onUnLoad  => "$('ctn_value_text').value = $('ctn_lo_or_hi').value",
+      :condition    => "(getSelected2().match(/CREATININE/i)) && ($('ctn_unit').value == 'Lo/Hi')",
+      :helpText     =>"Creatinine",
+      :tt_onload    => "resetPageAttributes('touchscreenInput'+tstCurrentPage, 'cf');__$('nextButton').style.display = 'block'; showCategory('Lab Results')",
+      :tt_requireNextClick => true
+    }) %>
+    <%= select_tag("ctn_value_lo_or_hi", options_for_select(["","Lo","Hi"]), options ) %>
+
+    <!-- set the test type concept name and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'ctn_test_type_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'ctn_test_type_value_coded_or_text'}) %>
+    <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+    <!-- set the test concept and value -->
+    <%= hidden_field_tag("observations[][concept_name]",        "", {:id => 'ctn_concept_name'}) %>
+    <%= hidden_field_tag("observations[][value_text]",          "", {:id => 'ctn_value_text'} ) %>
+    <%= hidden_field_tag("observations[][value_numeric]",       "", {:id => 'ctn_value_numeric'} ) %>
+    <%= hidden_field_tag("observations[][measurement_unit]",    nil,{:id => 'ctn_measurement_unit'}) %>
+    <%= hidden_field_tag("observations[][parent_concept_name]", "", {:id => 'ctn_parent_concept_name'}) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+<% end %>
+
+
+	<% if @retrospective %>
+		<p><label for="filter_provider">Staff who provided the information (Provider)</label> <span id='helper'> Lab Results</span></br>
+		<%= text_field "filter" , 'provider', :helpText => 'Staff who provided the information (Provider)', :ajaxURL => '/user/username?username=' %></p>
+	<% else %>
+		<%= hidden_field_tag "filter[provider]", nil %>
+	<% end %>
+
+    <%= submit_tag "Finish" %>
+</form>

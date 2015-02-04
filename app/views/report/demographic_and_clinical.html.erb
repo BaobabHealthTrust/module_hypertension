@@ -1,0 +1,319 @@
+<link rel="stylesheet" type="text/css" href="/stylesheets/prescription/application.css" media="screen" />
+
+<div class="report_header">
+     <%= " Demographic and Clinical Report for #{Date::MONTHNAMES[params[:month].to_i]} #{params[:year]} "%>
+</div>
+
+<div id="report_content" class="report_content">
+    <table class="report_table" >
+       <thead>
+        <tr>
+          <td style="padding-left: 10px;">Field</td>
+          <td style="width: 20%;text-align: center;">Monthly</td>
+          <td style="width: 20%;text-align: center;">Cumulative</td>
+        </tr>
+       </thead>
+       <tbody>
+       <tr>
+         <td class="sectionHeading">Total Number Screened for Hypertension</td>
+         <td><div id="screenedMonthly" onclick="drillDown(this.getAttribute('ids'))"   class="clickable">&nbsp;</div></td>
+         <td><div id="screenedCumulative" class="clickable">&nbsp;</div></td>
+       </tr>
+        <tr>
+          <td class="sectionHeading" colspan="3">Sex</td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Female</td>
+          <td><div id="monthlyFemales" class="clickable" ids="">&nbsp;</div></td>
+          <td><div id="cumulativeFemales" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Male</td>
+          <td><div id="monthlyMales" class="clickable">&nbsp;</div></td>
+          <td><div id="cumulativeMales" class="clickable">&nbsp;</div></td>
+        </tr>
+        <tr>
+          <td class="fieldTitle">Unknown/Missing</td>
+          <td><div id="monthlyMissing" class="clickable">&nbsp;</div></td>
+          <td><div id="cumulativeMissing" class="clickable">&nbsp;</div></td>
+        </tr>
+       <tr>
+         <td class="sectionHeading">Age (years), Median </td>
+         <td><div id="monthlyAgeMedian" class="clickable">&nbsp;</div></td>
+         <td><div id="cumulativeAgeMedian" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="sectionHeading" colspan="3">Age Group </td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">20 - 29</td>
+         <td><div id="monthly20to29" class="clickable">&nbsp;</div></td>
+         <td><div id="cumulative20to29" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">30 - 39</td>
+         <td><div id="monthly30to39" class="clickable">&nbsp;</div></td>
+         <td><div id="cumulative30to39" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">40 - 49</td>
+         <td><div id="monthly40to49" class="clickable">&nbsp;</div></td>
+         <td><div id="cumulative40to49" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">50 - 59</td>
+         <td><div id="monthly50to59" class="clickable">&nbsp;</div></td>
+         <td><div id="cumulative50to59" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle"> >= 60 </td>
+         <td><div id="monthlyAbove59" class="clickable">&nbsp;</div></td>
+         <td><div id="cumulativeAbove59" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Unknown/Missing</td>
+         <td><div id="monthlyUnkAge" class="clickable">&nbsp;</div></td>
+         <td><div id="culUnkAge" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="sectionHeading"> Body Mass Index (BMI) Median</td>
+         <td><div id="monthlyBmiMedian" class="clickable">&nbsp;</div></td>
+         <td><div id="culBmiMedian" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading"> BMI</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle"> 18.5 - 24.9</td>
+         <td><div id="monthlyBmi1" class="clickable">&nbsp;</div></td>
+         <td><div id="culBmi1" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">25 - 29.9</td>
+         <td><div id="monthlyBmi2" class="clickable">&nbsp;</div></td>
+         <td><div id="culBmi2" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle"> >= 30</td>
+         <td><div id="monthlyBmi3" class="clickable">&nbsp;</div></td>
+         <td><div id="culBmi3" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Unknown/Missing</td>
+         <td><div id="monthlyBmiUnk" class="clickable">&nbsp;</div></td>
+         <td><div id="culBmiUnk" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Blood Pressure Classification</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Normal</td>
+         <td><div id="monthlyBpNormal" class="clickable">&nbsp;</div></td>
+         <td><div id="culBpNormal" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Mild</td>
+         <td><div id="monthlyBpMild" class="clickable">&nbsp;</div></td>
+         <td><div id="culBpMild" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Moderate</td>
+         <td><div id="monthlyBpMod" class="clickable">&nbsp;</div></td>
+         <td><div id="culBpMod" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Severe</td>
+         <td><div id="monthlyBpSevere" class="clickable">&nbsp;</div></td>
+         <td><div id="culBpSevere" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Diagnosis of Hypertension</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Newly Diagnosed Hypertension</td>
+         <td><div id="monthlyNewDiag" class="clickable">&nbsp;</div></td>
+         <td><div >&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Existing Hypertension</td>
+         <td><div id="monthlyExisting" class="clickable">&nbsp;</div></td>
+         <td><div >&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Place of Diagnosis</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Lighthouse</td>
+         <td><div id="monthlyPodLighthouse" class="clickable">&nbsp;</div></td>
+         <td><div id="culPodLighthouse" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Ministry of Health</td>
+         <td><div id="monthlyPodMoh" class="clickable">&nbsp;</div></td>
+         <td><div id="culPodMoh" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Other</td>
+         <td><div id="monthlyPodOther" class="clickable">&nbsp;</div></td>
+         <td><div id="culPodOther" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Unknown/Missing</td>
+         <td><div id="monthlyPodUnk" class="clickable">&nbsp;</div></td>
+         <td><div id="culPodUnk" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td colspan="3" class="sectionHeading">Outcome Occurred</td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Alive and in care</td>
+         <td><div id="alive" class="clickable">&nbsp;</div></td>
+         <td><div id="culalive" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Death</td>
+         <td><div id="dead" class="clickable">&nbsp;</div></td>
+         <td><div id="culdead" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Lost to followup</td>
+         <td><div id="lostToFollowup" class="clickable">&nbsp;</div></td>
+         <td><div id="cullostToFollowup" class="clickable">&nbsp;</div></td>
+       </tr>
+       <tr>
+         <td class="fieldTitle">Transferred</td>
+         <td><div id="transferred" class="clickable">&nbsp;</div></td>
+         <td><div id="cultransferred" class="clickable">&nbsp;</div></td>
+       </tr>
+       </tbody>
+    </table>
+</div>
+<div id="footer">
+  <div id="buttons" class="buttonsDiv" style="">
+    <button id="finishButton" class="button navButton green" onclick="window.location='/'"><span>Finish</span></button>
+  </div>
+</div>
+
+<script type="text/javascript" src="/javascripts/jquery.js"></script>
+<script type="text/javascript" src="/javascripts/application.js"></script>
+<script type="text/javascript">
+    <!--
+    var fields = [["screenedMonthly","/report/total_screened?start_date=<%= @start_date %>&end_date=<%= @end_date %>", ""],
+        ["screenedCumulative","/report/total_screened?start_date='1900/01/01'" +
+                "&end_date=<%= @end_date %>", ""],
+        ["monthlyFemales","/report/total_screened?category=gender&" +
+                "start_date=<%= @start_date %> &end_date=<%= @end_date %>&gender=F", ""],
+        ["cumulativeFemales","/report/total_screened?category=gender" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>&gender=F", ""],
+        ["monthlyMales","/report/total_screened?category=gender" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>&gender=M", ""],
+        ["cumulativeMales","/report/total_screened?category=gender" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>&gender=M", ""],
+        ["monthlyMissing","/report/total_screened?category=gender" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>&gender=unknown", ""],
+        ["cumulativeMissing","/report/total_screened?category=gender" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>&gender=unknown", ""],
+        ["monthlyAgeMedian","/report/total_screened?category=age_median" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["cumulativeAgeMedian","/report/total_screened?category=age_median" +
+                "&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["monthly20to29","/report/total_screened?category=age&start_age=20" +
+                "&end_age=29&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["cumulative20to29","/report/total_screened?category=age&start_age=20" +
+                "&end_age=29&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthly30to39","/report/total_screened?category=age&start_age=30&" +
+                "end_age=39&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["cumulative30to39","/report/total_screened?category=age&start_age=30" +
+                "&end_age=39&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthly40to49","/report/total_screened?category=age&start_age=40" +
+                "&end_age=49&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["cumulative40to49","/report/total_screened?category=age&start_age=40" +
+                "&end_age=49&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthly50to59","/report/total_screened?category=age&start_age=50" +
+                "&end_age=59&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["cumulative50to59","/report/total_screened?category=age&start_age=50" +
+                "&end_age=59&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyAbove59","/report/total_screened?category=age&start_age=60" +
+                "&end_age=999&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["cumulativeAbove59","/report/total_screened?category=age&start_age=60" +
+                "&end_age=999&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["monthlyUnkAge","/report/total_screened?category=age&start_age=unknown" +
+                "&end_age=unknown&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culUnkAge","/report/total_screened?category=age&start_age=unknown" +
+                "&end_age=unknown&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyBmiMedian","/report/total_screened?category=bmi_median" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culBmiMedian","/report/total_screened?category=bmi_median&start_date='1900/01/01'" +
+                "&end_date=<%= @end_date %>", ""],
+        ["monthlyBmi1","/report/total_screened?category=bmi&start_bmi=18.5&end_bmi=24.9" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culBmi1","/report/total_screened?category=bmi&start_bmi=18.5&end_bmi=24.9" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["monthlyBmi2","/report/total_screened?category=bmi&start_bmi=25&end_bmi=29.9" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["culBmi2","/report/total_screened?category=bmi&start_bmi=25&end_bmi=29.9" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["monthlyBmi3","/report/total_screened?category=bmi&start_bmi=30&end_bmi=100" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["culBmi3","/report/total_screened?category=bmi&start_bmi=30&end_bmi=100" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["monthlyBmiUnk","/report/total_screened?category=bmi&start_bmi=0&end_bmi=0" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culBmiUnk","/report/total_screened?category=bmi&start_bmi=0&end_bmi=0" +
+                "&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyBpNormal","/report/total_screened?category=bp_classification&start_sbp=50&end_sbp=139" +
+                "&start_dbp=1&end_dbp=89&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culBpNormal","/report/total_screened?category=bp_classification&start_sbp=50&end_sbp=139" +
+                "&start_dbp=1&end_dbp=89&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyBpMild","/report/total_screened?category=bp_classification&start_sbp=140&end_sbp=159" +
+                "&start_dbp=90&end_dbp=99&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culBpMild","/report/total_screened?category=bp_classification&start_sbp=140&end_sbp=159" +
+                "&start_dbp=90&end_dbp=99&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["monthlyBpMod","/report/total_screened?category=bp_classification&start_sbp=160&end_sbp=179" +
+                "&start_dbp=100&end_dbp=109&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["culBpMod","/report/total_screened?category=bp_classification&start_sbp=160&end_sbp=179" +
+                "&start_dbp=100&end_dbp=109&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyBpSevere","/report/total_screened?category=bp_classification&start_sbp=180&end_sbp=1000" +
+                "&start_dbp=111&end_dbp=1000&start_date=<%= @start_date%> &end_date=<%= @end_date %>", ""],
+        ["culBpSevere","/report/total_screened?category=bp_classification&start_sbp=180&end_sbp=1000" +
+                "&start_dbp=111&end_dbp=1000&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["monthlyNewDiag","/report/total_screened?category=diagnosis_time" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        //["culNewDiag","/report/total_screened?category=diagnosis_time&" +
+        //        "start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyExisting","/report/total_screened?category=diagnosis_time" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        // ["culExisting","/report/total_screened?category=diagnosis_time" +
+        //        "&start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        /*["monthlyPodLighthouse","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culPodLighthouse","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["monthlyPodMoh","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culPodMoh","/report/total_screened?start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["monthlyPodOther","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culPodOther","/report/total_screened?start_date='1900/01/01' &end_date=<%= @end_date %>", ""],
+        ["monthlyPodUnk","/report/total_screened?start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culPodUnk","/report/total_screened?start_date='1900/01/01'" +
+                "&end_date=<%= @end_date %>", ""],
+      */["alive","/report/total_screened?category=outcome&outcome=alive" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["dead","/report/total_screened?category=outcome&outcome=dead" +
+                "&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["lostToFollowup","/report/total_screened?category=outcome" +
+                "&outcome=defaulted&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["transferred","/report/total_screened?category=outcome" +
+                "&outcome=transferred&start_date=<%= @start_date %> &end_date=<%= @end_date %>", ""],
+        ["culalive","/report/total_screened?category=outcome" +
+                "&outcome=alive&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["culdead","/report/total_screened?category=outcome" +
+                "&outcome=dead&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["cullostToFollowup","/report/total_screened?category=outcome" +
+                "&outcome=defaulted&start_date='1900/01/01'&end_date=<%= @end_date %>", ""],
+        ["cultransferred","/report/total_screened?category=outcome&outcome=transferred" +
+                "&start_date='1900/01/01'&end_date=<%= @end_date %>", ""]
+
+    ];
+
+
+    setTimeout('loadFields()',300);
+    //-->
+</script>

@@ -1,0 +1,25 @@
+<script>
+  var tt_cancel_destination = "/clinic?user_id=<%= params['user_id'] %>&location_id=<%= params['location_id'] %>" // /reports"
+</script>
+<style>
+#tt_page_select_the_type_of_prescription_taken #viewport {
+  height: 780px;
+}
+</style>
+
+  <% default={
+    :allowFreeText => 'true',
+  } %>
+<form method='post' action='/clinic/prescriptions'>
+	<input type='hidden' name='user_id' value='<%= params[:user_id] %>' />
+	<input type='hidden' name='location_id' value='<%= params[:location_id] %>' />
+  <% options=default.merge({
+      :field_type => 'text',
+      :helpText => "Select the type of prescription taken:",
+      :id => "prescription",
+      :tt_pageStyleClass => "MultiSelectList"
+    }) %>
+
+  <% @treatements_list = ["Standard OPD Prescription", "Advanced Prescription","Prescription With Sets"] %>
+  <%= select_tag("prescription",options_for_select(@treatements_list),options)%>
+</form>

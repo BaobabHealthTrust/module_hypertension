@@ -1,0 +1,607 @@
+<style>
+    th { text-align: center;
+        vertical-align: middle;
+        background-color: #9250DE;
+        color: white;
+        height: 10%;
+        border-radius: 20px ;
+    }
+    #charttable{
+        border-color:#ff0000 #0000ff;
+        border-radius: 20px ;
+        border-style: outset;
+        height: 390px;
+        overflow: scroll;
+    }
+    .statusLabel {
+        top: 542px ! important;
+        font-size: 15px ! important;
+    }
+    #yes4yes70m180{
+        background-color: #B8002E;
+    }
+    #yes5yes70m180{
+        background-color: #B8002E;
+    }
+    #yes6yes70m180{
+        background-color: #B8002E;
+    }
+
+    #yes7yes70m180{
+        background-color: #B8002E;
+    }
+    #yes8yes70m180{
+        background-color: #B8002E;
+    }
+
+    #yes4yes70m160{
+        background-color: #FF3333;
+    }
+    #yes5yes70m160{
+        background-color: #B8002E;
+    }
+    #yes6yes70m160{
+        background-color: #B8002E;
+    }
+
+    #yes7yes70m160{
+        background-color: #B8002E;
+    }
+    #yes8yes70m160{
+        background-color: #B8002E;
+    }
+
+
+    #yes4yes70m140{
+        background-color: #FF9933;
+    }
+    #yes5yes70m140{
+        background-color: #FF3333;
+    }
+    #yes6yes70m140{
+        background-color: #FF3333;
+    }
+
+    #yes7yes70m140{
+        background-color: #B8002E;
+    }
+    #yes8yes70m140{
+        background-color: #B8002E;
+    }
+
+    #yes4yes70m120{
+        background-color: #FFE47A;
+    }
+    #yes5yes70m120{
+        background-color: #FF9933;
+    }
+    #yes6yes70m120{
+        background-color: #FF9933;
+    }
+
+    #yes7yes70m120{
+        background-color: #FF3333;
+    }
+    #yes8yes70m120{
+        background-color: #B8002E;
+    }
+    #no7yes50m120, #no8yes40m120, #no7yes40m120,#no6yes40m120, #no5yes40m120, #no4yes40m120,  #no7yes40m140,#no6yes40m140, #no5yes40m140, #no4yes40m140, #no4yes40m160,#no5yes40m160,#no6yes50m120, #n7yes50m120,#no8yes50m120, #no5yes50m120,#no4yes50m120,#no6yes50m140,#no5yes50m140,#no4yes50m140,#no4yes50m160,#no6yes60m120,#no5yes60m120,#no4yes60m120,#no4yes60m140,#no4yes70m120,#yes7yes40m120,#yes6yes40m120, #yes4yes40m120, #yes5yes40m120, #yes6yes40m140,#yes5yes40m140, #yes4yes40m140,#yes4yes40m160,#yes7yes50m120,#yes6yes50m120,#yes5yes50m120,#yes4yes50m120, #yes5yes50m140,#yes4yes50m140,#yes4yes60m120, #first{
+
+        background-color: #336600;
+    }
+
+    #no8yes40m140, #no7yes40m160, #no6yes40m160, #no4yes40m180, #no7yes50m140,#no6yes50m160, #no5yes50m160,#no8yes60m120,#no7yes60m120,#no6yes60m140,#no5yes60m140,#no4yes60m160,#no6yes70m120, #no5yes70m120,#no4yes70m140,#yes8yes40m120,#yes7yes40m140,#yes5yes40m160,#yes6yes50m140,#yes4yes50m160,#yes4yes60m140, #yes5yes60m120, #yes6yes60m120, #second{
+
+        background-color: #FFE47A;
+    }
+
+    #no5yes40m180,#no8yes50m140,#no7yes50m160, #no4yes50m180, #no7yes60m140, #no5yes60m160,#no6yes60m160,#no8yes70m120, #no7yes70m120, #no6yes70m140,#no5yes70m140,#yes6yes40m160,#yes8yes50m120,#yes7yes50m140,#yes5yes50m160,#yes4yes60m160, #yes5yes60m140,#yes6yes60m140 , #yes7yes60m120, #third{
+
+        background-color: #FF9933;
+    }
+
+    #no6yes40m180,#no5yes50m180, #no8yes60m140,#no7yes60m160,#no7yes70m140,#no6yes70m160, #no4yes70m160,#no5yes70m160,#yes8yes40m140,#yes7yes40m160,#yes4yes40m180, #yes6yes50m160,#yes5yes60m160, #yes7yes60m140, #yes8yes60m120, #forth{
+
+        background-color: #FF3333;
+    }
+
+    #no8yes40m160, #no8yes40m180, #no7yes40m180, #no8yes50m160,#no8yes50m180, #no7yes50m180,#no6yes50m180, #no4yes60m180, #no8yes60m160, #no8yes60m180,   #no7yes60m180,#no6yes60m180,#no5yes60m180,#no5yes60m180,#no8yes70m140,#no7yes70m160,#no8yes70m160,#no8yes70m180,#no7yes70m180,#no6yes70m180,#no5yes70m180,#no4yes70m180, #yes8yes40m160,#yes8yes40m180,#yes7yes40m180, #yes6yes40m180,#yes5yes40m180, #yes8yes50m140,#yes7yes50m160,#yes8yes50m160, #yes4yes50m180,#yes5yes50m180,#yes6yes50m180,#yes7yes50m180,#yes8yes50m180, #yes4yes60m180,#yes5yes60m180,#yes6yes60m180,#yes7yes60m180,#yes8yes60m180,#yes6yes60m160, #yes7yes60m160,#yes8yes60m160,#yes8yes60m140, #fifth{
+
+        background-color: #B8002E;
+    }
+    #innertable {
+
+    }
+
+
+    #yes5yes40f120, #yes6yes40f120,#yes7yes40f120, #yes4yes40f120, #yes6yes40f140, #yes5yes40f140, #yes4yes40f140, #yes4yes40f160, #yes7yes50f120, #yes6yes50f120, #yes4yes50f120, #yes5yes50f120, #yes4yes50f140, #yes5yes50f140, #yes5yes60f120, #yes4yes60f120, #no4yes40f120, #no5yes40f120, #no6yes40f120,#no7yes40f120, #no8yes40f120, #no7yes40f140, #no6yes40f140, #no5yes40f140, #no4yes40f140, #no4yes40f160, #no5yes40f160, #no7yes50f120, #no6yes50f120, #no5yes50f120, #no4yes50f120, #no6yes50f140, #no5yes50f140, #no4yes50f140, #no4yes50f160, #no6yes60f120, #no5yes60f120, #no4yes60f120, #no4yes60f140, #no5yes70f120, #no4yes70f120, #first{
+
+        background-color: #336600;
+    }
+
+    #yes8yes40f120, #yes7yes40f140,  #yes5yes40f160, #yes8yes50f120, #yes6yes50f140, #yes4yes50f160, #yes5yes50f160, #yes7yes60f120, #yes6yes60f120, #yes5yes60f140, #yes4yes60f140, #yes4yes60f160, #yes4yes70f120, #yes5yes70f120, #yes6yes70f120, #yes4yes70f140, #no6yes40f160, #no8yes50f120, #no7yes50f140, #no6yes50f160,#no5yes50f160, #no8yes60f120, #no7yes60f120, #no6yes60f140, #no5yes60f140,#no4yes60f160, #no4yes70f160, #no7yes70f120, #no6yes70f120, #no6yes70f140, #no5yes70f140, #no4yes70f140, #no4yes0f160, #second{
+
+        background-color: #FFE47A;
+    }
+
+    #yes6yes40f160, #yes7yes50f140, #yes6yes50f160, #yes8yes60f120, #yes7yes60f140, #yes6yes60f140, #yes5yes60f160, #yes7yes70f120, #yes5yes70f140, #yes4yes70f160, #no8yes40f140, #no7yes40f160, #no4yes40f180, #no8yes50f140,#no7yes50f160,#no4yes50f180, #no7yes60f140, #no6yes60f160, #no5yes60f160, #no8yes70f120, #no7yes70f140, #no5yes70f160, #no6yes70f160, #third{
+
+        background-color: #FF9933;
+    }
+
+    #yes8yes40f140, #yes4yes40f180,#yes8yes50f140, #yes8yes60f140, #yes6yes60f160, #yes8yes70f120, #yes6yes70f140, #yes7yes70f140, #yes5yes70f160, #no5yes40f180,#no5yes50f180, #no8yes60f140, #no7yes60f160, #no8yes70f140, #no7yes70f160, #forth{
+        background-color: #FF3333;
+    }
+
+    #yes8yes40f160, #yes7yes40f160, #yes5yes40f180, #yes6yes40f180, #yes7yes40f180, #yes8yes40f180, #yes7yes50f160, #yes8yes50f160, #yes4yes50f180, #yes5yes50f180, #yes6yes50f180, #yes7yes50f180, #yes8yes50f180, #yes7yes60f160, #yes8yes60f160, #yes4yes60f180, #yes5yes60f180, #yes6yes60f180, #yes7yes60f180, #yes8yes60f180,  #yes8yes70f140, #yes6yes70f160, #yes7yes70f160, #yes8yes70f160, #yes4yes70f180, #yes5yes70f180, #yes6yes70f180, #yes7yes70f180, #yes8yes70f180, #no8yes40f160, #no8yes40f180,#no7yes40f180,#no6yes40f180,#no8yes50f160, #no6yes50f180,#no7yes50f180, #no8yes50f180, #no8yes60f160, #no4yes60f180, #no5yes60f180, #no6yes60f180, #no7yes60f180, #no8yes60f180, #no8yes70f160, #no4yes70f180, #no5yes70f180, #no6yes70f180, #no7yes70f180, #no8yes70f180, #fifth{
+        background-color: #B8002E;
+    }
+
+
+    #classed1 {
+        background-color: #B8002E;
+    }
+
+    #no8no40m120, #no7no40m120, #no6no40m120, #no5no40m120, #no4no40m120, #no7no40m140, #no6no40m140, #no5no40m140, #no4no40m140, #no7no40m160, #no6no40m160, #no5no40m160, #no4no40m160, #no4no40m180, #no8no50m120, #no7no50m120, #no6no50m120, #no5no50m120, #no4no50m120, #no4no50m140, #no5no50m140, #no6no50m140, #no7no50m140,#no4no50m160, #no5no50m160, #no6no50m160, #no4no60m120, #no5no60m120, #no6no60m120, #no7no60m120, #no4no60m140, #no5no60m140, #no6no60m140, #no4no60m160, #no4no70m120, #no5no70m120, #no6no70m120, #no4no70m140, #yes4no40m120, #yes5no40m120, #yes6no40m120, #yes7no40m120, #yes8no40m120, #yes7no40m140, #yes6no40m140, #yes5no40m140, #yes4no40m140, #yes4no40m160, #yes5no40m160, #yes4no50m120,#yes5no50m120,#yes6no50m120, #yes7no50m120, #yes4no50m140, #yes5no50m140, #yes6no50m140, #yes4no50m160, #yes5no60m120, #yes4no60m120, #yes6no60m120, #yes4no60m140, #yes4no70m120 {
+
+        background-color: #336600;
+    }
+
+    #no8no40m140, #no5no40m180, #no8no50m140, #no7no50m160, #no4no50m180, #no8no60m120, #no7no60m140, #no8no60m140, #no5no60m160, #no6no60m160, #no7no70m120, #no8no70m120, #no5no70m140, #no6no70m140, #no7no70m140, #no4no70m160, #no5no70m160, #yes6no40m160, #yes4no40m180, #yes5no50m160, #yes6no50m160, #yes7no50m140, #yes8no50m120, #yes7no60m120, #yes8no60m120, #yes5no60m140, #yes6no60m140, #yes4no60m160,#yes5no60m160, #yes7no70m120, #yes6no70m120, #yes5no70m120,#yes4no70m140, #yes5no70m140 {
+
+        background-color: #FFE47A;
+    }
+
+    #no8no40m160, #no6no40m180, #no8no50m160, #no5no50m180, #no6no50m180, #no7no60m160, #no4no60m180, #no8no70m140, #no7no70m160, #no6no70m160, #yes8no40m140, #yes7no40m160, #yes5no40m180, #yes7no50m160, #yes4no50m180, #yes8no50m140, #yes6no60m160, #yes7no60m140, #yes8no70m120, #yes7no70m140, #yes6no70m140, #yes4no70m160, #yes5no70m160{
+
+        background-color: #FF9933;
+    }
+
+    #no7no40m180, #no8no60m160, #no5no60m180,#no8no70m160, #no4no70m180, #no5no70m180, #yes5no50m180, #yes7no60m160,#yes8no60m140, #yes4no60m180, #yes8no70m140, #yes6no70m160 {
+
+        background-color: #FF3333;
+    }
+
+    #no8no40m180, #no7no50m180, #no8no50m180, #no8no60m180, #no7no60m180, #no6no60m180,#no8no70m180, #no7no70m180, #no6no70m180, #yes8no40m160, #yes6no40m180, #yes7no40m180, #yes8no40m180, #yes8no50m160, #yes6no50m180, #yes6no50m180, #yes7no50m180, #yes8no50m180, #yes8no60m160, #yes5no60m180, #yes6no60m180, #yes7no60m180, #yes8no60m180, #yes7no70m160, #yes8no70m160, #yes4no70m180, #yes5no70m180, #yes6no70m180, #yes7no70m180, #yes8no70m180 {
+
+        background-color: #B8002E;
+    }
+
+    #summary_container {
+        bottom: 124px;
+        font-size: 20px;
+        left: 25px;
+        position: absolute;
+        z-index: 600;
+        border-radius: 10px 10px 10px 10px;
+        width: 47.2em;
+        border-style: solid;
+        border-width: 1px;
+        background-color: lightgrey;
+        display: none;
+        -moz-user-select: none;
+        height: 18em;
+        overflow: auto;
+    }
+
+
+    #yes8no40f120, #yes4no40f120, #yes5no40f120, #yes6no40f120, #yes7no40f120, #yes4no40f140, #yes5no40f140, #yes6no40f140, #yes7no40f140, #yes4no40f160, #yes5no40f160, #yes4no50f120, #yes5no50f120, #yes6no50f120, #yes7no50f120, #yes8no50f120, #yes4no50f140, #yes5no50f140, #yes6no50f140, #yes7no50f140, #yes4no50f160, #yes5no50f160, #yes7no60f120, #yes6no60f120, #yes5no60f120, #yes4no60f120, #yes6no60f140, #yes4no60f140, #yes5no60f140, #yes4no60f160, #yes6no70f120, #yes5no70f120, #yes4no70f120, #yes4no70f140, #no8no40f120, #no7no40f120, #no6no40f120, #no4no40f120, #no5no40f120, #no7no40f140, #no6no40f140, #no5no40f140, #no4no40f140, #no6no40f160, #no5no40f160, #no4no40f160, #no4no50f120, #no5no50f120, #no6no50f120, #no7no50f120, #no8no50f120, #no7no50f140, #no6no50f140, #no5no50f140, #no4no50f140, #no4no50f160, #no6no50f160, #no5no50f160, #no8no60f120, #no7no60f120, #no6no60f120, #no5no60f120, #no4no60f120, #no7no60f140, #no6no60f140, #no5no60f140, #no4no60f140, #no6no60f160, #no5no60f160, #no4no60f160, #no4no70f120, #no5no70f120, #no6no70f120, #no7no70f120, #no8no70f120, #no4no70f140, #no5no70f140, #no6no70f140, #no4no70f160 {
+        width:10.01% ! important;
+        background-color: #336600;
+    }
+
+    #yes6no40f160, #yes8no50f140, #yes6no50f160, #yes8no60f120, #yes7no60f140, #yes6no60f160, #yes5no60f160, #yes8no70f120, #yes7no70f120, #yes7no70f140, #yes6no70f140, #yes5no70f140, #yes4no70f160, #yes5no70f160, #no8no40f140, #no7no40f160, #no5no40f180, #no4no40f180, #no8no50f140, #no7no50f160, #no4no50f180, #no8no60f140, #no8no60f160, #no7no60f160, #no4no60f180, #no7no70f140, #no8no70f140,#no5no70f160, #no6no70f160, #no7no70f160 {
+        width:10.02%;
+        background-color: #FFE47A;
+    }
+
+    #yes8no40f140, #yes7no40f160, #yes4no40f180, #yes7no50f160, #yes4no50f180, #yes8no60f140, #yes7no60f160, #yes4no60f180, #yes8no70f140, #yes7no70f160, #yes6no70f160, #no8no40f160, #no6no40f180, #no5no50f180, #no6no50f180, #no5no60f180,#no6no60f180, #no8no70f160, #no4no70f180, #no5no70f180 , #no8no50f160{
+        width:10.03%;
+        background-color: #FF9933;
+    }
+
+    #yes5no40f180, #yes5no50f180, #yes8no60f160, #yes5no60f180, #yes8no70f160, #yes4no70f180, #no7no60f180, #no6no70f180 {
+        width:10.04%;
+        background-color: #FF3333;
+    }
+
+    #yes8no70f180 , #yes8no40f160, #yes8no40f180, #yes7no40f180, #yes6no40f180, #yes8no50f160, #yes8no50f180, #yes7no50f180, #yes6no50f180, #yes7no60f180, #yes8no60f180, #yes6no60f180, #yes9no70f180, #yes7no70f180, #yes6no70f180, #yes5no70f180, #no7no40f180, #no8no40f180, #no7no50f180, #no8no50f180, #no8no60f180, #no7no70f180, #no8no70f180 {
+        width:10.05%;
+        background-color: #B8002E;
+    }
+
+    .summary {
+        font-size: 27px;
+        padding-left: 15px;
+    }
+
+    .data {
+        color: black;
+        font-size: 25px;
+    }
+
+    .menu{
+        border-radius: 20px ;
+        border-style:solid;
+        border-color:#ff0000 #0000ff;
+    }
+    .range{
+        height: 5%;
+        width: 400px;
+        background-color:white;
+        border-radius: 20px ;
+        border-style:solid;
+        border-color:#ff0000 #0000ff;
+    }
+
+    .create_button:hover{
+        color:black;
+    }
+
+    a:hover {
+        color:black;
+    }
+
+    .create_button {
+        background-color: #7784AE;
+        border-bottom: 1px outset black;
+        border-radius: 7px 7px 7px 7px;
+        border-style: outset;
+        border-top: 1px outset black;
+        color: #E8EAF1;
+        display: block;
+        padding: 10px 16px 10px 10px;
+        text-align: center;
+        text-decoration: none !important;
+        font-size:15px;
+        width: 50%;
+    }
+    #helper {
+        display: block;
+        float:right;
+        color: black;
+        background-color: #EEFFEE;
+        border: 1px solid #CCCCCC;
+        border-radius: 20px 20px 20px 20px;
+    }
+</style>
+
+<script type='text/javascript' language='javascript'>
+<!--
+    tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+    tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= @user.id %>';
+    var smoking = "";
+    var diabetic = "";
+    var age;
+    var riskValue = "";
+
+
+    function calculateBP(pos){
+        var bp;
+
+        if(!$('bp')){
+            var div = document.createElement("div");
+            div.id = "bp";
+            div.className = "statusLabel";
+
+            $("inputFrame" + tstCurrentPage).appendChild(div);
+        }
+        <% if @first_vist == false %>
+        if (riskValue == "< 10 %"){
+            $("bp").innerHTML = "Reassess cardiovascular risk in 12 months<br>";
+        }
+        else if (riskValue == ">= 10% and < 20%"){
+            $("bp").innerHTML = "Reassess cardiovascular risk in 6 months<br>";
+        }
+        else{
+            <% if Location.current_health_center.description.match(/district hospital/i) %>
+            $("bp").innerHTML = "Follow-up monthly<br>Reassess cardiovascular risk in 3 months<br>";
+            <% end %>
+            <% if Location.current_health_center.description.match(/health center/i) %>
+            $("bp").innerHTML = "<a class='create_button' href='/protocol_patients/treatment?ext=1&patient_id=<%= @patient.id %>&user_id=<%= @user.id %>'>Refer to next level</a><br>";
+            <% end %>
+        }
+
+        <% else %>
+        if ((riskValue == "< 10 %") || (riskValue == ">= 10% and < 20%")){
+            $("bp").innerHTML = "Counsel on diet, physical activity, smoking cessation<br>";
+        }
+        else{
+            <% if Location.current_health_center.description.match(/district hospital/i) %>
+            $("bp").innerHTML = "Treat accordingly & follow-up<br>";
+            <% end %>
+            <% if Location.current_health_center.description.match(/health center/i) %>
+            $("bp").innerHTML = "<a class='create_button' href='/protocol_patients/treatment?ext=1&patient_id=<%= @patient.id %>&user_id=<%= @user.id %>'>Refer to next level</a><br>";
+            <% end %>
+        }
+        <% end %>
+        $("bp").innerHTML += "Risk Value: <i style='font-size: 1.2em; float: right;'>" + riskValue + "</i>";
+        //timedEvent = setTimeout('calculateBP(' + pos + ')', 500);
+    }
+    function upcaseFirst(property) {
+        return property.replace(/_/g, ' ').replace(/(\w+)/g, function(match) {
+            return match.charAt(0).toUpperCase() + match.slice(1);
+        });
+    };
+
+
+    function showSelectedConditions() {
+        var conditions = [];
+        var cholesterol = '<%= @cholesterol_value.to_i / 18  %>'
+        var html
+
+        conditions.push("Age : " + '<%= @patient.age %>');
+
+        conditions.push("Gender : " + '<%= @patient.gender %>');
+
+        conditions.push("Smoker : " + '<%= @smoking_status %>');
+
+        if ($('diabetic').value.length > 0)
+            conditions.push("Diabetes : " + $('diabetic').value);
+
+        age = '<%= @patient.age.to_i %>'
+
+        if (age < 50){
+            age = 40;
+        }
+        else if(age >= 50 && age <60){
+            age = 50;
+        }
+        else if (age >= 60 && age < 70){
+            age = 60
+        }
+        else if (age >= 70){
+            age = 70
+        }
+        else {
+            age = 0;
+        }
+
+        smoking = '<%= @smoking_status.downcase rescue "" %>'
+        diabetic = $('diabetic').value.toLowerCase();
+        sex = '<%= @patient.gender.downcase  rescue "" %>'
+        bp = '<%= @systolic_value.to_i   rescue ""%>'
+        if (sex == "female")
+            sex = "f"
+
+        if (sex == "male")
+            sex = "m"
+
+        conditions.push("SBP : " + '<%= @systolic_value.to_i  %>' + " mm Hg");
+
+        conditions.push("Cholesterol : " + '<%= @cholesterol_value.to_i / 18  %>' + " mmol/l");
+
+        html = "<table valign='top' id='maintable' width='100%'><tr valign='top'><td width='20%' class='menu'><ul>"
+        for(var i=0;i < conditions.length;i++) {
+            if (conditions[i].length > 0)
+                html += "<li class='data'>" + conditions[i] + "</li>";
+
+        }
+        html += "</ul></td>"
+
+        html +="<td valign='top' width='80%' id='innertable'><table id='charttable'  width='100%'><tr ><th colspan='10'>WHO/ISH risk Prediction</th></tr>"
+        html += "<tr  valign='top' class='range'><td colspan = '10'><table cellspacing='5'><tr>"
+        html += "<td width='5%'><10%           </td><td id='first' width='5%' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp;  </td>"
+        html += "<td width='5%'>>=10% and <20%   </td><td id='second' width='5%' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp; </td>"
+        html += "<td width='5%'>>=20% and <30%   </td><td id='third' width='5%' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp; </td>"
+        html += "<td width='5%'>>=30% and <40%   </td><td id='forth' width='5%' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp; </td>"
+        html += "<td width='5% ! important'>>= 40% </td>     <td id='fifth' width='5% ! important' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp;</td></tr>"
+        html += "</tr></table></td><tr><td colspan='10'></td></tr>"
+        var min_age = 70;
+
+        if (cholesterol > 8)
+            cholesterol = 8
+
+        if (cholesterol < 4)
+            cholesterol = 4
+
+        html += "<tr>"
+        for (var h =0; h < 4; h++){
+
+            html += "<td align='right' colspan='' width = 10%><b>" + min_age + "</b></td><td colspan='' align='left'  width = 15%><table id = 'mytable' border=0 align='left'>"
+            var max_sbp = 180;
+            if (bp <= 130) {
+                set_age = 120
+            }
+            else if (bp > 130 && bp <= 150){
+                set_age = 140
+            }
+            else if (bp > 150 && bp <= 170){
+                set_age = 160
+            }
+            else {
+                set_age = 180
+            }
+            predefinedClass = smoking + cholesterol + diabetic + age +  sex + set_age
+            html += "<tr>"
+            for (i =0; i< 4; i++){
+                classed = smoking + "4" + diabetic + min_age +  sex + max_sbp
+                if (predefinedClass == classed){
+
+                    html += "<td id ='" + classed + "' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp;&nbsp;</td>"
+                }
+                else {
+                    html += "<td id ='" + classed + "'>&nbsp;&nbsp;</td>"
+                }
+
+                classed = smoking + "5" + diabetic + min_age +  sex + max_sbp
+                if (predefinedClass == classed){
+
+                    html += "<td id ='" + classed + "' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp;&nbsp;</td>"
+                }
+                else {
+                    html += "<td id ='" + classed + "'>&nbsp;&nbsp;</td>"
+                }
+
+                classed =  smoking + "6" + diabetic + min_age +  sex + max_sbp
+                if (predefinedClass == classed){
+
+                    html += "<td id ='" + classed + "' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'><blink>&nbsp;&nbsp;</blink></td>"
+                }
+                else {
+                    html += "<td id ='" + classed + "'>&nbsp;&nbsp;</td>"
+                }
+
+                classed =  smoking + "7" + diabetic + min_age +  sex + max_sbp
+                if (predefinedClass == classed){
+                    html += "<td id ='" + classed + "' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp;&nbsp;</td>"
+                }
+                else {
+                    html += "<td id ='" + classed + "'>&nbsp;&nbsp;</td>"
+                }
+
+                classed =  smoking + "8" + diabetic + min_age +  sex + max_sbp
+                if (predefinedClass == classed){
+                    html += "<td id ='" + classed + "' style ='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;'>&nbsp;&nbsp;</td>"
+                }
+                else {
+                    html += "<td id ='" + classed + "'>&nbsp;&nbsp;</td>"
+                }
+
+                html += "<td><b>" + max_sbp + "</b></td></tr>";
+                max_sbp -= 20;
+                if (i == 3){
+                    html += "<tr><td >&nbsp;4</td>"
+                    html += "<td >&nbsp;5</td>"
+                    html += "<td >&nbsp;6</td>"
+                    html += "<td >&nbsp;7</td>"
+                    html += "<td >&nbsp;8</td></tr>"
+                    html += "<tr><td colspan=5>Cholesterol (mmol/l)</td></tr>"
+                    //document.getElementById(predefinedClass)
+                    //alert(document.getElementById(predefinedClass))
+                    //html += "<td><b>" + max_sbp + "</b></td></tr>";
+                }
+            }
+
+            min_age -= 10;
+            html += "</table></td>"
+        }
+
+        html +="</tr></table></td></tr>"
+
+        html += "</table></td></tr>"
+        html += "</table>"
+        $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + html + '</div>' ;
+        $("clearButton").style.display = "none";
+
+        elem1 = document.getElementById(predefinedClass);
+
+        bg = window.getComputedStyle(elem1, null).backgroundColor;
+        if (bg == "rgb(51, 102, 0)")
+        {
+            riskValue = "< 10 %"
+        }
+
+        if (bg == "rgb(184, 0, 46)")
+        {
+            riskValue = ">= 40%"
+        }
+
+        if (bg == "rgb(255, 228, 122)")
+        {
+            riskValue = ">= 10% and < 20%"
+        }
+
+        if (bg == "rgb(255, 153, 51)")
+        {
+            riskValue = ">= 20% and < 30%"
+        }
+
+        if (bg == "rgb(255, 51, 51)")
+        {
+            riskValue = ">= 30% and < 40%"
+        }
+
+
+
+        html = "<table valign='top' id='maintable' width='100%'><tr><td width =80%>"
+        html += "Risk Percentage : </td><td width =20%>" + riskValue + "</td></tr>"
+        html += "<tr><td width =80%>Risk Color: </td><td style='border-radius: 20px ;border-style: outset;border-color:#ff0000 #0000ff;background-color:" + bg +"' width =20%> &nbsp;</td></tr>"
+        html += "<tr><td width =80%>With Age Range : </td><td width =20%>" + age + " Years</td></tr></table>"
+        $('inputFrame'+tstCurrentPage).innerHTML += html
+
+        calculateBP()
+
+        submitForm = document.getElementById("assessment");
+
+        newElement = document.createElement("input");
+        newElement.setAttribute("name","concept[Assessment comments]");
+        newElement.setAttribute("type","hidden");
+        newElement.value = riskValue;
+        submitForm.appendChild(newElement);
+
+        //for (var i = 1; i < numRows; i++) {
+        // alert the table cell contents
+        // you probably do not want to do this, but let's just make
+        // it SUPER-obvious  that it works :)
+        //alert(td[i].width);
+        //}
+
+    }
+
+    //-->
+
+</script>
+<% if @cholesterol_value == 0 || @systolic_value == 0 %>
+    <div class="inputPage NoKeyboard" id="page" style="display: block;">
+      <div id="trigger"></div>
+      <div id="infoBar" class="infoBarClass"></div>
+      <label id="helpText" class="helpTextClass" for="">
+        No enough information for assessment :
+
+        <% if @cholesterol_value == 0 %>
+            Capture cholesterol lab order <br/>
+        <% end %>
+        <% if @systolic_value == 0 %>
+            Capture systollic blood pressure <br/>
+        <% end %>
+      </label>
+    </div>
+    <div id="buttons" class="buttonsDiv" style="top:456;">
+      <div id="tt_extraButtons"></div>
+      <button onmousedown="window.location=tt_cancel_destination;" id="cancelButton" class="button navButton red"><span>Cancel</span></button>
+    </div>
+    <script>
+        setTimeout("window.location=tt_cancel_destination;", 5000);
+    </script>
+<% else %>
+
+    <form method='post' action='/encounters/create' id="assessment">
+      <input type='hidden' name='program' value='CHRONIC CARE PROGRAM' />
+      <input type='hidden' name='encounter_type' value='ASSESSMENT ' />
+      <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+      <input type='hidden' name='user_id' value='<%= @user.id %>' />
+      <table>
+        <tr>
+          <td>
+            Is patient Diabetic?
+          </td>
+          <td>
+            <% if @diabetic.upcase != "YES" %>
+                <select id='diabetic' name='concept[Patient has Diabetes]' helpText='Is patient Diabetic?<span id="helper">Assessment</span> ' pos='1' >
+                  <option></option>
+                  <option value='No'>No</option>
+                  <option value='Yes'>Yes</option>
+                </select>
+            <% else %>
+                <input type='hidden' id='diabetic' value='YES' />
+            <%  end %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Risk Pridiction for: <b><%= @patient.name %></b>
+          </td>
+          <td>
+            <label for='summary'>Risk Pridiction for: <b><%= @patient.name %></b> <span id="helper">Assessment</span></label>
+            <%= text_field_tag :summary, nil, {
+                    :tt_onLoad => "showSelectedConditions();__$('keyboard').style.display = 'none';",
+                    :optional => "true",
+                    :tt_pageStyleClass => "NoControls" } %>
+
+          </td>
+        </tr>
+
+      </table>
+    </form>
+<% end %>

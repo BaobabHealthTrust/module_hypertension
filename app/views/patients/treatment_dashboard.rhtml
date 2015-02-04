@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<title>Patient Treatment Dashboard</title>
+		<script type="text/javascript" language="javascript"
+			src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer  >
+		</script>
+<script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+		<meta http-equiv='content-type' content='text/html;charset=UTF-8' />
+
+		<script language="javascript">
+			tstUsername = "";
+			tstCurrentDate = "<%= @date %>";
+			//tt_cancel_destination = '/patients/show/<%= @patient.id %>';
+			tt_cancel_show = "<%= (((@amounts_required.to_f != @amount_needed.to_f) && (@amount_needed.to_i > 0))?
+						      "javascript:confirmAction()" : "/patients/show/#{@patient.id}?user_id=#{@user["user_id"] }") %>";
+
+			function confirmAction(){
+				confirmOperation("An amount of <%= @amount_needed %> units is still outstanding. Do you still want to ignore it?",
+					"/patients/show/<%= @patient.id %>?user_id=<%=  @user["user_id"] %>")
+
+				return;
+
+				var response = confirm("An amount of <%= @amount_needed %> units is still outstanding. Do you still want to ignore it?");
+
+				if(response) {
+					alert(response);
+					window.location = "/patients/show/<%= @patient.id %>?user_id=<%=  @user["user_id"] %>";
+				} 
+			}
+
+		</script>
+
+	</head>
+
+	<body>
+		<div id='content'>
+			<form id = 'dashboard' action='/clinic'>
+				<h1 id='project_name'>
+                  <div style="margin-top: 10px; color: #6281A7;">
+                    htn<sub style="font-size: 12px;">module</sub><sup style="font-size: 12px; margin-left: -40px; color: green;">treatment</sup>
+                  </div>
+				</h1>
+				<span id='patient_name'><%= @patient.name rescue "" %></span>
+				<span id='patient_id'><%= @patient.national_id rescue "" %></span>
+				<span id='patient_residence'><%= "#{@patient.address}" %></span>
+				<% if @patient.age > 0 %>
+				    <span id='patient_age'><%= @patient.age rescue "" %></span>
+				<% else %>
+				    <span id='patient_age'><%= "#{@patient.age_in_months} Months" rescue "" %></span>
+				<% end %>
+				<span id='patient_gender'><%= @patient.gender rescue "" %></span>
+
+
+				<select id="tabs">
+					<option value='/patients/treatment?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id %>&dispensed_order_id=<%=@dispensed_order_id%>'>
+						Dispensation
+					</option>
+					<option value='/patients/history_treatment?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id %>'>Treatment history</option>
+				</select>
+
+				<select id="links">
+
+					<% if !@advanced.nil? and @advanced.upcase == "ADVANCED PRESCRIPTION" %>
+						<optgroup value='/prescriptions/generic_advanced_prescription?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id -%>' label="Drugs">Drugs</option>
+					<% elsif @advanced.upcase == "PRESCRIPTION WITH SETS"%>
+                                                <optgroup value='/prescriptions/new_prescription?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id -%>' label="Drugs">Drugs</optgroup>
+                                        <% else %>
+						<optgroup value='/prescriptions/prescribe?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id -%>' label="Drugs">Drugs</optgroup>
+					<% end %>
+					<% if @dispense.to_s.downcase == "false" %>
+					 <optgroup value='/dispensations/new?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id -%>' label="Dispense">Dispense</optgroup>
+					<%  end %>
+
+                                        <%#  if @advanced.upcase == 'STANDARD OPD PRESCRIPTION' %>
+					 <optgroup value='/prescriptions/prescription_print?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id -%>' label="Prescriptions (Print)">Prescription (Print)</optgroup>
+					<%#  end %>
+                                          <optgroup value='/encounters/life_advise?user_id=<%=  @user["user_id"] %>&patient_id=<%= @patient.id -%>' label="Life Changes">Life Changes</optgroup>
+				</select>
+
+				<input type='button' value='Done' />
+				<input type='submit' value='Finish' />
+			</form>
+		</div>
+          <script>
+            function showError(){
+              <% unless flash[:error].nil? %>
+                showMessage("<%= flash[:error] %>");
+              <% end %>
+              }
+            setTimeout("showError();",300);
+          </script>
+	</body>
+</html>

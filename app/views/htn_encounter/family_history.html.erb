@@ -1,0 +1,42 @@
+<script language="javascript" type="text/javascript" src="/javascripts/jquery.js"></script>
+<script type="text/javascript">
+    var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>";
+    var displayText = "";
+
+    function showSummary()
+    {
+        jQuery('#keyboard').empty();
+        displayText += "Family has history of pre-mature cardiovascular death : <b>" + $('cvDeath').value + "</b><br/>"
+        displayText += "Family has history of diabetes : <b>" + $('diabetesHistory').value + "</b><br/>"
+        displayText += "Family has history of hypetension : <b>" + $('hypertensionHistory').value + "</b><br/>"
+        displayText += "Family has history of kidney disease : <b>" + $('kidneyHistory').value + "</b><br/>"
+        document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>' ;
+    }
+</script>
+
+<form action="/htn_encounter/create/">
+  <%= hidden_field_tag "encounter[encounter_type_name]", "FAMILY MEDICAL HISTORY" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]", User.current.user_id %>
+
+  <%= touch_yes_no_tag "Does the family have a history of premature cardiovascular death?", @patient,
+                        nil, {:id => "cvDeath", :helptext => "Does the family have a history of premature cardiovascular death?" }%>
+
+  <%= touch_yes_no_tag "DIABETES FAMILY HISTORY", @patient, nil, {:id => "diabetesHistory",
+                        :helptext => "Does family have history of diabetes?"} %>
+
+  <%= touch_yes_no_tag "DOES THE FAMILY HAVE A HISTORY OF HYPERTENSION?", @patient, nil, {:id => "hypertensionHistory",
+                        :helptext => "Does family have history of hypertension?"} %>
+
+  <%= touch_yes_no_tag "DOES THE FAMILY HAVE A HISTORY OF KIDNEY DISEASE?", @patient, nil, {:id => "kidneyHistory",
+                        :helptext => "Does family have history of kidney disease?"} %>
+
+
+  <%= text_field_tag :showSummary, nil,
+                     {	:tt_onLoad => "showSummary();  $('clearButton').style.display = 'none';  ",
+                          :tt_onUnLoad => " $('clearButton').style.display = 'inline';",
+                          :helpText => "Summary",
+                          :optional => "true"
+                     } %>
+</form>

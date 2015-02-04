@@ -1,0 +1,2 @@
+module HtnLocationHelper
+end
