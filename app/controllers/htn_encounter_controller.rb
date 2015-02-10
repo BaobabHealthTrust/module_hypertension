@@ -120,11 +120,16 @@ class HtnEncounterController < ApplicationController
   
   	if !session[:datetime].blank? && !session[:htn_provider_id].blank?
   		user_person_id = session[:htn_provider_id]
-  	else
+
+   else
+
    		user_person_id = Core::User.find_by_user_id(params['encounter']['provider_id']).person_id
-	end
+   end
+
   end
+
   encounter.provider_id = user_person_id
+  encounter.creator = current_user.user_id
   encounter.save
   create_obs(encounter, params)
 =begin
@@ -657,7 +662,7 @@ def create_or_update(params)
   @patient = Core::Patient.find(params[:id])
  end
 
- def redirect_to_to_next_task
+ def redirect_to_next_task
   redirect_to next_task(Patient.find(params['patient_id']))
  end
 end
