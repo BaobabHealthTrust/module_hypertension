@@ -103,6 +103,15 @@ module ApplicationHelper
   def htn_screening_age
    get_global_property_value("htn.screening.age.threshold").to_i rescue 0
   end
+
+  def htn_diastolic_threshold
+   get_global_property_value("htn.diastolic.threshold").to_i rescue 140
+  end
+
+  def htn_systolic_threshold
+   get_global_property_value("htn.systolic.threshold").to_i rescue 90
+  end
+
   def prefix
     get_global_property_value("dc.number.prefix") rescue ""
   end

@@ -94,6 +94,8 @@ module Core
 
    def eligible_for_htn_screening(date = Date.today)
     threshold = CoreService.get_global_property_value("htn.screening.age.threshold").to_i
+    sbp_threshold = CoreService.get_global_property_value("htn_systolic_threshold").to_i
+    dbp_threshold = CoreService.get_global_property_value("htn_diastolic_threshold").to_i
 
     if (self.age(date) >= threshold || self.programs.map{|x| x.name}.include?("HYPERTENSION PROGRAM"))
 
@@ -107,7 +109,7 @@ module Core
 
       if last_check.blank?
        return true #patient has never had their BP checked
-      elsif ((last_check['SBP'].to_i >= 140 || last_check['DBP'].to_i >= 90))
+      elsif ((last_check['SBP'].to_i >= sbp_threshold || last_check['DBP'].to_i >= dbp_threshold))
        return true #patient had high BP readings at last visit
       elsif((date.to_date - last_check.max_date.to_date).to_i >= 365 )
        return true # 1 Year has passed since last check
@@ -144,6 +146,9 @@ module Core
    end
 
    def bp_normal()
+    sbp_threshold = CoreService.get_global_property_value("htn_systolic_threshold").to_i
+    dbp_threshold = CoreService.get_global_property_value("htn_diastolic_threshold").to_i
+
     diastolic = Core::Observation.find(:last,:conditions => ["person_id = ? AND concept_id = ? AND obs_datetime = ?",
                                               self.id,Core::Concept.find_by_name("diastolic blood pressure").concept_id,
                                               Date.today])
@@ -153,7 +158,7 @@ module Core
     if (diastolic.blank? || systolic.blank?)
      raise "Patient has no BP measurements".to_s
     else
-     if (diastolic.value_text.to_i >= 90 || systolic.value_text.to_i >= 140)
+     if (diastolic.value_text.to_i >= dbp_threshold || systolic.value_text.to_i >= sbp_threshold)
        false
      else
       true
@@ -184,7 +189,7 @@ module Core
                                        '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}' HAVING SBP IS NOT NULL
                                        AND DBP IS NOT NULL ORDER BY o.obs_datetime DESC, o.encounter_id DESC").each do |record|
      #visits[record.obs_datetime.strftime('%d-%b-%Y')] = [] if visits[record.obs_datetime.strftime('%d-%b-%Y')].blank?
-     visits << {"date" => record.obs_datetime.strftime('%d-%b-%Y'), "systolic" => record["SBP"],
+     visits << {"date" => record.obs_datetime.strftime('%d-%b-%Y'), "systolic" => record["SBP"],"grade" => bp_grade(record["SBP"],record["DBP"]),
                 "diastolic" => record["DBP"], "plan" => (record["plan"].blank? ? "" : record["plan"]), "drugs" => "None"}
     end
     return visits
@@ -367,5 +372,41 @@ module Core
      end
     end
 
+   def bp_grade(sbp, dbp)
+
+     if (sbp.to_i < 140 ) && (dbp.to_i < 90)
+      return "normal"
+     elsif ((sbp.to_i >= 140 && sbp.to_i < 160) || (dbp.to_i >= 100 && dbp.to_i < 110))
+      return "grade 1"
+     elsif (sbp.to_i >= 180 && dbp.to_i > 110) || sbp.to_i >= 180
+      return "grade 3"
+     elsif ((sbp.to_i >= 160 && sbp.to_i < 180) || (dbp.to_i >= 110 ))
+      return "grade 2"
+     end
+   end
+
+   def normatensive(trail)
+
+    dates_checked = 0
+    normal_bp = 0
+    dates = []
+    (0..2).each do |day|
+     return false if trail[day].blank?
+
+       if trail[day]["diastolic"].to_i < 90 && trail[day]["systolic"].to_i < 140 && !dates.include?(trail[day]["date"])
+          normal_bp += 1
+     end
+     dates_checked +=1 if !dates.include?(trail[day]["date"])
+     dates << trail[day]["date"] if !dates.include?(trail[day]["date"])
+
+     break if dates_checked == 2 && normal_bp == 2
+    end
+
+    if dates_checked == 2 && normal_bp == 2
+     return true
+    else
+     return false
+    end
+   end
   end
 end

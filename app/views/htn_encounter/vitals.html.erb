@@ -61,7 +61,7 @@
         var sbp = document.getElementById("systolic_blood_pressure").value
         var dbp = document.getElementById("diastolic_blood_pressure").value
 
-        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
+        if((parseInt(sbp) > <%= htn_systolic_threshold %>) && (parseInt(dbp) > <%= htn_diastolic_threshold %>)){
             return true
         }
         else
@@ -110,7 +110,7 @@
         }
         displayText += "</div>"
 
-        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
+        if((parseInt(sbp) > <%= htn_systolic_threshold %>) && (parseInt(dbp) > <%= htn_diastolic_threshold %>)){
 
             displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp +"/" +
                     dbp + "</span><span class='recommendation'>Patient's blood pressure is high</span><br/>";
@@ -245,7 +245,11 @@
 
     function captureBP()
     {
-        if ((<%= htn_activated %> ) && (<%= @patient_eligible %> || bpOverRide))
+        if (<%= htn_activated %>  && <%= @patient_eligible %> && !bpOverRide )
+        {
+            return  true
+        }
+        else if (<%= htn_activated %>  && <%= !@patient_eligible %> && bpOverRide)
         {
             return true
         }
@@ -258,7 +262,7 @@
     function toggleOverride()
     {
         bpOverRide = (!bpOverRide);
-        document.getElementById("captureBPBtn").innerHTML = (bpOverRide ? "<span>Don't Capture BP</span>" : "<span>Capture BP</span>");
+        document.getElementById("captureBPBtn").innerHTML = (document.getElementById("captureBPBtn").innerHTML == "<span>Capture BP</span>" ? "<span>Don't Capture BP</span>" : "<span>Capture BP</span>");
     }
 
     function addButton() {
@@ -270,19 +274,27 @@
             bp.setAttribute("id", "captureBPBtn")
             document.getElementById("buttons").appendChild(bp);
         }
+        else if ((<%= htn_activated %>) && (<%= @patient_eligible %>))
+        {
+            var bp = document.createElement("button");
+            bp.innerHTML = "<span>Don't Capture BP</span>";
+            bp.setAttribute("onClick", "toggleOverride()");
+            bp.setAttribute("id", "captureBPBtn")
+            document.getElementById("buttons").appendChild(bp);
+        }
 
     }
 
     function hideButton()
     {
-        if ((<%= htn_activated %>) && (<%= !@patient_eligible %>))
+        if (<%= htn_activated %>)
         {
             document.getElementById("captureBPBtn").style.display = 'none'
         }
     }
     function displayButton()
     {
-        if ((<%= htn_activated %>) && (<%= !@patient_eligible %>))
+        if (<%= htn_activated %>)
         {
             document.getElementById("captureBPBtn").style.display = 'block'
         }
@@ -328,7 +340,7 @@
   <% end %>
   <%= text_field_tag :showSummary, nil,
                      {	  :tt_onLoad => "growthIndicators();  __$('clearButton').style.display = 'none';displayButton()",
-                          :tt_onUnLoad => " __$('clearButton').style.display = 'block';hideButton()",
+                          :tt_onUnLoad => " hideButton();__$('clearButton').style.display = 'block';",
                           :helpText => "Weight Summary",
                           :optional => "true"
                      } %>
@@ -337,6 +349,7 @@
                         {	:id => "systolic_blood_pressure",
                              :field_type => "number",
                              :helpText => "Systolic blood pressure (?/Y)",
+                             :tt_onLoad => "hideButton()",
                              :min => 80,
                              :max => 180,
                              :condition => "captureBP()",

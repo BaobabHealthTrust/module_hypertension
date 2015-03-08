@@ -14,8 +14,18 @@
   td {
       border-bottom:1pt solid black;
   }
-  tr.highBP{
-      background-color: #FFD000;
+  tr.normal{
+      background-color: #ffffff;
+  }
+  tr.grade1{
+      background-color: #FFC3CE;
+  }
+  tr.grade2{
+      background-color: #F20056;
+      color: white;
+  }
+  tr.grade3{
+      background-color: #FF3333;
   }
   div.heading{
       background-color: lightgrey;
@@ -117,8 +127,6 @@
 
     function nextPage()
     {
-        document.getElementById("nextButton").setAttribute("onmousedown", "")
-        document.getElementById("message").style.display = "block";
 
 
         options = document.getElementsByClassName("option")
@@ -126,7 +134,6 @@
         for(i = 0; i < options.length; i ++)
         {
             if (options[i].getAttribute("selected") == "true")
-
             {
                 checked = true;
                 switch (options[i].children[1].innerHTML){
@@ -146,6 +153,8 @@
                         path = "/htn_encounter/redirect_to_next_task?patient_id=<%= @patient.patient_id %>"
                         break;
                 }
+                document.getElementById("nextButton").setAttribute("onmousedown", "")
+                document.getElementById("message").style.display = "block";
 
                 return createEncounter(options[i].children[1].innerHTML, path, options[i].children[1].getAttribute("state"));
 
@@ -234,7 +243,7 @@
             </thead>
             <tbody>
             <% (@bp_trail || []).each do  |record|  %>
-                <tr class=<%= (record['systolic'].to_i > 140 || record['diastolic'].to_i > 90) ? 'highBP' : ''%> >
+                <tr class=<%= @patient.bp_grade(record['systolic'].to_i ,record['diastolic'].to_i).gsub(' ', '') rescue 'normal' %> >
                   <td style="text-align: center"><%= record['date'] %></td>
                   <td style="text-align: center"><%= record['systolic'] %></td>
                   <td style="text-align: center"><%= record['diastolic'] %></td>
@@ -291,11 +300,13 @@
                   </div>
                 </div>
                 <div class="row">
+                 <% if @normatensive %>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                     <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="Alive">Return to annual screening</div>
                   </div>
-                    </div>
+                  </div>
+                 <% end %>
                   <div class="cell"><div class="option" selected=false onclick="selected(this)">
                     <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"></div>
                     <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="On Treatment">Start anti-hypertensives</div>

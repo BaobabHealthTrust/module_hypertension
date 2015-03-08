@@ -61,7 +61,7 @@
         var sbp = document.getElementById("systolic_blood_pressure").value
         var dbp = document.getElementById("diastolic_blood_pressure").value
 
-        if((parseInt(sbp) > 140) && (parseInt(dbp) > 90)){
+        if((parseInt(sbp) > <%= htn_systolic_threshold %>) && (parseInt(dbp) > <%= htn_diastolic_threshold %>)){
             return true
         }
         else
@@ -98,7 +98,7 @@
         var sbp = document.getElementById("systolic_blood_pressure").value
         var dbp = document.getElementById("diastolic_blood_pressure").value
 
-        if((parseInt(sbp) > 140) || (parseInt(dbp) > 90)){
+        if((parseInt(sbp) > <%= htn_systolic_threshold %>) && (parseInt(dbp) > <%= htn_diastolic_threshold %>)){
 
             displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp +"/" +
                     dbp + "</span><span class='recommendation'> Patient's blood pressure is high</span><br/>";

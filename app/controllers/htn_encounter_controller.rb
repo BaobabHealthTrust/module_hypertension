@@ -392,6 +392,7 @@ def create_or_update(params)
   date = session[:datetime].to_date rescue Date.today
   @patient_program = @patient.enrolled_on_program(Core::Program.find_by_name("Hypertension program").id,date, true)
   @bp_trail =  @patient.bp_management_trail(date)
+  @normatensive = @patient.normatensive(@bp_trail)
   @note = @patient.pregnancy_status(date) if @patient.gender == "F"
   @risks = @patient.current_risk_factors(date).length
  end
