@@ -35,6 +35,9 @@
 			</div>
 			<% if (((@bp[0] || 0) <= 160) &&  ((@bp[1] || 0) <= 100) && !@patient_pregnant) %>
                 <div class="body">
+                  <% if @patient_on_bp_drugs %>
+                        <h2 style="font-weight:bold;">(Patient already on BP drugs)</h2>
+                  <% end %>
                   <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
                     </span>  <br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. <br>Do you want to test BP?  </h2>
 
@@ -50,6 +53,9 @@
                 </div>
             <% else %>
                 <div class="body">
+                  <% if @patient_on_bp_drugs %>
+                        <h2 style="font-weight:bold;">(Patient already on BP drugs)</h2>
+                  <% end %>
                   <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
                     </span>  <br /> Recapture BP! </h2>
 
