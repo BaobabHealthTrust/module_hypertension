@@ -691,6 +691,10 @@ class HtnEncounterController < ApplicationController
 
   def capture_bp_drugs
     @patient = Core::Patient.find(params['patient_id'])
+    if request.method == :post
+      drugs = params[:drugs].split(', ')
+      raise drugs.inspect
+    end
   end
   
   def redirect_to_next_task

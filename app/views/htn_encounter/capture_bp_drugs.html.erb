@@ -19,20 +19,49 @@
     gotoNextPage();
   }
 
-function changeDefaultSettings(){
-  nextButton = document.getElementById('nextButton');
-  nextButton.innerHTML = '<span>Finish</span>';
-  nextButton.onmousedown = function(){
-    drug = document.getElementById("touchscreenInput" + tstCurrentPage).value;
-    if (drug == ''){
-      console.log("No Value detected")
-      showMessage('You must enter a value to continue');
-      return false;
-    }
+  var inputValues = {}
+  function changeDefaultSettings(){
+    nextButton = document.getElementById('nextButton');
+    nextButton.innerHTML = '<span>Finish</span>';
+    nextButton.onmousedown = function(){
+      drug = document.getElementById("touchscreenInput" + tstCurrentPage).value;
+      if (drug == ''){
+        console.log("No Value detected")
+        showMessage('You must enter a value to continue');
+        return false;
+      }
+      value = document.getElementById('touchscreenInput' + tstCurrentPage).value;
 
-    document.getElementById('myDrugs').submit();
+      for (var i=0; i<=tstPages.length - 1; i++){
+        input = document.getElementById('touchscreenInput' + i)
+        if (input){
+          if (input.value == ''){
+            continue;
+          }
+          inputValues[i] = input.value;
+        }       
+      }
+
+      var drugs = ""
+      for (var key in inputValues){
+        drugs += inputValues[key] + ', '
+      }
+      document.getElementById("drugs").value = drugs;
+      console.log(drugs);
+      document.getElementById('myDrugs').submit();
+    }
   }
-}
+  
+  function updateParams(){
+    currentInputValue = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+    inputValues[tstCurrentPage] = currentInputValue;
+    var drugs = ""
+    for (var key in inputValues){
+      drugs += inputValues[key] + ', '
+    }
+    document.getElementById("drugs").value = drugs;
+    console.log("drugs");
+  }
 
 </script>
 <style type="text/css">
@@ -44,22 +73,25 @@ function changeDefaultSettings(){
 
   <%  1.upto(10) do |i| %>
     <% if i != 1 %>
-      <%= text_field_tag "bp_drugs[]", nil,
+      <%= text_field_tag "bp_drugs_#{i}", nil,
         {
         :id => "drug_#{i}",
         :optional => "true",
         :tt_onLoad => "changeDefaultSettings();",
+        :tt_onUnLoad => "updateParams();",
         :helpText => "Drug Name #{i}"
       } %>
     <% else %>
-      <%= text_field_tag "bp_drugs[]", nil,
+      <%= text_field_tag "bp_drugs_#{i}", nil,
         {
         :id => "drug_#{i}",
         :tt_onLoad => "changeDefaultSettings();",
+        :tt_onUnLoad => "updateParams();",
         :helpText => "Drug Name #{i}"
       } %>
     <% end %>
   <% end %>
   <%= hidden_field_tag "patient_id", @patient.id %>
+  <%= hidden_field_tag "drugs", "" %>
   <%= submit_tag "Finish" %>
 </form>
