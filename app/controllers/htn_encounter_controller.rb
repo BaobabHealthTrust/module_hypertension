@@ -690,7 +690,7 @@ class HtnEncounterController < ApplicationController
   end
 
   def capture_bp_drugs
-    @patient = Core::Patient.find(params[:id])
+    @patient = Core::Patient.find(params['patient_id'])
   end
   
   def redirect_to_next_task

@@ -260,7 +260,7 @@
           <div style="color:green;">
             (<i>Patient already on BP drugs</i>)
           </div>
-          <div class="update_drug_button">Add Drugs</div>
+          <div class="update_drug_button" onmousedown="window.location='/htn_encounter/capture_bp_drugs?patient_id=<%= params[:patient_id] %>'">Add Drugs</div>
         <% end %>
       </div>
     </div>
