@@ -39,7 +39,7 @@
             continue;
           }
           inputValues[i] = input.value;
-        }       
+        }
       }
 
       var drugs = ""
@@ -51,7 +51,7 @@
       document.getElementById('myDrugs').submit();
     }
   }
-  
+
   function updateParams(){
     currentInputValue = document.getElementById('touchscreenInput' + tstCurrentPage).value;
     inputValues[tstCurrentPage] = currentInputValue;
@@ -74,7 +74,7 @@
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", (session[:datetime].to_date rescue DateTime.now) %>
   <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
-  
+
   <%= select_tag 'location_id', params[:location_id],
     {
     :id => 'location_id',
@@ -91,7 +91,7 @@
     :helpText => "Do you want to transfer in this patient?"
     }
 %>
-  
+
   <%  1.upto(10) do |i| %>
     <% if i != 1 %>
       <%= text_field_tag "bp_drugs_#{i}", nil,

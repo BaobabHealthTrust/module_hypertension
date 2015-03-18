@@ -421,6 +421,10 @@ class HtnEncounterController < ApplicationController
     unless treatment_status.blank?
       @patient_on_bp_drugs = true
     end
+
+    @bp_drug_use_history = Observation.find(:last, :conditions => ["person_id =? AND
+      concept_id =?", params[:patient_id], Concept.find_by_name('DRUG USE HISTORY').id])
+
   end
  
   def update_htn_provider
@@ -689,11 +693,25 @@ class HtnEncounterController < ApplicationController
     @patient = Core::Patient.find(params[:id])
   end
 
+  def diabetes_initial_visit
+    @patient = Core::Patient.find(params[:id])
+  end
+
   def capture_bp_drugs
     @patient = Core::Patient.find(params['patient_id'])
     if request.method == :post
       drugs = params[:drugs].split(', ')
-      raise drugs.inspect
+      vitals_encounter = @patient.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =?
+          AND encounter_type =?", Date.today, EncounterType.find_by_name('VITALS').id])
+      unless vitals_encounter.blank?
+        vitals_encounter.observations.create({
+          :person_id => params['patient_id'],
+          :concept_id => Concept.find_by_name('DRUG USE HISTORY').id,
+          :value_text => drugs.join(', '),
+          :obs_datetime => Time.now
+          })
+      end
+      redirect_to :controller => "htn_encounter", :action => "bp_management", :patient_id => params[:patient_id] and return
     end
   end
   
