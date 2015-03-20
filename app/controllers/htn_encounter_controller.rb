@@ -694,7 +694,7 @@ class HtnEncounterController < ApplicationController
   end
 
   def diabetes_initial_visit
-    @patient = Core::Patient.find(params[:id])
+    @patient = Core::Patient.find(params['patient_id'])
   end
 
   def capture_bp_drugs
