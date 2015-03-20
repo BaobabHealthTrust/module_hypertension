@@ -183,6 +183,8 @@
                         :helpText => "Systolic blood pressure (?/Y)",
                         :min => 80,
                         :max => 180,
+                        :absoluteMin => 0,
+                        :absoluteMax => 300,
                         :validationRule => "^([0-9]+)|Unknown$",
                         :validationMessage => "You must enter numbers only (for example 157)",
                         :tt_pageStyleClass => "KeyboardNumeric NumbersOnly" } %>
@@ -194,6 +196,8 @@
                         :helpText => "Diastolic blood pressure (X/?)",
                         :min => 50,
                         :max => 110,
+                        :absoluteMin => 0,
+                        :absoluteMax => 200,
                         :validationRule => "^([0-9]+)|Unknown$",
                         :validationMessage => "You must enter numbers only (for example 157)",
                         :tt_pageStyleClass => "Keyboard Numeric NumbersOnly"} %>
