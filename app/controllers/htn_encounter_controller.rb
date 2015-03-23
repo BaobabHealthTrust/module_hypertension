@@ -47,12 +47,18 @@ class HtnEncounterController < ApplicationController
 
     @patient_on_bp_drugs = false
     treatment_status_concept_id = Concept.find_by_name("TREATMENT STATUS").id
-    treatment_status = Core::Observation.find(:last, :conditions => ["person_id =? AND 
+    bp_drugs_started = Core::Observation.find(:last, :conditions => ["person_id =? AND
         concept_id =? AND value_text REGEXP ?", params[:patient_id], treatment_status_concept_id,
         "BP Drugs started"])
-    unless treatment_status.blank?
+    @next_task_to_do = "/htn_encounter/bp_management?patient_id=#{@patient.id}"
+    unless bp_drugs_started.blank?
       @patient_on_bp_drugs = true
+      bp_initial_visit_enc = @patient.encounters.find(:last, :conditions => ["encounter_type =?",
+          EncounterType.find_by_name("DIABETES HYPERTENSION INITIAL VISIT").id])
+      @next_task_to_do = "/htn_encounter/diabetes_initial_visit?patient_id=#{@patient.id}" if bp_initial_visit_enc.blank?
     end
+    
+    session[:bp_alert] = true
   end
 
   def vitals_confirmation
@@ -705,10 +711,10 @@ class HtnEncounterController < ApplicationController
           AND encounter_type =?", Date.today, EncounterType.find_by_name('VITALS').id])
       unless vitals_encounter.blank?
         vitals_encounter.observations.create({
-          :person_id => params['patient_id'],
-          :concept_id => Concept.find_by_name('DRUG USE HISTORY').id,
-          :value_text => drugs.join(', '),
-          :obs_datetime => Time.now
+            :person_id => params['patient_id'],
+            :concept_id => Concept.find_by_name('DRUG USE HISTORY').id,
+            :value_text => drugs.join(', '),
+            :obs_datetime => Time.now
           })
       end
       redirect_to :controller => "htn_encounter", :action => "bp_management", :patient_id => params[:patient_id] and return

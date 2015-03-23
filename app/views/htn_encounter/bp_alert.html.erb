@@ -48,7 +48,7 @@
                     <span>Yes</span>
                   </button>
                   <button id="referButton" class="button red navButton" style="float: left"
-                          onmousedown="window.location = '/htn_encounter/bp_management?patient_id=<%= @patient.id%>'"><span>No</span>
+                          onmousedown="window.location = '<%= @next_task_to_do %>'"><span>No</span>
                   </button>
                 </div>
             <% else %>
