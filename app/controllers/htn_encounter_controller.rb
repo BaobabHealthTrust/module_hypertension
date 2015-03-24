@@ -32,6 +32,9 @@ class HtnEncounterController < ApplicationController
     unless bp_treatment_status.blank?
       @bp_treatment_info_available = true
     end
+    @patient_transfer_in  = false
+    patient_transfer_in = patient.person.observations.recent(1).question("HAS TRANSFER LETTER").all rescue nil
+    @patient_transfer_in = true unless patient_transfer_in.blank?
   end
 
   def bp_alert

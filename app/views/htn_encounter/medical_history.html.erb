@@ -34,7 +34,7 @@
         finishButton = document.getElementById('nextButton');
         finishButton.setAttribute("onMouseDown", "buildAnswers()")
     }
-    setTimeout("changeFinish()", 300);
+    //setTimeout("changeFinish()", 300);
 </script>
 
 <style>
@@ -61,6 +61,7 @@
                    :helpText => "Does patient have any of these conditions?",
                    :id => "riskFactors",
                    :multiple => true,
+                   :tt_onLoad => "changeFinish();",
                    :tt_pageStyleClass => "MultiSelectList",
                    :optional => true
                    } %>
