@@ -700,6 +700,11 @@ class HtnEncounterController < ApplicationController
   end
 
   def diabetes_initial_visit
+    if session[:datetime]
+      @retrospective = true
+    else
+      @retrospective = false
+    end
     @patient = Core::Patient.find(params['patient_id'])
   end
 

@@ -7,7 +7,6 @@
     nextDrug.setAttribute("id", "nextDrug")
     document.getElementById("buttons").appendChild(nextDrug);
   }
-  //window.setTimeout("addButton()", 200);
 
   function newDrug(){
     currentInput = document.getElementById("touchscreenInput" + tstCurrentPage).value;
@@ -49,10 +48,13 @@
         drugArray.push(inputValues[keys[i]]);
       }
       drugs = drugArray.join(', ');
-
       document.getElementById("drugs").value = drugs;
-      jQuery('.drug_name').remove();//Remove all unnecessary parameters before submitting to server
-      document.getElementById('myDrugs').submit();
+      <% if @retrospective %>
+            gotoPage(tstPages.length - 1); //Input for provider
+      <% else %>
+            jQuery('.drug_name').remove();//Remove all unnecessary parameters before submitting to server
+            document.getElementById('myDrugs').submit();
+      <% end %>
     }
   }
 
@@ -68,6 +70,14 @@
     drugs = drugArray.join(', ');
     document.getElementById("drugs").value = drugs;
   }
+
+function processParameters(){
+  nextButton = document.getElementById('nextButton');
+  nextButton.onmousedown = function(){
+    jQuery('.drug_name').remove();
+    gotoNextPage();
+  }
+}
 
 </script>
 <style type="text/css">
@@ -119,6 +129,16 @@
         :helpText => "Drug Name #{i}"
       } %>
     <% end %>
+  <% end %>
+  <% if @retrospective %>
+    <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
+      <%= text_field "filter" , 'provider',
+        :tt_onLoad => "changeDefaultSettings(); processParameters();",
+        :helpText => 'Staff who provided the information (Provider)',
+        :ajaxURL => '/user/username?username=' %>
+    </p>
+  <% else %>
+    <%= hidden_field_tag "filter[provider]", nil %>
   <% end %>
   <%= touch_hidden_tag("DRUG USE HISTORY", @patient, '', {:id=>"drugs"}) %>
   <%= hidden_field_tag "patient_id", @patient.id %>
