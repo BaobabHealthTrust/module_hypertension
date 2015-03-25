@@ -1,6 +1,10 @@
 <script type="text/javascript">
   var tt_cancel_destination = "/htn_encounter/bp_management?patient_id=<%= @patient.patient_id %>";
   function addButton() {
+    nextDrugInput = document.getElementById("nextDrug");
+    if (nextDrugInput){
+      nextDrugInput.parentNode.removeChild(nextDrugInput);
+    }
     var nextDrug = document.createElement("button");
     nextDrug.innerHTML = "<span>New Drug</span>";
     nextDrug.setAttribute("onclick", "newDrug()");
@@ -79,6 +83,16 @@ function processParameters(){
   }
 }
 
+function changeBackSettings(){
+  keys = Object.keys(inputValues);
+  sortedKeys = keys.sort();
+  lastKey = parseInt(sortedKeys[sortedKeys.length - 1]);
+  backButton = document.getElementById('backButton');
+  backButton.onmousedown = function(){
+    gotoPage(lastKey);
+  }
+}
+
 </script>
 <style type="text/css">
 
@@ -133,7 +147,7 @@ function processParameters(){
   <% if @retrospective %>
     <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
       <%= text_field "filter" , 'provider',
-        :tt_onLoad => "changeDefaultSettings(); processParameters();",
+        :tt_onLoad => "changeDefaultSettings(); processParameters(); changeBackSettings();",
         :helpText => 'Staff who provided the information (Provider)',
         :ajaxURL => '/user/username?username=' %>
     </p>
