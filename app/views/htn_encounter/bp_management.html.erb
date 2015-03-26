@@ -293,9 +293,9 @@
                 <% else %>
                     <% unless record['plan'].blank? %>
                         <td style="padding-left: 10px;"><%= record['plan'] %><br />
-                        Past BP Drugs: <%= past_drug_use %></td>
+                        Past BP Drugs: <i><b><%= past_drug_use %></b></i></td>
                     <% else %>
-                        <td style="padding-left: 10px;">Past BP Drugs : <%= past_drug_use %></td>
+                        <td style="padding-left: 10px;">Past BP Drugs : <i><b><%= past_drug_use %></b></i></td>
                     <% end %>
                 <% end %>
               </tr>
