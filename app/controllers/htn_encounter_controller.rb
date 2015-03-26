@@ -61,7 +61,7 @@ class HtnEncounterController < ApplicationController
       @next_task_to_do = "/htn_encounter/diabetes_initial_visit?patient_id=#{@patient.id}" if bp_initial_visit_enc.blank?
     end
     
-    session[:bp_alert] = true
+    session[:bp_alert] = @patient.id
   end
 
   def vitals_confirmation
