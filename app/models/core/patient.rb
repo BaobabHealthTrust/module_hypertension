@@ -408,5 +408,19 @@ module Core
      return false
     end
    end
+
+   def drug_use_history(date = Date.today)
+     past_drugs = ""
+     bp_drug_use_history = Observation.find(:last, :conditions => ["person_id =? AND
+        concept_id =? AND DATE(obs_datetime) =?", self.id,
+          Concept.find_by_name('DRUG USE HISTORY').id, date])
+
+     unless bp_drug_use_history.blank?
+       past_drugs = bp_drug_use_history.value_text
+     end
+     
+     return past_drugs
+   end
+   
   end
 end

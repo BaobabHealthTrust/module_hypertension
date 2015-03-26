@@ -260,7 +260,6 @@
           <div style="color:green;">
             (<i>Patient already on BP drugs</i>)
           </div>
-          <div class="update_drug_button" onmousedown="window.location='/htn_encounter/capture_bp_drugs?patient_id=<%= params[:patient_id] %>'">Add Drugs</div>
         <% end %>
       </div>
     </div>
@@ -287,7 +286,18 @@
                 <td style="text-align: center"><%= record['systolic'] %></td>
                 <td style="text-align: center"><%= record['diastolic'] %></td>
                 <td style="text-align: center"><%= @patient.current_bp_drugs(record['date'].to_date - 1.days).join(", ") %></td>
-                <td style="padding-left: 10px;"><%= record['plan'] %></td>
+
+                <% past_drug_use = @patient.drug_use_history(record['date'].to_date) %>
+                <% if past_drug_use.blank? %>
+                    <td style="padding-left: 10px;"><%= record['plan'] %></td>
+                <% else %>
+                    <% unless record['plan'].blank? %>
+                        <td style="padding-left: 10px;"><%= record['plan'] %><br />
+                        Past BP Drugs: <%= past_drug_use %></td>
+                    <% else %>
+                        <td style="padding-left: 10px;">Past BP Drugs : <%= past_drug_use %></td>
+                    <% end %>
+                <% end %>
               </tr>
             <% end %>
           </tbody>
