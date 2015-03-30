@@ -131,7 +131,7 @@ function changeBackSettings(){
         :optional => "true",
         :tt_onLoad => "changeDefaultSettings();",
         :tt_onUnLoad => "updateParams();",
-        :helpText => "Drug Name #{i}"
+        :helpText => "Drug #{i} that the patient was taking"
       } %>
     <% else %>
       <%= text_field_tag "bp_drugs_#{i}", nil,
@@ -140,7 +140,7 @@ function changeBackSettings(){
         :class => 'drug_name',
         :tt_onLoad => "addButton(); changeDefaultSettings();",
         :tt_onUnLoad => "updateParams();",
-        :helpText => "Drug Name #{i}"
+        :helpText => "Drug #{i} that the patient was taking"
       } %>
     <% end %>
   <% end %>
