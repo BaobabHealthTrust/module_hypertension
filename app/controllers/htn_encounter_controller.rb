@@ -28,7 +28,7 @@ class HtnEncounterController < ApplicationController
     ]
     @bp_treatment_info_available = false
     bp_treatment_status = Core::Observation.find(:last, :conditions => ["person_id =? AND
-        concept_id =?", params[:patient_id], Concept.find_by_name("TREATMENT STATUS").id])
+        concept_id =? AND voided=0", params[:patient_id], Concept.find_by_name("TREATMENT STATUS").id])
     unless bp_treatment_status.blank?
       @bp_treatment_info_available = true
     end
@@ -738,4 +738,30 @@ class HtnEncounterController < ApplicationController
   def redirect_to_next_task
     redirect_to next_task(Patient.find(params['patient_id']))
   end
+
+  def create_vitals_transfer_obs
+
+    todays_date = (session[:datetime] || Date.today)
+    patient = Core::Patient.find(params[:patient_id])
+    todays_patient_vitals_enc = patient.encounters.find(:last, :conditions => ["encounter_type =?
+        AND DATE(encounter_datetime) =? AND voided=0", EncounterType.find_by_name("VITALS").id, todays_date])
+=begin
+    if todays_patient_vitals_enc.blank?
+      todays_patient_vitals_enc = patient.encounters.create(
+        :encounter_type => EncounterType.find_by_name("VITALS").id,
+        :encounter_datetime => todays_date
+      )
+    end
+=end
+    todays_patient_vitals_enc.observations.create(
+      :person_id => params[:patient_id],
+      :concept_id => Concept.find_by_name('TRANSFERRED').id,
+      :obs_datetime => Time.now,
+      :value_coded => Concept.find_by_name("#{params[:value]}").id
+    )
+
+    next_url = next_task(patient)
+    render :text => next_url and return
+  end
+  
 end

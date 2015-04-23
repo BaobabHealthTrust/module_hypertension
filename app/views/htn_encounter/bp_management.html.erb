@@ -325,8 +325,8 @@
 <br />
 <% if @bp_treatment_info_available == true %>
   <span style="margin-left:25%; font-weight: bold; font-size: 16pt;">Do you want to transfer in this patient?</span>
-  <span class="update_drug_button" style="margin-left:2%;">Yes</span>
-  <span class="update_drug_button" style="margin-left:2%;">No</span>
+  <span class="update_drug_button" onmousedown="createVitalsTransferObs('YES')" style="margin-left:2%;">Yes</span>
+  <span class="update_drug_button" onmousedown="createVitalsTransferObs('NO')" style="margin-left:2%;">No</span>
 <% else %>
   <div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">
     <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">
@@ -407,8 +407,20 @@
 </div>
 <div id="confirm_div" class="confirm_div">
 </div>
-  
+
 <script>
     tstMessageBar = document.getElementById('confirm_div');
     tt_cancel_destination = '/patients/show/<%= params[:patient_id] %>'
+
+    function createVitalsTransferObs(value){
+      patientId = '<%= params[:patient_id] %>';
+      jQuery.ajax({
+        type: "POST",
+        url: "/htn_encounter/create_vitals_transfer_obs",
+        data: "patient_id=" + patientId + "&value=" + value,
+        success: function(nextUrl){
+          window.location = nextUrl;
+        }
+      });
+    }
 </script>

@@ -177,7 +177,7 @@ module Core
     dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
     plan_concept = Core::Concept.find_by_name('Plan').id
 
-    records = Core::Observation.find_by_sql("SELECT  DISTINCT o.encounter_id,o.person_id,o.obs_datetime,
+    records = Core::Observation.find_by_sql("SELECT  DISTINCT o.encounter_id,o.person_id,DATE(o.obs_datetime) as obs_datetime,
                                        (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
                                        AND concept_id = #{sbp_concept} AND person_id = o.person_id AND voided = 0 LIMIT 1) AS SBP,
                                        (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
