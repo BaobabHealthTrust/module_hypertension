@@ -434,12 +434,11 @@ class HtnEncounterController < ApplicationController
     @bp_drug_use_history = Observation.find(:last, :conditions => ["person_id =? AND
       concept_id =?", params[:patient_id], Concept.find_by_name('DRUG USE HISTORY').id])
 
-    @bp_treatment_info_available = false
-    bp_treatment_status = Core::Observation.find(:last, :conditions => ["person_id =? AND
-        concept_id =?", params[:patient_id], Concept.find_by_name("TREATMENT STATUS").id])
-    unless bp_treatment_status.blank?
-      @bp_treatment_info_available = true
-    end
+    @first_visit = false
+    transfer_obs =  Observation.find(:last, :conditions => ["person_id =? AND concept_id =?",
+        params[:patient_id], Concept.find_by_name('TRANSFERRED').id]
+    )
+    @first_visit = true if transfer_obs.blank?
   end
  
   def update_htn_provider

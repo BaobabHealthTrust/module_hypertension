@@ -323,7 +323,7 @@
   </div>
 </div>
 <br />
-<% if @bp_treatment_info_available == true %>
+<% if (@patient_on_bp_drugs == true && @first_visit == true) %>
   <span style="margin-left:25%; font-weight: bold; font-size: 16pt;">Do you want to transfer in this patient?</span>
   <span class="update_drug_button" onmousedown="createVitalsTransferObs('YES')" style="margin-left:2%;">Yes</span>
   <span class="update_drug_button" onmousedown="createVitalsTransferObs('NO')" style="margin-left:2%;">No</span>
@@ -390,7 +390,7 @@
 
 
 <div id="buttons" class="buttonsDiv">
-  <% if @bp_treatment_info_available == true %>
+  <% if (@patient_on_bp_drugs == true && @first_visit == true) %>
     <button onmousedown="confirmCancelEntry();" id="cancelButton" class="button navButton red"><span>Cancel</span></button>
   <% else %>
     <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
