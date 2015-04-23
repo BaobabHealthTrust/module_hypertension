@@ -114,14 +114,6 @@ function changeBackSettings(){
     :allowFreeText => false }
 %>
 
-  <%= touch_select_tag 'TRANSFERRED', @patient, options_for_select(['Yes', 'No']),
-    {
-    :id => 'transfer_in',
-    :field_type => 'alpha',
-    :helpText => "Do you want to transfer in this patient?"
-  }
-%>
-
   <%  1.upto(10) do |i| %>
     <% if i != 1 %>
       <%= text_field_tag "bp_drugs_#{i}", nil,
