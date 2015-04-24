@@ -324,9 +324,29 @@
 </div>
 <br />
 <% if (@patient_on_bp_drugs == true && @first_visit == true) %>
-  <span style="margin-left:25%; font-weight: bold; font-size: 16pt;">Do you want to transfer in this patient?</span>
-  <span class="update_drug_button" onmousedown="createVitalsTransferObs('YES')" style="margin-left:2%;">Yes</span>
-  <span class="update_drug_button" onmousedown="createVitalsTransferObs('NO')" style="margin-left:2%;">No</span>
+
+  <div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">
+    <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">
+      <div style="width:100%" class="heading">Do you want to transfer in this patient?</div>
+
+      <div class="row">
+        <div class="cell">
+          <div class="option" value="YES" onmousedown="selected(this);" >
+            <div style="display: table-cell; vertical-align: middle; "><img src="/touchscreentoolkit/lib/images/unchecked.png"/></div>
+            <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:110% !important; ">Yes</div>
+          </div>
+        </div>
+        <div class="cell"  style="padding-left:40px;">
+          <div class="option" value="NO" onmousedown="selected(this);">
+            <div style="display: table-cell; vertical-align: middle;"><img src="/touchscreentoolkit/lib/images/unchecked.png"/></div>
+            <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">No</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 <% else %>
   <div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">
     <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">
@@ -391,6 +411,7 @@
 
 <div id="buttons" class="buttonsDiv">
   <% if (@patient_on_bp_drugs == true && @first_visit == true) %>
+    <button id="nextButton" class="button green navButton" onmousedown="createVitalsTransferObs();"><span>Finish</span></button>
     <button onmousedown="confirmCancelEntry();" id="cancelButton" class="button navButton red"><span>Cancel</span></button>
   <% else %>
     <button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>
@@ -411,16 +432,25 @@
 <script>
     tstMessageBar = document.getElementById('confirm_div');
     tt_cancel_destination = '/patients/show/<%= params[:patient_id] %>'
-
-    function createVitalsTransferObs(value){
-      patientId = '<%= params[:patient_id] %>';
-      jQuery.ajax({
-        type: "POST",
-        url: "/htn_encounter/create_vitals_transfer_obs",
-        data: "patient_id=" + patientId + "&value=" + value,
-        success: function(nextUrl){
-          window.location = nextUrl;
+    patientId = '<%= params[:patient_id] %>';
+    function createVitalsTransferObs(){
+      options = document.getElementsByClassName("option")
+      var checked = false;
+      for(i = 0; i < options.length; i ++){
+        if (options[i].getAttribute("selected") == "true"){
+          checked = true;
+          value = options[i].getAttribute("value");
+          jQuery.ajax({
+            type: "POST",
+            url: "/htn_encounter/create_vitals_transfer_obs",
+            data: "patient_id=" + patientId + "&value=" + value,
+            success: function(nextUrl){
+              window.location = nextUrl;
+            }
+          });
+          break;
         }
-      });
+      }
+      if (checked == false) showMessage("Please select one action to proceed");
     }
 </script>
