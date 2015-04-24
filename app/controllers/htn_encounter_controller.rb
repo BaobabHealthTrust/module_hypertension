@@ -742,6 +742,7 @@ class HtnEncounterController < ApplicationController
 
     todays_date = (session[:datetime] || Date.today)
     patient = Core::Patient.find(params[:patient_id])
+    task = main_next_task(Location.current_location, patient,todays_date)
     todays_patient_vitals_enc = patient.encounters.find(:last, :conditions => ["encounter_type =?
         AND DATE(encounter_datetime) =? AND voided=0", EncounterType.find_by_name("VITALS").id, todays_date])
 =begin
@@ -759,7 +760,17 @@ class HtnEncounterController < ApplicationController
       :value_coded => Concept.find_by_name("#{params[:value]}").id
     )
 
-    next_url = next_task(patient)
+    sbp_threshold = CoreService.get_global_property_value("htn_systolic_threshold").to_i
+    dbp_threshold = CoreService.get_global_property_value("htn_diastolic_threshold").to_i
+    bp = patient.current_bp(todays_date)
+    
+    next_url = task.url
+    if (params[:value].match(/YES/i))
+      if ((!bp[0].blank? && bp[0] > sbp_threshold) || (!bp[1].blank?  && bp[1] > dbp_threshold))
+        next_url = "/htn_encounter/diabetes_initial_visit?patient_id=#{patient.id}"
+      end
+    end
+ 
     render :text => next_url and return
   end
   
