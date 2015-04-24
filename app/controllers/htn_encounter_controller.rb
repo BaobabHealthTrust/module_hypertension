@@ -56,9 +56,6 @@ class HtnEncounterController < ApplicationController
     @next_task_to_do = "/htn_encounter/bp_management?patient_id=#{@patient.id}"
     unless bp_drugs_started.blank?
       @patient_on_bp_drugs = true
-      bp_initial_visit_enc = @patient.encounters.find(:last, :conditions => ["encounter_type =?",
-          EncounterType.find_by_name("DIABETES HYPERTENSION INITIAL VISIT").id])
-      @next_task_to_do = "/htn_encounter/diabetes_initial_visit?patient_id=#{@patient.id}" if bp_initial_visit_enc.blank?
     end
     
     session[:bp_alert] = @patient.id
@@ -760,15 +757,15 @@ class HtnEncounterController < ApplicationController
       :value_coded => Concept.find_by_name("#{params[:value]}").id
     )
 
-    sbp_threshold = CoreService.get_global_property_value("htn_systolic_threshold").to_i
-    dbp_threshold = CoreService.get_global_property_value("htn_diastolic_threshold").to_i
-    bp = patient.current_bp(todays_date)
+    #sbp_threshold = CoreService.get_global_property_value("htn_systolic_threshold").to_i
+    #dbp_threshold = CoreService.get_global_property_value("htn_diastolic_threshold").to_i
+    #bp = patient.current_bp(todays_date)
     
     next_url = task.url
     if (params[:value].match(/YES/i))
-      if ((!bp[0].blank? && bp[0] > sbp_threshold) || (!bp[1].blank?  && bp[1] > dbp_threshold))
+      #if ((!bp[0].blank? && bp[0] > sbp_threshold) || (!bp[1].blank?  && bp[1] > dbp_threshold))
         next_url = "/htn_encounter/diabetes_initial_visit?patient_id=#{patient.id}"
-      end
+      #end
     end
  
     render :text => next_url and return
