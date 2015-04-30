@@ -397,13 +397,6 @@ dateToday = session[:datetime].to_date rescue Date.today
   <%= hidden_field_tag "encounter[encounter_datetime]", (session[:datetime].to_date rescue DateTime.now) %>
   <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
 
-  <%= touch_select_tag "TREATMENT STATUS", @patient, options_for_select(@treatment_status),
-    {:id => "treatment_status",
-    :tt_pageStyleClass => "NoKeyboard",
-    :condition => "#{@bp_treatment_info_available == false}",
-    :helpText => "Already taking drugs for blood pressure?" } %>
-
-
   <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
     {	:id => "weight",
     :field_type => "number",
@@ -418,6 +411,12 @@ dateToday = session[:datetime].to_date rescue Date.today
     :tt_pageStyleClass => "Keyboard Numeric NumbersOnlyWithDecimal",
     :helpText => "Weight (Kg)" } %>
 
+  <%= touch_select_tag "TREATMENT STATUS", @patient, options_for_select(@treatment_status),
+    {:id => "treatment_status",
+    :tt_pageStyleClass => "NoKeyboard",
+    :condition => "#{@bp_treatment_info_available == false}",
+    :helpText => "Already taking drugs for blood pressure?" } %>
+  
   <% if @patient_bean.age > 18 and not @current_height == 0 %>
     <%= touch_hidden_tag "HEIGHT (CM)", @patient, @current_height %>
   <% else %>
