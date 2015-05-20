@@ -1,0 +1,152 @@
+<script type="text/javascript">
+  var tt_cancel_destination = "/htn_encounter/bp_management?patient_id=<%= @patient.patient_id %>";
+  function addButton() {
+    nextDrugInput = document.getElementById("nextDrug");
+    if (nextDrugInput){
+      nextDrugInput.parentNode.removeChild(nextDrugInput);
+    }
+    var nextDrug = document.createElement("button");
+    nextDrug.innerHTML = "<span>New Drug</span>";
+    nextDrug.setAttribute("onclick", "newDrug()");
+    nextDrug.setAttribute("id", "nextDrug")
+    document.getElementById("buttons").appendChild(nextDrug);
+  }
+
+  function newDrug(){
+    currentInput = document.getElementById("touchscreenInput" + tstCurrentPage).value;
+    if (currentInput == ''){
+      console.log("No Value detected")
+      showMessage('You must enter a value to continue');
+      return false;
+    }
+    gotoNextPage();
+  }
+
+  var inputValues = {}
+  function changeDefaultSettings(){
+    nextButton = document.getElementById('nextButton');
+    nextButton.innerHTML = '<span>Finish</span>';
+    nextButton.onmousedown = function(){
+      drug = document.getElementById("touchscreenInput" + tstCurrentPage).value;
+      if (drug == ''){
+        console.log("No Value detected")
+        showMessage('You must enter a value to continue');
+        return false;
+      }
+      value = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+
+      for (var i=0; i<=tstPages.length - 1; i++){
+        input = document.getElementById('touchscreenInput' + i)
+        if (input){
+          if (input.value == ''){
+            continue;
+          }
+          inputValues[i] = input.value;
+        }
+      }
+
+      var drugs = "";
+      var drugArray = [];
+      keys = Object.keys(inputValues);
+      for (var i=0; i<= keys.length - 1; i++){
+        drugArray.push(inputValues[keys[i]]);
+      }
+      drugs = drugArray.join(', ');
+      document.getElementById("drugs").value = drugs;
+      <% if @retrospective %>
+            gotoPage(tstPages.length - 1); //Input for provider
+      <% else %>
+            jQuery('.drug_name').remove();//Remove all unnecessary parameters before submitting to server
+            document.getElementById('myDrugs').submit();
+      <% end %>
+    }
+  }
+
+  function updateParams(){
+    currentInputValue = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+    inputValues[tstCurrentPage] = currentInputValue;
+    var drugs = "";
+    var drugArray = [];
+    keys = Object.keys(inputValues);
+    for (var i=0; i<= keys.length - 1; i++){
+      drugArray.push(inputValues[keys[i]]);
+    }
+    drugs = drugArray.join(', ');
+    document.getElementById("drugs").value = drugs;
+  }
+
+function processParameters(){
+  nextButton = document.getElementById('nextButton');
+  nextButton.onmousedown = function(){
+    jQuery('.drug_name').remove();
+    gotoNextPage();
+  }
+}
+
+function changeBackSettings(){
+  keys = Object.keys(inputValues);
+  sortedKeys = keys.sort();
+  lastKey = parseInt(sortedKeys[sortedKeys.length - 1]);
+  backButton = document.getElementById('backButton');
+  backButton.onmousedown = function(){
+    gotoPage(lastKey);
+  }
+}
+
+</script>
+<style type="text/css">
+
+</style>
+<script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
+
+<form id="myDrugs" action="/htn_encounter/create/diabetes_hypertension_initial_visit" method="POST">
+  <%= hidden_field_tag "encounter[encounter_type_name]", "DIABETES HYPERTENSION INITIAL VISIT" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", (session[:datetime].to_date rescue DateTime.now) %>
+  <%= hidden_field_tag "encounter[provider_id]", current_user.user_id %>
+
+  <%= touch_select_tag 'TRANSFERRED FROM',@patient, '',
+    {
+    :id => 'transferred_from',
+    :field_type => 'alpha',
+    :helpText => "Facility from which the patient is transferred from",
+    :ajaxURL => '/htn_programs/locations?q=',
+    :allowFreeText => false }
+%>
+
+  <%  1.upto(10) do |i| %>
+    <% if i != 1 %>
+      <%= text_field_tag "bp_drugs_#{i}", nil,
+        {
+        :id => "drug_#{i}",
+        :class => 'drug_name',
+        :optional => "true",
+        :tt_onLoad => "changeDefaultSettings();",
+        :tt_onUnLoad => "updateParams();",
+        :helpText => "Drug #{i} that the patient was taking"
+      } %>
+    <% else %>
+      <%= text_field_tag "bp_drugs_#{i}", nil,
+        {
+        :id => "drug_#{i}",
+        :class => 'drug_name',
+        :tt_onLoad => "addButton(); changeDefaultSettings();",
+        :tt_onUnLoad => "updateParams();",
+        :helpText => "Drug #{i} that the patient was taking"
+      } %>
+    <% end %>
+  <% end %>
+  <% if @retrospective %>
+    <p><label for="filter_provider">Staff who provided the information (Provider)</label></br>
+      <%= text_field "filter" , 'provider',
+        :tt_onLoad => "changeDefaultSettings(); processParameters(); changeBackSettings();",
+        :helpText => 'Staff who provided the information (Provider)',
+        :ajaxURL => '/user/username?username=' %>
+    </p>
+  <% else %>
+    <%= hidden_field_tag "filter[provider]", nil %>
+  <% end %>
+  <%= touch_hidden_tag("DRUG USE HISTORY", @patient, '', {:id=>"drugs"}) %>
+  <%= hidden_field_tag "patient_id", @patient.id %>
+  <%= submit_tag "Finish" %>
+</form>

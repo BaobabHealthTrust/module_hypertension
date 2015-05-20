@@ -1,65 +1,71 @@
 <html>
-	<head>
-		<script>
-			var tt_next_destination = "/htn_encounter/vitals_confirmation?patient_id=<%=@patient.id%>"
-		</script>
-		<style>
-			.body{
-				margin-top: 10%;
-				color: gray;
-				text-align: center;
-				width: 99%;
-				text-decoration: none;		
-			}
-			.header{
-				width: 99%;
-				text-align: center;
-				margin-top: 3%;	
-			}
-			.bp{
-				color: red;
-				font-style: italic;			
-			}
-			.name{
-				color: blue;
-				font-style: italic;
-			}
-			.green{
-				width: 170px;
-			}			
-		</style>
-	</head>
-		<body>
-			<div class="header">
-				<h1> High BP! </h1>
-			</div>
-			<% if (((@bp[0] || 0) <= 160) &&  ((@bp[1] || 0) <= 100) && !@patient_pregnant) %>
-                <div class="body">
-                  <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
-                    </span>  <br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. <br>Do you want to test BP?  </h2>
+  <head>
+    <script>
+      var tt_next_destination = "/htn_encounter/vitals_confirmation?patient_id=<%=@patient.id%>"
+    </script>
+    <style>
+      .body{
+        margin-top: 10%;
+        color: gray;
+        text-align: center;
+        width: 99%;
+        text-decoration: none;
+      }
+      .header{
+        width: 99%;
+        text-align: center;
+        margin-top: 3%;
+      }
+      .bp{
+        color: red;
+        font-style: italic;
+      }
+      .name{
+        color: blue;
+        font-style: italic;
+      }
+      .green{
+        width: 170px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1> High BP! </h1>
+    </div>
+    <% if (((@bp[0] || 0) <= 160) &&  ((@bp[1] || 0) <= 100) && !@patient_pregnant) %>
+      <div class="body">
+        <% if @patient_on_bp_drugs %>
+          <h2 style="font-weight:bold;">(Patient already on BP drugs)</h2>
+        <% end %>
+        <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
+          </span>  <br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. <br>Do you want to test BP?  </h2>
 
-                </div>
+      </div>
 
-                <div class="buttonsDiv footer">
-                  <button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">
-                    <span>Yes</span>
-                  </button>
-                  <button id="referButton" class="button red navButton" style="float: left"
-                          onmousedown="window.location = '/htn_encounter/bp_management?patient_id=<%= @patient.id%>'"><span>No</span>
-                  </button>
-                </div>
-            <% else %>
-                <div class="body">
-                  <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
-                    </span>  <br /> Recapture BP! </h2>
+      <div class="buttonsDiv footer">
+        <button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">
+          <span>Yes</span>
+        </button>
+        <button id="referButton" class="button red navButton" style="float: left"
+                onmousedown="window.location = '<%= @next_task_to_do %>'"><span>No</span>
+        </button>
+      </div>
+    <% else %>
+      <div class="body">
+        <% if @patient_on_bp_drugs %>
+          <h2 style="font-weight:bold;">(Patient already on BP drugs)</h2>
+        <% end %>
+        <h2> <span class="name"><%= @patient.name%></span> has a high blood pressure of <span class="bp"><%= @bp[0] || "?"%>/<%= @bp[1] || "?"%>
+          </span>  <br /> Recapture BP! </h2>
 
-                </div>
+      </div>
 
-                <div class="buttonsDiv footer">
-                  <button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">
-                    <span>Continue</span></button>
-                </div>
-            <% end %>
+      <div class="buttonsDiv footer">
+        <button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">
+          <span>Continue</span></button>
+      </div>
+    <% end %>
 
-		</body>
+  </body>
 </html>

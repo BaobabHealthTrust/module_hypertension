@@ -177,7 +177,7 @@ module Core
     dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
     plan_concept = Core::Concept.find_by_name('Plan').id
 
-    records = Core::Observation.find_by_sql("SELECT  DISTINCT o.encounter_id,o.person_id,o.obs_datetime,
+    records = Core::Observation.find_by_sql("SELECT  DISTINCT o.encounter_id,o.person_id,DATE(o.obs_datetime) as obs_datetime,
                                        (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
                                        AND concept_id = #{sbp_concept} AND person_id = o.person_id AND voided = 0 LIMIT 1) AS SBP,
                                        (SELECT value_numeric FROM obs WHERE encounter_id = o.encounter_id
@@ -408,5 +408,19 @@ module Core
      return false
     end
    end
+
+   def drug_use_history(date = Date.today)
+     past_drugs = ""
+     bp_drug_use_history = Observation.find(:last, :conditions => ["person_id =? AND
+        concept_id =? AND DATE(obs_datetime) =?", self.id,
+          Concept.find_by_name('DRUG USE HISTORY').id, date])
+
+     unless bp_drug_use_history.blank?
+       past_drugs = bp_drug_use_history.value_text
+     end
+     
+     return past_drugs
+   end
+   
   end
 end
