@@ -593,9 +593,10 @@ class HtnEncounterController < ApplicationController
     end        
 =end
 
-      obs = Observation.last(:conditions => ["person_id = ? AND concept_id = ? AND encounter_id = ? AND value_drug = ?",
-          @patient.id, adherence_concept_id, encounter.id, drug_id])
-      if adherence.blank?
+      obs = Observation.last(:conditions => ["person_id = ? AND concept_id = ? AND encounter_id = ? AND 
+          value_drug = ? AND DATE(obs_datetime) =?", @patient.id, adherence_concept_id,
+          encounter.id, drug_id, session_date])
+      if !adherence.blank?
         if obs.blank?
           obs = Observation.create(
             :obs_datetime => encounter.encounter_datetime,
@@ -606,6 +607,7 @@ class HtnEncounterController < ApplicationController
             :order_id => order_id,
             :creator => current_user.user_id,
             :value_numeric => adherence,
+            :value_modifier => '%',
             :value_text => '',
             :value_drug => drug_id
           )
