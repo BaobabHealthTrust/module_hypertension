@@ -109,6 +109,9 @@
                     case 'Continue Drugs':
                         path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
                         break;
+                    case 'Did not take prescribed BP drugs today':
+                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        break;
                     default :
                         path = "<%= next_task(@patient)%>"
                         break;
