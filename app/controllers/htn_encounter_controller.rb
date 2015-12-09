@@ -436,6 +436,8 @@ class HtnEncounterController < ApplicationController
         params[:patient_id], Concept.find_by_name('TRANSFERRED').id]
     )
     @first_visit = true if transfer_obs.blank?
+    current_bp_drugs = @patient.current_bp_drugs
+    @first_visit = false unless current_bp_drugs.blank?
   end
  
   def update_htn_provider
