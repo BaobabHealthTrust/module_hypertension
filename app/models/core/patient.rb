@@ -109,9 +109,9 @@ module Core
 
       if last_check.blank?
        return true #patient has never had their BP checked
-      elsif ((last_check['SBP'].to_i >= sbp_threshold || last_check['DBP'].to_i >= dbp_threshold))
+      elsif ((last_check[:sbp].to_i >= sbp_threshold || last_check[:dbp].to_i >= dbp_threshold))
        return true #patient had high BP readings at last visit
-      elsif((date.to_date - last_check.max_date.to_date).to_i >= 365 )
+      elsif((date.to_date - last_check[:max_date].to_date).to_i >= 365 )
        return true # 1 Year has passed since last check
       else
        return false
@@ -260,16 +260,35 @@ module Core
    def last_bp_readings(date)
     sbp_concept = Core::Concept.find_by_name('Systolic blood pressure').id
     dbp_concept = Core::Concept.find_by_name('Diastolic blood pressure').id
+    patient_id = self.id
 
-    return Core::Observation.find_by_sql("SELECT o.person_id, (SELECT MAX(obs_datetime) FROM obs
-                                         WHERE person_id = o.person_id AND voided = 0 AND
-                                         obs_datetime <= '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}' AND
-                                         concept_id in (#{dbp_concept},#{sbp_concept})) AS max_date,
-                                         (SELECT COALESCE(value_numeric,0) FROM obs WHERE obs_datetime = max_date
-                                         AND concept_id = #{sbp_concept} AND person_id = o.person_id LIMIT 1) AS SBP,
-                                         (SELECT COALESCE(value_numeric,0) FROM obs WHERE obs_datetime = max_date
-                                         AND concept_id = #{dbp_concept} AND person_id = o.person_id LIMIT 1) AS DBP
-                                         FROM obs as o WHERE o.person_id =#{self.id} HAVING max_date IS NOT NULL").first rescue nil
+    latest_date = Observation.find_by_sql("
+      SELECT MAX(obs_datetime) AS date FROM obs
+      WHERE person_id = #{patient_id}
+        AND voided = 0
+        AND concept_id IN (#{sbp_concept}, #{dbp_concept})
+        AND obs_datetime <= '#{date.to_date.strftime('%Y-%m-%d 23:59:59')}'
+    ").last.date.to_date rescue nil
+
+    return nil if latest_date.blank?
+
+    sbp = Observation.find_by_sql("
+        SELECT * FROM obs
+        WHERE person_id = #{patient_id}
+          AND voided = 0
+          AND concept_id = #{sbp_concept}
+          AND obs_datetime BETWEEN '#{latest_date.to_date.strftime('%Y-%m-%d 00:00:00')}' AND '#{latest_date.to_date.strftime('%Y-%m-%d 23:59:59')}'
+      ").last.value_numeric rescue nil
+
+    dbp = Observation.find_by_sql("
+        SELECT * FROM obs
+        WHERE person_id = #{patient_id}
+          AND voided = 0
+          AND concept_id = #{dbp_concept}
+          AND obs_datetime BETWEEN '#{latest_date.to_date.strftime('%Y-%m-%d 00:00:00')}' AND '#{latest_date.to_date.strftime('%Y-%m-%d 23:59:59')}'
+      ").last.value_numeric rescue nil
+
+    return {:patient_id => patient_id, :max_date => latest_date, :sbp => sbp, :dbp => dbp}
    end
    
    def drug_notes(date = Date.today)
