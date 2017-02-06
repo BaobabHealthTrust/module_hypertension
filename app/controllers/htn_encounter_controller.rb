@@ -419,6 +419,10 @@ class HtnEncounterController < ApplicationController
     @normatensive = @patient.normatensive(@bp_trail)
     @note = @patient.pregnancy_status(date) if @patient.gender == "F"
     @risks = @patient.current_risk_factors(date).length
+
+    @hypertension_obs = Observation.find(:last, :conditions => ["person_id =? AND
+      concept_id =?", params[:patient_id], Concept.find_by_name("PATIENT HAS HYPERTENSION").concept_id])
+
     @patient_on_bp_drugs = false
     treatment_status_concept_id = Concept.find_by_name("TREATMENT STATUS").id
     treatment_status = Core::Observation.find(:last, :conditions => ["person_id =? AND
@@ -768,11 +772,43 @@ class HtnEncounterController < ApplicationController
     next_url = task.url
     if (params[:value].match(/YES/i))
       #if ((!bp[0].blank? && bp[0] > sbp_threshold) || (!bp[1].blank?  && bp[1] > dbp_threshold))
-        next_url = "/htn_encounter/diabetes_initial_visit?patient_id=#{patient.id}"
+      next_url = "/htn_encounter/diabetes_initial_visit?patient_id=#{patient.id}"
       #end
     end
  
     render :text => next_url and return
   end
-  
+
+  def hypertension_diagnosis
+    @patient = Patient.find(params[:patient_id])
+    todays_date = (session[:datetime] || Date.today)
+    
+    if request.post?
+      #HYPERTENSION DIAGNOSIS DATE
+      #PATIENT HAS HYPERTENSION
+      diagnosis_date = params[:diagnosis_date].to_date rescue nil
+      hiv_clinic_consultation_enc_type_id = EncounterType.find_by_name("HIV CLINIC CONSULTATION").encounter_type_id
+      hiv_clinic_consultation_enc =  @patient.encounters.find(:last, :conditions => ["encounter_type =? AND DATE(encounter_datetime) =?",
+          hiv_clinic_consultation_enc_type_id, todays_date.to_date])
+
+      hiv_clinic_consultation_enc.observations.create({
+          :person_id => params[:patient_id],
+          :concept_id => Concept.find_by_name("PATIENT HAS HYPERTENSION").concept_id,
+          :value_coded => Concept.find_by_name(params[:diagnosis_status]).concept_id,
+          :obs_datetime => todays_date
+        })
+
+      hiv_clinic_consultation_enc.observations.create({
+          :person_id => params[:patient_id],
+          :concept_id => Concept.find_by_name("HYPERTENSION DIAGNOSIS DATE").concept_id,
+          :value_datetime => params[:diagnosis_date].to_date,
+          :obs_datetime => todays_date
+        }) unless diagnosis_date.blank?
+
+      redirect_to("/htn_encounter/bp_management?patient_id=#{params[:patient_id]}")
+    end
+
+
+  end
+
 end

@@ -1,0 +1,23 @@
+<script>
+  var tt_cancel_destination = "/htn_encounter/bp_management?patient_id=<%= @patient.patient_id %>";
+
+</script>
+<form action="/htn_encounter/hypertension_diagnosis/" method="POST">
+  <%= hidden_field_tag "patient_id", @patient.id %>
+
+  <%= select_tag "diagnosis_status",options_for_select(['', 'Yes', 'No']),
+    { :field_type => 'text',
+    :helpText => "Does the patient have hypertension?",
+    :id => "diagnosis_status",
+    :optional => true
+  } %>
+
+  <%= text_field_tag "diagnosis_date", nil,
+    {
+    :id => "diagnosis_date",
+    :condition => '$("diagnosis_status").value.toUpperCase() == "YES"',
+    :field_type => "date",
+    :helpText => "Date the patient was diagnosed with hypertension"
+  } %>
+
+</form>

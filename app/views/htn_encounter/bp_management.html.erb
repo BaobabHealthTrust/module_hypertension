@@ -453,4 +453,26 @@
       }
       if (checked == false) showMessage("Please select one action to proceed");
     }
+
+<% if @hypertension_obs.blank? %>
+      window.onload = function () {
+        var button = document.createElement("button");
+        button.id = "hypeternsion-diagnosis";
+        button.className = 'blue'
+        button.innerHTML = "<span>Hypertension Diagnosis</span>";
+        button.style.cssFloat = "left";
+
+        button.onclick = function(){
+          window.location = "/htn_encounter/hypertension_diagnosis?patient_id=" + patientId;
+        }
+
+        if(__$("buttons")){
+          __$("buttons").appendChild(button);
+          __$("nextButton").style.display = 'none'; //Hiding the finish button
+        }
+      }
+      //nextButton
+
+<% end %>
+
 </script>
