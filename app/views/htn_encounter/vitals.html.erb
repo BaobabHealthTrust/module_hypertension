@@ -388,7 +388,7 @@ dateToday = session[:datetime].to_date rescue Date.today
       document.getElementById("captureBPBtn").style.display = 'block'
     }
   }
-  setTimeout("addButton()", 300)
+  //setTimeout("addButton()", 300)
 </script>
 
 <form action="/htn_encounter/create/vitals">
@@ -400,7 +400,7 @@ dateToday = session[:datetime].to_date rescue Date.today
   <%= touch_numeric_tag "WEIGHT (KG)", @patient, nil,
     {	:id => "weight",
     :field_type => "number",
-    :tt_onLoad => "$('clearButton').style.display = 'inline';",
+    :tt_onLoad => "addButton(); $('clearButton').style.display = 'inline';",
     :min => number_with_precision(@min_weight, :precision => 1),
     :max => number_with_precision(@max_weight, :precision => 1),
     :absoluteMin => 0,
